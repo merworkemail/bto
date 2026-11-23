@@ -7,56 +7,66 @@
 <meta name="claude:viewport-fit-sides" content="cover">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Archivo:wght@500;600;700&family=IBM+Plex+Mono:wght@400;500&family=IBM+Plex+Sans:wght@400;500;600&display=swap">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=IBM+Plex+Mono:wght@400;500&display=swap">
 <style>
-/* Layout: drafting-table app shell. Catalogue | to-scale plan | inspector + budget. Plan is the hero. */
+/* Layout: full-bleed 3D stage; floating chrome — brand (TL), view controls (TC), history + budget (TR),
+   tool rail + one slide-out drawer (L), contextual selection bar (B), plan inset that swaps with 3D (BR). */
 :root {
-  --bg: #e7eae5;
-  --panel: #f6f7f3;
-  --paper: #fcfcf9;
-  --ink: #1c2420;
-  --muted: #5b6760;
-  --line: #cdd3cc;
-  --accent: #0d6b5c;
-  --accent-soft: #d5e9e3;
-  --accent-ink: #ffffff;
-  --struct: #1a1e1c;
-  --wall-ext: #59625d;
-  --wall: #9aa39d;
+  --stage: #e8ebe7;
+  --ground: #dcdfda;
+  --surface: #ffffff;
+  --surface-2: #f3f5f2;
+  --ink: #17201c;
+  --muted: #66716b;
+  --line: #e3e7e2;
+  --line-strong: #cfd5ce;
+  --accent: #0f6e5e;
+  --accent-weak: #e2f0eb;
+  --on-accent: #ffffff;
+  --shadow: 0 1px 2px rgba(18, 28, 24, .06), 0 10px 28px rgba(18, 28, 24, .12);
+  --shadow-sm: 0 1px 2px rgba(18, 28, 24, .08), 0 4px 12px rgba(18, 28, 24, .08);
+  /* plan drawing */
+  --paper: #fbfbf8;
+  --struct: #1b1f1d;
+  --wall-ext: #5b645f;
+  --wall: #a2aaa4;
   --furn: #ffffff;
   --furn-soft: #eef1ec;
   --furn-line: #2f3a35;
-  --built: #e6efe9;
+  --built: #e3eee8;
   --rug: #e9e2d4;
-  --grid: rgba(28, 36, 32, .07);
+  --grid: rgba(23, 32, 28, .07);
   --warn: #a8660f;
   --danger: #b42318;
-  --danger-soft: #f8e0dc;
+  --danger-weak: #fbe6e2;
   --floor-filter: none;
   --g1: #b5523b; --g2: #c08a2d; --g3: #4f8a62; --g4: #2f6c8d; --g5: #7a5c99; --g6: #7d8640;
-  --font-display: "Archivo", "Helvetica Neue", Arial, sans-serif;
-  --font-body: "IBM Plex Sans", system-ui, -apple-system, "Segoe UI", sans-serif;
-  --font-mono: "IBM Plex Mono", ui-monospace, "SFMono-Regular", Menlo, monospace;
+  --font: "Inter", system-ui, -apple-system, "Segoe UI", Roboto, sans-serif;
+  --mono: "IBM Plex Mono", ui-monospace, Menlo, monospace;
+  --r: 14px;
+  --gl: max(16px, env(safe-area-inset-left, 0px));
+  --gr: max(16px, env(safe-area-inset-right, 0px));
+  --gt: calc(16px + env(safe-area-inset-top, 0px));
+  --gb: calc(16px + env(safe-area-inset-bottom, 0px));
+  --mini-w: 300px; --mini-h: 216px; --drawer-w: 348px; --rail-w: 72px;
 }
 @media (prefers-color-scheme: dark) {
   :root:not([data-theme="light"]) {
-    --bg: #111513; --panel: #181d1a; --paper: #1e2420; --ink: #e5ebe7; --muted: #98a59e; --line: #313a35;
-    --accent: #48c2a3; --accent-soft: #1f3a33; --accent-ink: #0b1411;
-    --struct: #d7ded9; --wall-ext: #8c9690; --wall: #59635d;
-    --furn: #2a322e; --furn-soft: #343e39; --furn-line: #cbd5cf; --built: #23352f; --rug: #3a3a33;
-    --grid: rgba(229, 235, 231, .06); --warn: #e0a24a; --danger: #f0735f; --danger-soft: #3d201b;
-    --floor-filter: brightness(.6) saturate(.85);
+    --stage: #151a17; --ground: #1c221e; --surface: #1d2320; --surface-2: #252c28; --ink: #e7ece9; --muted: #9aa69f; --line: #2c3430; --line-strong: #3a443f;
+    --accent: #4cc3a4; --accent-weak: #1d3a32; --on-accent: #08130f;
+    --shadow: 0 1px 2px rgba(0,0,0,.4), 0 12px 30px rgba(0,0,0,.45); --shadow-sm: 0 1px 2px rgba(0,0,0,.4), 0 4px 12px rgba(0,0,0,.3);
+    --paper: #1e2420; --struct: #d7ded9; --wall-ext: #8c9690; --wall: #58625c; --furn: #2a322e; --furn-soft: #343e39; --furn-line: #cbd5cf; --built: #23352f; --rug: #3a3a33;
+    --grid: rgba(231, 236, 233, .06); --warn: #e0a24a; --danger: #f0735f; --danger-weak: #3d201b; --floor-filter: brightness(.62) saturate(.85);
     --g1: #e07a60; --g2: #dcae55; --g3: #74b488; --g4: #5fa2c6; --g5: #a98bc9; --g6: #aab565;
     color-scheme: dark;
   }
 }
 :root[data-theme="dark"] {
-  --bg: #111513; --panel: #181d1a; --paper: #1e2420; --ink: #e5ebe7; --muted: #98a59e; --line: #313a35;
-  --accent: #48c2a3; --accent-soft: #1f3a33; --accent-ink: #0b1411;
-  --struct: #d7ded9; --wall-ext: #8c9690; --wall: #59635d;
-  --furn: #2a322e; --furn-soft: #343e39; --furn-line: #cbd5cf; --built: #23352f; --rug: #3a3a33;
-  --grid: rgba(229, 235, 231, .06); --warn: #e0a24a; --danger: #f0735f; --danger-soft: #3d201b;
-  --floor-filter: brightness(.6) saturate(.85);
+  --stage: #151a17; --ground: #1c221e; --surface: #1d2320; --surface-2: #252c28; --ink: #e7ece9; --muted: #9aa69f; --line: #2c3430; --line-strong: #3a443f;
+  --accent: #4cc3a4; --accent-weak: #1d3a32; --on-accent: #08130f;
+  --shadow: 0 1px 2px rgba(0,0,0,.4), 0 12px 30px rgba(0,0,0,.45); --shadow-sm: 0 1px 2px rgba(0,0,0,.4), 0 4px 12px rgba(0,0,0,.3);
+  --paper: #1e2420; --struct: #d7ded9; --wall-ext: #8c9690; --wall: #58625c; --furn: #2a322e; --furn-soft: #343e39; --furn-line: #cbd5cf; --built: #23352f; --rug: #3a3a33;
+  --grid: rgba(231, 236, 233, .06); --warn: #e0a24a; --danger: #f0735f; --danger-weak: #3d201b; --floor-filter: brightness(.62) saturate(.85);
   --g1: #e07a60; --g2: #dcae55; --g3: #74b488; --g4: #5fa2c6; --g5: #a98bc9; --g6: #aab565;
   color-scheme: dark;
 }
@@ -64,87 +74,220 @@
 * { box-sizing: border-box; }
 [hidden] { display: none !important; }
 html, body { height: 100%; }
-body { margin: 0; background: var(--bg); color: var(--ink); font: 14px/1.45 var(--font-body); }
+body { margin: 0; background: var(--stage); color: var(--ink); font: 14px/1.45 var(--font); -webkit-font-smoothing: antialiased; overflow: hidden; }
 button, input, select, textarea { font: inherit; color: inherit; }
-button { cursor: pointer; }
+button { cursor: pointer; background: none; border: 0; padding: 0; }
 :focus-visible { outline: 2px solid var(--accent); outline-offset: 2px; }
+.num { font-variant-numeric: tabular-nums; }
+svg.ic { width: 20px; height: 20px; fill: none; stroke: currentColor; stroke-width: 1.7; stroke-linecap: round; stroke-linejoin: round; flex: none; }
+svg.ic.sm { width: 16px; height: 16px; }
 
-.app {
-  height: 100%;
-  display: grid;
-  grid-template-columns: 272px minmax(0, 1fr) 340px;
-  grid-template-rows: auto minmax(0, 1fr);
-  grid-template-areas: "top top top" "cat plan side";
-  gap: 10px;
-  padding-block: 10px;
-  padding-left: max(16px, env(safe-area-inset-left, 0px));
-  padding-right: max(16px, env(safe-area-inset-right, 0px));
-}
-.panel { background: var(--panel); border: 1px solid var(--line); border-radius: 10px; min-width: 0; min-height: 0; }
+.app { position: fixed; inset: 0; }
+.card { background: var(--surface); border: 1px solid var(--line); border-radius: var(--r); box-shadow: var(--shadow-sm); }
 
-/* Top bar */
-.top { grid-area: top; display: flex; flex-wrap: wrap; align-items: center; gap: 10px 16px; padding: 10px 14px; }
-.brand { display: flex; flex-direction: column; min-width: 0; margin-right: auto; }
-.brand h1 { font: 700 18px/1.1 var(--font-display); margin: 0; letter-spacing: -.01em; text-wrap: balance; }
-.brand p { margin: 2px 0 0; color: var(--muted); font-size: 12.5px; }
-.toolbar { display: flex; flex-wrap: wrap; gap: 6px; align-items: center; }
-.seg { display: inline-flex; border: 1px solid var(--line); border-radius: 8px; overflow: hidden; background: var(--paper); }
-.seg button { border: 0; background: transparent; padding: 6px 10px; font-size: 13px; display: inline-flex; align-items: center; gap: 6px; }
-.seg button + button { border-left: 1px solid var(--line); }
-.seg button[aria-pressed="true"] { background: var(--accent); color: var(--accent-ink); }
-.seg button:disabled { opacity: .4; cursor: default; }
-.btn { border: 1px solid var(--line); background: var(--paper); border-radius: 8px; padding: 6px 11px; font-size: 13px; display: inline-flex; align-items: center; gap: 6px; }
-.btn:hover:not(:disabled) { border-color: var(--accent); }
-.btn.primary { background: var(--accent); color: var(--accent-ink); border-color: var(--accent); }
+/* Views */
+.view-main { position: absolute; inset: 0; background: var(--stage); }
+.view-main > svg, .view-main > canvas { position: absolute; inset: 0; width: 100%; height: 100%; display: block; touch-action: none; outline: none; }
+.view-main > svg { background: var(--paper); }
+.loading { position: absolute; inset: 0; display: grid; place-items: center; color: var(--muted); font-size: 13px; pointer-events: none; }
+.loading span { background: var(--surface); padding: 8px 14px; border-radius: 999px; box-shadow: var(--shadow-sm); }
+
+/* Top-left brand */
+.brand { position: absolute; top: var(--gt); left: var(--gl); display: flex; align-items: center; gap: 10px; padding: 8px 14px 8px 8px; }
+.brand .mark { width: 36px; height: 36px; border-radius: 10px; background: var(--accent); color: var(--on-accent); display: grid; place-items: center; }
+.brand b { display: block; font-size: 14px; font-weight: 600; letter-spacing: -.01em; line-height: 1.2; }
+.brand small { display: block; color: var(--muted); font-size: 12px; line-height: 1.3; }
+
+/* Top-center view controls */
+.tc { position: absolute; top: var(--gt); left: 50%; transform: translateX(-50%); display: flex; gap: 8px; }
+.seg { display: inline-flex; padding: 4px; gap: 2px; }
+.seg button { display: inline-flex; align-items: center; gap: 6px; height: 34px; padding: 0 12px; border-radius: 10px; font-size: 13px; font-weight: 500; color: var(--muted); white-space: nowrap; }
+.seg button:hover { color: var(--ink); background: var(--surface-2); }
+.seg button[aria-pressed="true"] { background: var(--ink); color: var(--surface); }
+
+/* Top-right */
+.tr { position: absolute; top: var(--gt); right: var(--gr); display: flex; gap: 8px; align-items: stretch; }
+.iconbar { display: inline-flex; padding: 4px; gap: 2px; }
+.iconbtn { width: 36px; height: 36px; border-radius: 10px; display: grid; place-items: center; color: var(--ink); }
+.iconbtn:hover:not(:disabled) { background: var(--surface-2); }
+.iconbtn:disabled { opacity: .3; cursor: default; }
+.iconbtn[aria-pressed="true"] { background: var(--accent-weak); color: var(--accent); }
+.card.iconbtn { width: 44px; height: 44px; }
+.pill { display: flex; flex-direction: column; justify-content: center; gap: 4px; padding: 6px 14px; min-width: 168px; text-align: left; }
+.pill .row1 { display: flex; justify-content: space-between; align-items: baseline; gap: 10px; }
+.pill .lab { font-size: 11px; color: var(--muted); }
+.pill b { font-size: 15px; font-weight: 600; font-variant-numeric: tabular-nums; letter-spacing: -.01em; }
+.pill .meter { height: 4px; border-radius: 2px; background: var(--surface-2); overflow: hidden; }
+.pill .meter i { display: block; height: 100%; background: var(--accent); border-radius: 2px; transition: width .3s; }
+.pill.over b { color: var(--danger); }
+.pill.over .meter i { background: var(--danger); }
+.pill:hover { border-color: var(--line-strong); }
+
+/* Tool rail */
+.rail { position: absolute; left: var(--gl); top: calc(var(--gt) + 68px); width: var(--rail-w); display: flex; flex-direction: column; padding: 6px; gap: 2px; }
+.tool { display: flex; flex-direction: column; align-items: center; gap: 3px; padding: 9px 2px 7px; border-radius: 10px; font-size: 11px; font-weight: 500; color: var(--muted); }
+.tool:hover { background: var(--surface-2); color: var(--ink); }
+.tool[aria-pressed="true"] { background: var(--accent-weak); color: var(--accent); }
+.rail hr { border: 0; border-top: 1px solid var(--line); margin: 4px 6px; }
+
+/* Drawer */
+.drawer { position: absolute; left: calc(var(--gl) + var(--rail-w) + 10px); top: calc(var(--gt) + 68px); bottom: var(--gb); width: var(--drawer-w); display: flex; flex-direction: column; overflow: hidden; box-shadow: var(--shadow); }
+.drawer-head { display: flex; align-items: center; justify-content: space-between; padding: 14px 12px 10px 18px; }
+.drawer-head h2 { margin: 0; font-size: 16px; font-weight: 600; letter-spacing: -.01em; }
+.drawer-body > * { flex-shrink: 0; }
+.drawer-body { flex: 1; overflow-y: auto; padding: 0 18px 18px; display: flex; flex-direction: column; gap: 18px; overscroll-behavior: contain; }
+.sec { display: flex; flex-direction: column; gap: 8px; }
+.eyebrow { font-size: 11px; font-weight: 600; text-transform: uppercase; letter-spacing: .07em; color: var(--muted); margin: 0; }
+.hint { font-size: 12.5px; color: var(--muted); margin: 0; }
+.note { font-size: 12.5px; border-radius: 10px; padding: 9px 11px; background: var(--surface-2); margin: 0; display: flex; gap: 8px; }
+.note.bad { background: var(--danger-weak); }
+.note svg { margin-top: 1px; }
+
+.search { display: flex; align-items: center; gap: 8px; border: 1px solid var(--line-strong); border-radius: 10px; padding: 0 10px; background: var(--surface); }
+.search input { border: 0; outline: 0; background: none; height: 38px; flex: 1; min-width: 0; }
+.chips { display: flex; gap: 6px; overflow-x: auto; scrollbar-width: none; margin: 0 -18px; padding: 0 18px; }
+.chips::-webkit-scrollbar { display: none; }
+.chip { flex: none; height: 30px; padding: 0 12px; border-radius: 999px; border: 1px solid var(--line-strong); font-size: 12.5px; font-weight: 500; color: var(--muted); }
+.chip:hover { color: var(--ink); }
+.chip[aria-pressed="true"] { background: var(--ink); border-color: var(--ink); color: var(--surface); }
+.cards { display: grid; grid-template-columns: 1fr 1fr; gap: 8px; }
+.icard { display: flex; flex-direction: column; text-align: left; border-radius: 12px; border: 1px solid var(--line); background: var(--surface); padding: 8px 10px 10px; gap: 2px; min-width: 0; transition: border-color .12s, box-shadow .12s; }
+.icard:hover { border-color: var(--accent); box-shadow: var(--shadow-sm); }
+.icard .thumb { height: 74px; border-radius: 8px; background: var(--surface-2); display: grid; place-items: center; margin-bottom: 6px; padding: 8px; }
+.icard .thumb svg { width: 100%; height: 100%; }
+.icard .nm { font-size: 13px; font-weight: 500; line-height: 1.25; }
+.icard .mt { font-size: 11.5px; color: var(--muted); font-variant-numeric: tabular-nums; }
+.icard .tag { font-size: 10px; font-weight: 600; text-transform: uppercase; letter-spacing: .06em; color: var(--accent); }
+
+.rows { display: flex; flex-direction: column; }
+.rowbtn { display: flex; align-items: center; gap: 10px; padding: 9px 8px; margin: 0 -8px; border-radius: 10px; text-align: left; }
+.rowbtn:hover { background: var(--surface-2); }
+.rowbtn[aria-current="true"] { background: var(--accent-weak); }
+.rowbtn .t { flex: 1; min-width: 0; }
+.rowbtn .t b { display: block; font-weight: 500; font-size: 13.5px; }
+.rowbtn .t small { display: block; color: var(--muted); font-size: 12px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+.rowbtn .v { font-size: 12.5px; color: var(--muted); font-variant-numeric: tabular-nums; white-space: nowrap; }
+.dot2 { width: 28px; height: 28px; border-radius: 8px; flex: none; position: relative; overflow: hidden; border: 1px solid var(--line-strong); }
+.dot2 i { position: absolute; right: 0; bottom: 0; width: 50%; height: 50%; border-top-left-radius: 6px; border-left: 1px solid var(--line-strong); border-top: 1px solid var(--line-strong); }
+
+.opts { display: flex; flex-direction: column; gap: 6px; }
+.opt { display: flex; align-items: center; gap: 10px; border: 1px solid var(--line); border-radius: 12px; padding: 8px 10px; text-align: left; }
+.opt:hover { border-color: var(--line-strong); }
+.opt[aria-pressed="true"] { border-color: var(--accent); box-shadow: inset 0 0 0 1px var(--accent); }
+.opt .sw0 { width: 34px; height: 34px; border-radius: 8px; flex: none; border: 1px solid var(--line-strong); }
+.opt .t { flex: 1; min-width: 0; font-size: 13px; font-weight: 500; }
+.opt .t small { display: block; font-weight: 400; color: var(--muted); font-size: 12px; font-variant-numeric: tabular-nums; }
+.swatches { display: flex; flex-wrap: wrap; gap: 8px; }
+.sw { width: 34px; height: 34px; border-radius: 50%; border: 1px solid var(--line-strong); }
+.sw[aria-pressed="true"] { box-shadow: 0 0 0 2px var(--surface), 0 0 0 4px var(--accent); }
+.sw.none { background: repeating-linear-gradient(45deg, var(--surface) 0 4px, var(--line-strong) 4px 5px); }
+.sw.sq { border-radius: 9px; width: 44px; }
+.btn { display: inline-flex; align-items: center; justify-content: center; gap: 6px; height: 36px; padding: 0 14px; border-radius: 10px; border: 1px solid var(--line-strong); background: var(--surface); font-size: 13px; font-weight: 500; white-space: nowrap; }
+.btn:hover { border-color: var(--ink); }
+.btn.primary { background: var(--accent); border-color: var(--accent); color: var(--on-accent); }
+.btn.primary:hover { filter: brightness(1.06); }
 .btn.danger { color: var(--danger); }
-.btn.danger.confirm { background: var(--danger); color: #fff; border-color: var(--danger); }
-.btn.small { padding: 4px 8px; font-size: 12px; }
-.btn:disabled { opacity: .45; cursor: default; }
-svg.ic { width: 16px; height: 16px; fill: none; stroke: currentColor; stroke-width: 1.7; stroke-linecap: round; stroke-linejoin: round; flex: none; }
-.total-chip { display: flex; flex-direction: column; align-items: flex-end; border: 1px solid var(--line); background: var(--paper); border-radius: 8px; padding: 4px 10px; min-width: 150px; }
-.total-chip b { font: 600 15px/1.2 var(--font-mono); font-variant-numeric: tabular-nums; }
-.total-chip span { font-size: 11px; color: var(--muted); letter-spacing: .04em; text-transform: uppercase; }
-.total-chip .bar { width: 100%; height: 4px; border-radius: 2px; background: var(--line); margin-top: 3px; overflow: hidden; }
-.total-chip .bar i { display: block; height: 100%; background: var(--accent); }
-.total-chip.over .bar i { background: var(--danger); }
-.total-chip.over b { color: var(--danger); }
+.btn.danger.solid { background: var(--danger); border-color: var(--danger); color: #fff; }
+.btn.ghost { border-color: transparent; }
+.btn.ghost:hover { background: var(--surface-2); }
+.btn.sm { height: 30px; padding: 0 10px; font-size: 12.5px; }
+.btnrow { display: flex; gap: 8px; flex-wrap: wrap; }
 
-/* Catalogue */
-.cat { grid-area: cat; display: flex; flex-direction: column; overflow: hidden; }
-.cat-head { padding: 12px 12px 8px; display: flex; flex-direction: column; gap: 8px; border-bottom: 1px solid var(--line); }
-.cat-head h2, .side h2 { font: 600 12px/1 var(--font-display); text-transform: uppercase; letter-spacing: .08em; color: var(--muted); margin: 0; }
-.search { width: 100%; border: 1px solid var(--line); border-radius: 8px; background: var(--paper); padding: 7px 10px; }
-.chips { display: flex; flex-wrap: wrap; gap: 4px; }
-.chip { border: 1px solid var(--line); background: var(--paper); border-radius: 999px; padding: 2px 9px; font-size: 12px; }
-.chip[aria-pressed="true"] { background: var(--ink); color: var(--panel); border-color: var(--ink); }
-.cat-list { overflow-y: auto; padding: 8px; display: grid; grid-template-columns: 1fr 1fr; gap: 6px; align-content: start; }
-.card { border: 1px solid var(--line); background: var(--paper); border-radius: 8px; padding: 6px; display: flex; flex-direction: column; gap: 3px; text-align: left; min-width: 0; }
-.card:hover { border-color: var(--accent); }
-.card svg { width: 100%; height: 58px; }
-.card .nm { font-size: 12.5px; font-weight: 500; line-height: 1.25; }
-.card .mt { font: 11px/1.3 var(--font-mono); color: var(--muted); font-variant-numeric: tabular-nums; }
-.card .tag { font-size: 10px; text-transform: uppercase; letter-spacing: .06em; color: var(--accent); }
-.cat-foot { padding: 8px 12px; font-size: 12px; color: var(--muted); border-top: 1px solid var(--line); }
+/* switch */
+.switch { position: relative; width: 38px; height: 22px; border-radius: 999px; background: var(--line-strong); flex: none; transition: background .15s; }
+.switch::after { content: ""; position: absolute; top: 3px; left: 3px; width: 16px; height: 16px; border-radius: 50%; background: #fff; box-shadow: 0 1px 2px rgba(0,0,0,.25); transition: transform .15s; }
+.switch[aria-checked="true"] { background: var(--danger); }
+.switch[aria-checked="true"]::after { transform: translateX(16px); }
 
-/* Plan */
-.plan-wrap { grid-area: plan; position: relative; overflow: hidden; background: var(--paper); }
-#plan { width: 100%; height: 100%; display: block; touch-action: none; user-select: none; -webkit-user-select: none; }
+/* budget */
+.total { font-size: 30px; font-weight: 600; letter-spacing: -.02em; font-variant-numeric: tabular-nums; line-height: 1.1; }
+.total small { font-size: 13px; font-weight: 400; color: var(--muted); letter-spacing: 0; }
+.stack { display: flex; height: 8px; border-radius: 4px; overflow: hidden; background: var(--surface-2); gap: 2px; }
+.stack i { display: block; height: 100%; }
+.glist details { border-bottom: 1px solid var(--line); }
+.glist summary { display: flex; align-items: center; gap: 10px; padding: 10px 0; cursor: pointer; list-style: none; font-size: 13.5px; }
+.glist summary::-webkit-details-marker { display: none; }
+.glist .k { width: 10px; height: 10px; border-radius: 3px; flex: none; }
+.glist .amt { margin-left: auto; font-variant-numeric: tabular-nums; font-weight: 500; }
+.glist .chev { color: var(--muted); transition: transform .15s; }
+.glist details[open] .chev { transform: rotate(90deg); }
+.lines { display: flex; flex-direction: column; gap: 6px; padding: 0 0 12px 20px; }
+.line { display: grid; grid-template-columns: minmax(0, 1fr) auto; gap: 0 10px; font-size: 12.5px; }
+.line .d { color: var(--muted); font-size: 11.5px; }
+.line .a { font-variant-numeric: tabular-nums; text-align: right; grid-row: 1; grid-column: 2; }
+.kv { display: grid; grid-template-columns: 1fr auto; gap: 6px 12px; font-size: 13px; align-items: center; }
+.kv .a { text-align: right; font-variant-numeric: tabular-nums; }
+.kv .grand { font-weight: 600; font-size: 15px; padding-top: 8px; border-top: 1px solid var(--line); }
+.stepper { display: inline-flex; align-items: center; border: 1px solid var(--line-strong); border-radius: 9px; }
+.stepper button { width: 30px; height: 30px; display: grid; place-items: center; color: var(--muted); }
+.stepper button:hover { color: var(--ink); }
+.stepper output { min-width: 24px; text-align: center; font-variant-numeric: tabular-nums; font-size: 13px; }
+.field { display: flex; flex-direction: column; gap: 4px; font-size: 12px; color: var(--muted); min-width: 0; }
+.input { height: 36px; border: 1px solid var(--line-strong); border-radius: 9px; background: var(--surface); padding: 0 10px; color: var(--ink); font-size: 13px; width: 100%; min-width: 0; font-variant-numeric: tabular-nums; }
+.rates { display: grid; grid-template-columns: minmax(0, 1fr) 92px; gap: 6px 10px; align-items: center; font-size: 12.5px; padding-top: 8px; }
+.rates h4 { grid-column: 1 / -1; margin: 10px 0 0; font-size: 11px; font-weight: 600; letter-spacing: .07em; text-transform: uppercase; color: var(--muted); }
+.rates .input { height: 30px; text-align: right; }
+details.more > summary { cursor: pointer; font-size: 13px; font-weight: 500; color: var(--accent); list-style: none; }
+details.more > summary::-webkit-details-marker { display: none; }
+
+/* Selection bar */
+.bottom-zone { position: absolute; bottom: var(--gb); left: calc(var(--gl) + var(--rail-w) + 12px); right: calc(var(--gr) + var(--mini-w) + 12px); display: flex; flex-direction: column; align-items: center; gap: 8px; pointer-events: none; }
+.app.drawer-open .bottom-zone { left: calc(var(--gl) + var(--rail-w) + var(--drawer-w) + 22px); }
+.bottom-zone > * { pointer-events: auto; }
+.selbar { display: flex; align-items: center; gap: 4px; padding: 6px; max-width: 100%; box-shadow: var(--shadow); flex-wrap: wrap; justify-content: center; }
+.selbar .who { display: flex; align-items: center; gap: 10px; padding: 0 10px 0 4px; min-width: 0; }
+.selbar .who .th { width: 40px; height: 40px; border-radius: 9px; background: var(--surface-2); display: grid; place-items: center; padding: 5px; flex: none; }
+.selbar .who .th svg { width: 100%; height: 100%; }
+.selbar .who b { display: block; font-size: 13.5px; font-weight: 600; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; max-width: 220px; }
+.selbar .who small { display: block; font-size: 12px; color: var(--muted); font-variant-numeric: tabular-nums; white-space: nowrap; }
+.selbar .sep { width: 1px; align-self: stretch; background: var(--line); margin: 4px 4px; }
+.selbar .dims { display: flex; align-items: center; gap: 4px; font-size: 12px; color: var(--muted); }
+.selbar .dims input { width: 72px; height: 32px; border: 1px solid var(--line-strong); border-radius: 8px; background: var(--surface); padding: 0 8px; font-size: 13px; font-variant-numeric: tabular-nums; color: var(--ink); }
+.selbar .iconbtn { width: 38px; height: 38px; }
+.selbar .iconbtn.danger { color: var(--danger); }
+.flag { display: inline-flex; align-items: center; gap: 5px; font-size: 12px; font-weight: 500; color: var(--danger); background: var(--danger-weak); border-radius: 999px; padding: 3px 9px; }
+.flag.ok { color: var(--accent); background: var(--accent-weak); }
+.flag.neutral { color: var(--muted); background: var(--surface-2); }
+.minisw { width: 22px; height: 22px; border-radius: 6px; border: 1px solid var(--line-strong); flex: none; }
+.chipbtn { display: inline-flex; align-items: center; gap: 8px; height: 38px; padding: 0 10px; border-radius: 10px; font-size: 12.5px; }
+.chipbtn:hover { background: var(--surface-2); }
+.chipbtn small { display: block; color: var(--muted); font-size: 11px; line-height: 1.1; }
+.chipbtn span { text-align: left; line-height: 1.2; }
+.hintchip { display: flex; align-items: center; gap: 10px; background: color-mix(in srgb, var(--ink) 86%, transparent); color: var(--surface); padding: 7px 8px 7px 14px; border-radius: 999px; font-size: 12.5px; box-shadow: var(--shadow-sm); max-width: 100%; }
+.hintchip button { color: inherit; opacity: .75; width: 24px; height: 24px; border-radius: 50%; display: grid; place-items: center; flex: none; }
+.hintchip button:hover { opacity: 1; background: rgba(255,255,255,.12); }
+
+/* Mini map / inset */
+.mini { position: absolute; right: var(--gr); bottom: var(--gb); width: var(--mini-w); height: var(--mini-h); overflow: hidden; overflow: clip; box-shadow: var(--shadow); transition: width .2s, height .2s; }
+.mini-head { position: absolute; top: 8px; left: 8px; right: 8px; display: flex; justify-content: space-between; align-items: center; z-index: 2; pointer-events: none; }
+.mini-head > * { pointer-events: auto; }
+.mini-label { font-size: 11px; font-weight: 600; letter-spacing: .06em; text-transform: uppercase; background: var(--surface); color: var(--muted); padding: 3px 8px; border-radius: 999px; box-shadow: var(--shadow-sm); }
+.mini-head .iconbtn { width: 30px; height: 30px; background: var(--surface); box-shadow: var(--shadow-sm); border-radius: 8px; }
+.view-mini { position: absolute; inset: 0; background: var(--paper); cursor: pointer; overflow: hidden; overflow: clip; }
+.view-mini > svg, .view-mini > canvas { width: 100%; height: 100%; display: block; }
+.view-mini > canvas { pointer-events: none; }
+.mini.collapsed { width: 44px; height: 44px; }
+.mini.collapsed .view-mini, .mini.collapsed .mini-label, .mini.collapsed #mini-swap { display: none; }
+.mini.collapsed .mini-head { inset: 0; justify-content: center; }
+.mini.collapsed #mini-toggle { width: 44px; height: 44px; box-shadow: none; }
+
+.zoom { position: absolute; right: var(--gr); bottom: calc(var(--gb) + var(--mini-h) + 12px); display: flex; flex-direction: column; padding: 4px; gap: 2px; }
+.app.mini-collapsed .zoom { bottom: calc(var(--gb) + 56px); }
+.app.mini-collapsed .bottom-zone { right: calc(var(--gr) + 56px); }
+
+/* Menu popover */
+.menu { position: absolute; top: calc(var(--gt) + 56px); right: var(--gr); width: min(360px, calc(100vw - 32px)); max-height: calc(100% - 100px); overflow-y: auto; padding: 16px; display: flex; flex-direction: column; gap: 16px; box-shadow: var(--shadow); z-index: 20; }
+.menu h3 { margin: 0; font-size: 15px; font-weight: 600; }
+.saved .srow { display: flex; align-items: center; gap: 6px; font-size: 13px; padding: 6px 0; border-bottom: 1px solid var(--line); }
+.saved .srow span { flex: 1; min-width: 0; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+.saved .srow small { color: var(--muted); font-size: 11.5px; }
+textarea { width: 100%; min-height: 72px; border: 1px solid var(--line-strong); border-radius: 10px; background: var(--surface); padding: 8px 10px; font: 12px var(--mono); resize: vertical; }
+
+.toast { position: absolute; top: calc(var(--gt) + 64px); left: 50%; transform: translateX(-50%); background: var(--ink); color: var(--surface); padding: 8px 14px; border-radius: 999px; font-size: 13px; z-index: 50; box-shadow: var(--shadow); max-width: calc(100vw - 32px); }
+
+/* ---- Plan (SVG) ---- */
 #plan.measure { cursor: crosshair; }
 #plan.panning { cursor: grabbing; }
-.plan-hud { position: absolute; left: 10px; bottom: 10px; display: flex; gap: 6px; flex-wrap: wrap; pointer-events: none; }
-.plan-hud > * { pointer-events: auto; }
-.zoom { position: absolute; right: 10px; bottom: 10px; display: flex; flex-direction: column; gap: 4px; }
-.zoom button { width: 34px; height: 34px; border: 1px solid var(--line); background: var(--panel); border-radius: 8px; display: grid; place-items: center; }
-.legend { background: var(--panel); border: 1px solid var(--line); border-radius: 8px; padding: 5px 9px; font-size: 11.5px; display: flex; gap: 10px; flex-wrap: wrap; color: var(--muted); }
-.legend i { display: inline-block; width: 14px; height: 8px; border-radius: 2px; vertical-align: middle; margin-right: 4px; }
-#c3d { position: absolute; inset: 0; width: 100%; height: 100%; display: block; touch-action: none; outline: none; }
-.hud3d { position: absolute; left: 10px; top: 10px; right: 54px; display: flex; flex-wrap: wrap; gap: 6px; align-items: center; pointer-events: none; }
-.hud3d > * { pointer-events: auto; }
-.hud3d .hint3d { background: var(--panel); border: 1px solid var(--line); border-radius: 8px; padding: 5px 9px; font-size: 12px; color: var(--muted); }
-.loading3d { position: absolute; inset: 0; display: grid; place-items: center; font-size: 13px; color: var(--muted); pointer-events: none; }
-.scale-note { position: absolute; left: 10px; top: 10px; font: 11px var(--font-mono); color: var(--muted); background: var(--panel); border: 1px solid var(--line); border-radius: 6px; padding: 3px 7px; pointer-events: none; }
-
-/* SVG styling */
 .room { cursor: pointer; filter: var(--floor-filter); }
 .room-sel { fill: var(--accent); fill-opacity: .1; stroke: var(--accent); stroke-width: 2.5px; vector-effect: non-scaling-stroke; pointer-events: none; }
 .ledge { fill: url(#hatch); stroke: var(--muted); stroke-width: 1px; vector-effect: non-scaling-stroke; }
@@ -152,24 +295,22 @@ svg.ic { width: 16px; height: 16px; fill: none; stroke: currentColor; stroke-wid
 .wall.k-struct rect { fill: var(--struct); }
 .wall.k-ext rect { fill: var(--wall-ext); }
 .wall.k-part rect, .wall.k-wet rect { fill: var(--wall); cursor: pointer; }
-.wall.k-wet rect { fill: var(--wall); stroke: var(--wall-ext); stroke-width: .8px; stroke-dasharray: 3 2; }
+.wall.k-wet rect { stroke: var(--wall-ext); stroke-width: .8px; stroke-dasharray: 3 2; }
 .wall.k-struct rect, .wall.k-ext rect { cursor: pointer; }
 .wall.k-part:hover rect, .wall.k-wet:hover rect { fill: var(--accent); }
 .wall.removed rect { fill: transparent; stroke: var(--danger); stroke-width: 1.2px; stroke-dasharray: 5 4; }
-.wall.removed:hover rect { fill: var(--danger-soft); }
+.wall.removed:hover rect { fill: var(--danger-weak); }
 .wall.sel rect { stroke: var(--accent); stroke-width: 2.5px; }
 .wall.sel.removed rect { stroke: var(--danger); }
 .win-glass { fill: var(--paper); stroke: var(--ink); stroke-width: .9px; vector-effect: non-scaling-stroke; }
 .win-line { stroke: var(--ink); stroke-width: .7px; vector-effect: non-scaling-stroke; }
 .door-leaf { stroke: var(--ink); stroke-width: 1.4px; fill: none; vector-effect: non-scaling-stroke; }
 .door-arc { stroke: var(--muted); stroke-width: .9px; stroke-dasharray: 4 3; fill: none; vector-effect: non-scaling-stroke; }
-.room-label { font: 600 230px var(--font-display); fill: var(--ink); text-anchor: middle; paint-order: stroke; stroke: var(--paper); stroke-width: 50px; stroke-linejoin: round; pointer-events: none; letter-spacing: 4px; }
-.room-sub { font: 400 150px var(--font-mono); fill: var(--muted); text-anchor: middle; paint-order: stroke; stroke: var(--paper); stroke-width: 40px; pointer-events: none; }
+.room-label { font: 600 220px var(--font); fill: var(--ink); text-anchor: middle; paint-order: stroke; stroke: var(--paper); stroke-width: 50px; stroke-linejoin: round; pointer-events: none; letter-spacing: 6px; }
+.room-sub { font: 400 150px var(--mono); fill: var(--muted); text-anchor: middle; paint-order: stroke; stroke: var(--paper); stroke-width: 40px; pointer-events: none; }
 .dim { stroke: var(--muted); stroke-width: .8px; vector-effect: non-scaling-stroke; fill: none; }
-.dim-t { font: 400 170px var(--font-mono); fill: var(--muted); text-anchor: middle; }
-.grid-fill { fill: url(#gridpat); pointer-events: none; }
+.dim-t { font: 400 170px var(--mono); fill: var(--muted); text-anchor: middle; }
 .gridline { stroke: var(--grid); stroke-width: 1px; vector-effect: non-scaling-stroke; }
-
 .item { cursor: grab; }
 .item .hit { fill: transparent; }
 .fl { fill: var(--furn); stroke: var(--furn-line); stroke-width: 1.2px; vector-effect: non-scaling-stroke; }
@@ -179,208 +320,157 @@ svg.ic { width: 16px; height: 16px; fill: none; stroke: currentColor; stroke-wid
 .rugf { fill: var(--rug); stroke: var(--furn-line); stroke-width: .8px; vector-effect: non-scaling-stroke; opacity: .9; }
 .item.built .fl { fill: var(--built); }
 .item.warn .fl, .item.warn .fdash { stroke: var(--danger); }
-.item-label { font: 500 120px var(--font-body); fill: var(--muted); text-anchor: middle; pointer-events: none; }
 .sel-box { fill: none; stroke: var(--accent); stroke-width: 1.5px; stroke-dasharray: 6 4; vector-effect: non-scaling-stroke; pointer-events: none; }
 .sel-box.warn { stroke: var(--danger); }
 .handle { fill: var(--accent); stroke: var(--paper); stroke-width: 2px; vector-effect: non-scaling-stroke; cursor: nwse-resize; }
 .handle.rot { cursor: pointer; }
 .clr { stroke: var(--accent); stroke-width: 1px; vector-effect: non-scaling-stroke; }
-.clr-t { font: 500 140px var(--font-mono); fill: var(--accent); text-anchor: middle; paint-order: stroke; stroke: var(--paper); stroke-width: 40px; }
+.clr-t { font: 500 140px var(--mono); fill: var(--accent); text-anchor: middle; paint-order: stroke; stroke: var(--paper); stroke-width: 40px; }
 .meas { stroke: var(--warn); stroke-width: 2px; vector-effect: non-scaling-stroke; }
-.meas-t { font: 600 200px var(--font-mono); fill: var(--warn); text-anchor: middle; paint-order: stroke; stroke: var(--paper); stroke-width: 50px; }
+.meas-t { font: 600 200px var(--mono); fill: var(--warn); text-anchor: middle; paint-order: stroke; stroke: var(--paper); stroke-width: 50px; }
+.cam-wedge { fill: var(--accent); fill-opacity: .22; stroke: var(--accent); stroke-width: 1.2px; vector-effect: non-scaling-stroke; pointer-events: none; }
+.cam-dot { fill: var(--accent); stroke: var(--paper); stroke-width: 2px; vector-effect: non-scaling-stroke; pointer-events: none; }
+#plan.is-mini .room-label, #plan.is-mini .room-sub, #plan.is-mini #g-dims, #plan.is-mini #g-over, #plan.is-mini #g-grid { display: none; }
+#plan.is-mini .item, #plan.is-mini .room, #plan.is-mini .wall rect { cursor: pointer; }
+#plan.is-mini .wall.k-part:hover rect, #plan.is-mini .wall.k-wet:hover rect { fill: var(--wall); }
 
-/* Side */
-.side { grid-area: side; display: flex; flex-direction: column; overflow: hidden; }
-.tabs { display: flex; border-bottom: 1px solid var(--line); padding: 0 8px; gap: 2px; }
-.tabs button { border: 0; background: none; padding: 11px 10px 9px; font-size: 13px; color: var(--muted); border-bottom: 2px solid transparent; }
-.tabs button[aria-selected="true"] { color: var(--ink); border-bottom-color: var(--accent); font-weight: 600; }
-.pane { overflow-y: auto; padding: 14px; display: flex; flex-direction: column; gap: 14px; flex: 1; }
-.sec { display: flex; flex-direction: column; gap: 8px; }
-.sec h3 { margin: 0; font: 600 16px/1.2 var(--font-display); text-wrap: balance; }
-.kv { display: grid; grid-template-columns: auto 1fr; gap: 3px 12px; font-size: 13px; }
-.kv dt { color: var(--muted); }
-.kv dd { margin: 0; text-align: right; font-family: var(--font-mono); font-variant-numeric: tabular-nums; }
-.hint { font-size: 12.5px; color: var(--muted); margin: 0; }
-.note { font-size: 12.5px; border-radius: 8px; padding: 8px 10px; background: var(--accent-soft); color: var(--ink); margin: 0; }
-.note.bad { background: var(--danger-soft); }
-.badge { display: inline-block; font-size: 10.5px; letter-spacing: .06em; text-transform: uppercase; padding: 2px 7px; border-radius: 999px; border: 1px solid var(--line); color: var(--muted); }
-.badge.struct { background: var(--struct); color: var(--paper); border-color: var(--struct); }
-.badge.ok { background: var(--accent-soft); color: var(--accent); border-color: transparent; }
-.badge.bad { background: var(--danger-soft); color: var(--danger); border-color: transparent; }
-.row { display: flex; gap: 6px; flex-wrap: wrap; align-items: center; }
-.field { display: flex; flex-direction: column; gap: 3px; font-size: 12px; color: var(--muted); min-width: 0; }
-.field input, .field select { border: 1px solid var(--line); background: var(--paper); border-radius: 7px; padding: 6px 8px; color: var(--ink); font-size: 13px; width: 100%; min-width: 0; }
-.field input[type="number"] { font-family: var(--font-mono); font-variant-numeric: tabular-nums; }
-.grid2 { display: grid; grid-template-columns: 1fr 1fr; gap: 8px; }
-.opts { display: grid; grid-template-columns: 1fr; gap: 4px; }
-.opt { display: flex; justify-content: space-between; gap: 8px; border: 1px solid var(--line); background: var(--paper); border-radius: 8px; padding: 7px 9px; font-size: 13px; text-align: left; }
-.opt small { font-family: var(--font-mono); color: var(--muted); font-size: 11.5px; white-space: nowrap; }
-.opt[aria-pressed="true"] { border-color: var(--accent); box-shadow: inset 0 0 0 1px var(--accent); }
-.swatches { display: flex; flex-wrap: wrap; gap: 6px; }
-.sw { width: 30px; height: 30px; border-radius: 50%; border: 1px solid var(--line); padding: 0; position: relative; }
-.sw[aria-pressed="true"] { box-shadow: 0 0 0 2px var(--panel), 0 0 0 4px var(--accent); }
-.sw.none { background: repeating-linear-gradient(45deg, var(--paper) 0 4px, var(--line) 4px 5px); }
-.tone { border-radius: 6px; width: 46px; height: 30px; }
-.roomlist { display: flex; flex-direction: column; gap: 2px; }
-.roomlist button { display: flex; justify-content: space-between; gap: 8px; border: 0; background: none; padding: 6px 4px; border-bottom: 1px solid var(--line); text-align: left; font-size: 13px; }
-.roomlist button:hover { color: var(--accent); }
-.roomlist span:last-child { font-family: var(--font-mono); color: var(--muted); font-size: 12px; white-space: nowrap; }
-
-/* Budget */
-.big { font: 600 28px/1.1 var(--font-mono); font-variant-numeric: tabular-nums; letter-spacing: -.02em; }
-.big small { font-size: 13px; color: var(--muted); font-weight: 400; letter-spacing: 0; }
-.stack { display: flex; height: 10px; border-radius: 5px; overflow: hidden; background: var(--line); }
-.stack i { display: block; height: 100%; }
-.target-line { position: relative; }
-.glist { display: flex; flex-direction: column; }
-.glist details { border-bottom: 1px solid var(--line); }
-.glist summary { display: flex; align-items: center; gap: 8px; padding: 8px 2px; cursor: pointer; list-style: none; font-size: 13.5px; }
-.glist summary::-webkit-details-marker { display: none; }
-.glist summary .dot { width: 9px; height: 9px; border-radius: 2px; flex: none; }
-.glist summary .amt { margin-left: auto; font-family: var(--font-mono); font-variant-numeric: tabular-nums; }
-.glist summary .chev { color: var(--muted); transition: transform .15s; }
-.glist details[open] summary .chev { transform: rotate(90deg); }
-.lines { display: flex; flex-direction: column; gap: 2px; padding: 0 2px 10px 19px; }
-.line { display: grid; grid-template-columns: minmax(0, 1fr) auto; gap: 2px 10px; font-size: 12.5px; }
-.line .d { color: var(--muted); font-size: 11.5px; font-family: var(--font-mono); grid-column: 1; }
-.line .a { font-family: var(--font-mono); font-variant-numeric: tabular-nums; text-align: right; grid-row: 1; grid-column: 2; }
-.extras { display: flex; flex-direction: column; gap: 6px; }
-.extra { display: grid; grid-template-columns: minmax(0, 1fr) auto; align-items: center; gap: 8px; font-size: 13px; }
-.extra small { display: block; color: var(--muted); font-family: var(--font-mono); font-size: 11px; }
-.step { display: inline-flex; align-items: center; border: 1px solid var(--line); border-radius: 7px; background: var(--paper); }
-.step button { border: 0; background: none; width: 28px; height: 28px; }
-.step output { min-width: 26px; text-align: center; font-family: var(--font-mono); font-variant-numeric: tabular-nums; }
-.totals { display: grid; grid-template-columns: 1fr auto; gap: 4px 12px; font-size: 13px; }
-.totals .a { font-family: var(--font-mono); text-align: right; font-variant-numeric: tabular-nums; }
-.totals .grand { font-weight: 600; font-size: 15px; border-top: 1px solid var(--line); padding-top: 6px; }
-.rates { display: grid; grid-template-columns: minmax(0, 1fr) 96px; gap: 6px 10px; align-items: center; font-size: 13px; }
-.rates input { border: 1px solid var(--line); background: var(--paper); border-radius: 6px; padding: 4px 6px; width: 100%; font-family: var(--font-mono); text-align: right; }
-.rates h4 { grid-column: 1 / -1; margin: 8px 0 0; font: 600 11px var(--font-display); letter-spacing: .08em; text-transform: uppercase; color: var(--muted); }
-
-/* Layout manager popover */
-.pop { position: absolute; z-index: 30; top: 64px; right: max(16px, env(safe-area-inset-right, 0px)); width: min(380px, calc(100vw - 32px)); background: var(--panel); border: 1px solid var(--line); border-radius: 12px; box-shadow: 0 18px 40px rgba(0,0,0,.18); padding: 14px; display: flex; flex-direction: column; gap: 12px; max-height: calc(100% - 80px); overflow-y: auto; }
-.pop h3 { margin: 0; font: 600 15px var(--font-display); }
-.saved { display: flex; flex-direction: column; gap: 4px; }
-.saved .srow { display: flex; align-items: center; gap: 6px; font-size: 13px; padding: 4px 0; border-bottom: 1px solid var(--line); }
-.saved .srow span { flex: 1; min-width: 0; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
-.saved .srow small { color: var(--muted); font-family: var(--font-mono); font-size: 11px; }
-textarea { width: 100%; min-height: 80px; border: 1px solid var(--line); border-radius: 8px; background: var(--paper); padding: 8px; font: 12px var(--font-mono); resize: vertical; }
-
-.toast { position: fixed; left: 50%; transform: translateX(-50%); bottom: calc(18px + env(safe-area-inset-bottom, 0px)); background: var(--ink); color: var(--panel); padding: 8px 14px; border-radius: 8px; font-size: 13px; z-index: 50; max-width: calc(100vw - 32px); }
-
-@media (max-width: 1080px) {
-  .app { grid-template-columns: 240px minmax(0, 1fr); grid-template-areas: "top top" "cat plan" "side side"; grid-template-rows: auto minmax(460px, 1fr) auto; height: auto; min-height: 100%; }
-  .side { max-height: none; }
+/* ---- Tablet ---- */
+@media (max-width: 1100px) {
+  :root { --mini-w: 240px; --mini-h: 172px; --drawer-w: 320px; }
+  .brand small { display: none; }
 }
-@media (max-width: 720px) {
-  .app { grid-template-columns: minmax(0, 1fr); grid-template-areas: "top" "plan" "cat" "side"; grid-template-rows: auto 62vh auto auto; }
-  .cat { max-height: 360px; }
-  .cat-list { grid-template-columns: repeat(auto-fill, minmax(120px, 1fr)); }
-  .toolbar .lbl { display: none; }
-  .total-chip { min-width: 0; }
-  .pop { position: fixed; top: calc(12px + env(safe-area-inset-top, 0px)); }
+/* ---- Phone ---- */
+@media (max-width: 760px) {
+  :root { --mini-w: 150px; --mini-h: 112px; --rail-w: 0px; }
+  .brand { padding: 6px 10px 6px 6px; }
+  .brand .mark { width: 30px; height: 30px; }
+  .brand b { font-size: 13px; }
+  .tc { top: calc(var(--gt) + 56px); left: var(--gl); transform: none; }
+  .tc .seg button span { display: none; }
+  .tc .seg button { padding: 0 10px; }
+  .pill { min-width: 0; padding: 6px 10px; }
+  .pill .lab { display: none; }
+  .tr .iconbar { display: none; }
+  .rail { top: auto; bottom: var(--gb); left: var(--gl); right: var(--gr); width: auto; flex-direction: row; justify-content: space-around; padding: 4px; }
+  .rail hr { display: none; }
+  .tool { flex: 1; padding: 7px 2px 5px; }
+  .drawer { left: var(--gl); right: var(--gr); width: auto; top: auto; bottom: calc(var(--gb) + 70px); height: 58vh; }
+  .bottom-zone { left: var(--gl); right: var(--gr); bottom: calc(var(--gb) + 70px); }
+  .app.drawer-open .bottom-zone { display: none; }
+  .mini { top: calc(var(--gt) + 56px); bottom: auto; }
+  .zoom { display: none; }
+  .selbar .who b { max-width: 140px; }
+  .selbar .dims { display: none; }
+  .menu { top: calc(var(--gt) + 52px); }
 }
 @media (prefers-reduced-motion: reduce) { * { transition: none !important; } }
 </style>
 </head><!--shell-->
 <body><!--shell-->
+<svg width="0" height="0" style="position:absolute" aria-hidden="true">
+  <symbol id="i-home" viewBox="0 0 24 24"><path d="M4 11l8-6.5 8 6.5"/><path d="M6 9.5V19h12V9.5"/><path d="M10 19v-5h4v5"/></symbol>
+  <symbol id="i-sofa" viewBox="0 0 24 24"><path d="M5.5 10V8a2.5 2.5 0 012.5-2.5h8A2.5 2.5 0 0118.5 8v2"/><path d="M3.5 12.5a1.5 1.5 0 013 0V14h11v-1.5a1.5 1.5 0 013 0V17.5h-17z"/><path d="M6 17.5V19M18 17.5V19"/></symbol>
+  <symbol id="i-roller" viewBox="0 0 24 24"><rect x="4" y="3.5" width="13" height="5" rx="1.5"/><path d="M17 6h2.5v5.5H11.5V14"/><rect x="10" y="14" width="3" height="6.5" rx="1"/></symbol>
+  <symbol id="i-wall" viewBox="0 0 24 24"><rect x="3" y="5" width="18" height="14" rx="1"/><path d="M3 9.7h18M3 14.3h18M9 5v4.7M15 9.7v4.6M9 14.3V19"/></symbol>
+  <symbol id="i-ruler" viewBox="0 0 24 24"><path d="M3.5 16.5l13-13 4 4-13 13z"/><path d="M7.5 12.5l2 2M10.5 9.5l2 2M13.5 6.5l2 2"/></symbol>
+  <symbol id="i-wallet" viewBox="0 0 24 24"><path d="M4 7.5h14.5a1.5 1.5 0 011.5 1.5v9.5a1.5 1.5 0 01-1.5 1.5h-13A1.5 1.5 0 014 18.5z"/><path d="M4 7.5l11.5-3.5v3.5"/><circle cx="16" cy="13.75" r="1.1"/></symbol>
+  <symbol id="i-undo" viewBox="0 0 24 24"><path d="M9 14L4 9l5-5"/><path d="M4 9h10.5a5.5 5.5 0 010 11H11"/></symbol>
+  <symbol id="i-redo" viewBox="0 0 24 24"><path d="M15 14l5-5-5-5"/><path d="M20 9H9.5a5.5 5.5 0 000 11H13"/></symbol>
+  <symbol id="i-more" viewBox="0 0 24 24"><circle cx="5.5" cy="12" r="1.2"/><circle cx="12" cy="12" r="1.2"/><circle cx="18.5" cy="12" r="1.2"/></symbol>
+  <symbol id="i-expand" viewBox="0 0 24 24"><path d="M14 4h6v6M10 20H4v-6M20 4l-6.5 6.5M4 20l6.5-6.5"/></symbol>
+  <symbol id="i-swap" viewBox="0 0 24 24"><path d="M7 4L3.5 7.5 7 11"/><path d="M3.5 7.5H17"/><path d="M17 13l3.5 3.5L17 20"/><path d="M20.5 16.5H7"/></symbol>
+  <symbol id="i-map" viewBox="0 0 24 24"><path d="M9 4.5L3.5 6.5v13l5.5-2 6 2 5.5-2v-13l-5.5 2z"/><path d="M9 4.5v13M15 6.5v13"/></symbol>
+  <symbol id="i-plus" viewBox="0 0 24 24"><path d="M12 5v14M5 12h14"/></symbol>
+  <symbol id="i-minus" viewBox="0 0 24 24"><path d="M5 12h14"/></symbol>
+  <symbol id="i-focus" viewBox="0 0 24 24"><path d="M4 9V4h5M20 9V4h-5M4 15v5h5M20 15v5h-5"/></symbol>
+  <symbol id="i-orbit" viewBox="0 0 24 24"><path d="M12 3.5l7.5 4.25v8.5L12 20.5l-7.5-4.25v-8.5z"/><path d="M4.5 7.75L12 12l7.5-4.25M12 12v8.5"/></symbol>
+  <symbol id="i-walk" viewBox="0 0 24 24"><circle cx="13" cy="4.5" r="1.8"/><path d="M9.5 20.5l2-5.5 3 2.5v3"/><path d="M8 11.5l3.5-3 3 2.5 3 1"/><path d="M11.5 8.5l-.5 6.5"/></symbol>
+  <symbol id="i-cut" viewBox="0 0 24 24"><path d="M4 13l8-4 8 4"/><path d="M4 13v3.5l8 4 8-4V13"/><path d="M4 13l8 4 8-4M12 17v3.5"/><path d="M4 6l8-4 8 4" stroke-dasharray="2 2"/></symbol>
+  <symbol id="i-dims" viewBox="0 0 24 24"><path d="M4 6v12M20 6v12M4 12h16"/><path d="M7 9.5L4.5 12 7 14.5M17 9.5l2.5 2.5-2.5 2.5"/></symbol>
+  <symbol id="i-grid" viewBox="0 0 24 24"><rect x="4" y="4" width="16" height="16" rx="1"/><path d="M4 9.3h16M4 14.7h16M9.3 4v16M14.7 4v16"/></symbol>
+  <symbol id="i-magnet" viewBox="0 0 24 24"><path d="M6 4.5v7a6 6 0 0012 0v-7h-4v7a2 2 0 01-4 0v-7z"/><path d="M6 8.5h4M14 8.5h4"/></symbol>
+  <symbol id="i-rotl" viewBox="0 0 24 24"><path d="M4 4.5v5h5"/><path d="M5 15a7.5 7.5 0 101.8-7.3L4 9.5"/></symbol>
+  <symbol id="i-rotr" viewBox="0 0 24 24"><path d="M20 4.5v5h-5"/><path d="M19 15a7.5 7.5 0 11-1.8-7.3L20 9.5"/></symbol>
+  <symbol id="i-copy" viewBox="0 0 24 24"><rect x="8.5" y="8.5" width="11.5" height="11.5" rx="2"/><path d="M15.5 8.5V6a2 2 0 00-2-2H6a2 2 0 00-2 2v7.5a2 2 0 002 2h2.5"/></symbol>
+  <symbol id="i-trash" viewBox="0 0 24 24"><path d="M4.5 7h15M9.5 7V4.5h5V7M6.5 7l1 12.5h9l1-12.5"/><path d="M10 11v5M14 11v5"/></symbol>
+  <symbol id="i-close" viewBox="0 0 24 24"><path d="M6 6l12 12M18 6L6 18"/></symbol>
+  <symbol id="i-search" viewBox="0 0 24 24"><circle cx="11" cy="11" r="6.5"/><path d="M16 16l4 4"/></symbol>
+  <symbol id="i-lock" viewBox="0 0 24 24"><rect x="5" y="10.5" width="14" height="10" rx="2"/><path d="M8.5 10.5V8a3.5 3.5 0 017 0v2.5"/></symbol>
+  <symbol id="i-alert" viewBox="0 0 24 24"><path d="M12 4l9 16H3z"/><path d="M12 10v4.5M12 17.2v.3"/></symbol>
+  <symbol id="i-info" viewBox="0 0 24 24"><circle cx="12" cy="12" r="8.5"/><path d="M12 11v5.5M12 7.8v.3"/></symbol>
+  <symbol id="i-chev" viewBox="0 0 24 24"><path d="M9.5 6l6 6-6 6"/></symbol>
+  <symbol id="i-folder" viewBox="0 0 24 24"><path d="M3.5 7.5a2 2 0 012-2h4l2 2h7a2 2 0 012 2V17a2 2 0 01-2 2h-13a2 2 0 01-2-2z"/></symbol>
+  <symbol id="i-eye" viewBox="0 0 24 24"><path d="M2.5 12S6 5.5 12 5.5 21.5 12 21.5 12 18 18.5 12 18.5 2.5 12 2.5 12z"/><circle cx="12" cy="12" r="2.8"/></symbol>
+</svg>
+
 <div class="app" id="app">
-  <header class="panel top">
-    <div class="brand">
-      <h1>Blk 74A · 4-Room Type 2</h1>
-      <p>Reno planner · 89 m² (86 m² internal + A/C ledge) · drawn to scale in mm</p>
-    </div>
-    <div class="toolbar">
-      <div class="seg" role="group" aria-label="View">
-        <button id="view-2d" aria-pressed="true" title="Floor plan">2D</button>
-        <button id="view-3d" aria-pressed="false" title="3D view">3D</button>
-      </div>
-      <div class="seg" role="group" aria-label="Tool">
-        <button id="tool-select" aria-pressed="true" title="Select and move (V)"><svg class="ic" viewBox="0 0 24 24"><path d="M5 3l14 8-6 2-3 6z"/></svg><span class="lbl">Select</span></button>
-        <button id="tool-measure" aria-pressed="false" title="Measure (M)"><svg class="ic" viewBox="0 0 24 24"><path d="M3 17L17 3l4 4L7 21z"/><path d="M7 13l2 2M10 10l2 2M13 7l2 2"/></svg><span class="lbl">Measure</span></button>
-      </div>
-      <div class="seg" role="group" aria-label="History">
-        <button id="undo" title="Undo (Ctrl+Z)"><svg class="ic" viewBox="0 0 24 24"><path d="M9 14L4 9l5-5"/><path d="M4 9h10a6 6 0 010 12h-3"/></svg></button>
-        <button id="redo" title="Redo (Ctrl+Shift+Z)"><svg class="ic" viewBox="0 0 24 24"><path d="M15 14l5-5-5-5"/><path d="M20 9H10a6 6 0 000 12h3"/></svg></button>
-      </div>
-      <div class="seg" role="group" aria-label="Show on plan">
-        <button id="v-dims" aria-pressed="true" title="Plan dimensions">Dims</button>
-        <button id="v-grid" aria-pressed="false" title="500 mm grid">Grid</button>
-        <button id="v-furn" aria-pressed="true" title="Furniture">Furniture</button>
-        <button id="v-snap" aria-pressed="true" title="Snap to 50 mm and walls">Snap</button>
-      </div>
-      <button class="btn" id="open-layouts"><svg class="ic" viewBox="0 0 24 24"><path d="M4 4h12l4 4v12H4z"/><path d="M8 4v5h7V4M8 20v-6h8v6"/></svg><span class="lbl">Layouts</span></button>
-      <button class="total-chip" id="total-chip" title="Open budget">
-        <span>Estimated total</span>
-        <b id="chip-total">S$0</b>
-        <div class="bar"><i id="chip-bar" style="width:0"></i></div>
-      </button>
-    </div>
+  <div class="view-main" id="view-main"></div>
+  <div class="loading" id="loading" hidden><span>Building your flat in 3D…</span></div>
+
+  <header class="card brand">
+    <div class="mark"><svg class="ic"><use href="#i-home"/></svg></div>
+    <div><b>Blk 74A · 4-Room Type 2</b><small>89 m² · drawn to scale from the HDB plan</small></div>
   </header>
 
-  <aside class="panel cat" aria-label="Furniture catalogue">
-    <div class="cat-head">
-      <h2>Catalogue</h2>
-      <input class="search" id="cat-search" type="search" placeholder="Search beds, sofas, cabinets…" aria-label="Search catalogue">
-      <div class="chips" id="cat-chips"></div>
-    </div>
-    <div class="cat-list" id="cat-list"></div>
-    <div class="cat-foot">Tap to place in view, or drag onto the plan. Sizes are W × D in mm.</div>
-  </aside>
+  <div class="tc" id="tc"></div>
 
-  <main class="panel plan-wrap" id="plan-wrap">
-    <svg id="plan" viewBox="-1500 -1500 15300 11700" preserveAspectRatio="xMidYMid meet" aria-label="Floor plan">
-      <defs id="defs"></defs>
-      <g id="g-floor"></g>
-      <g id="g-paint"></g>
-      <g id="g-ledge"></g>
-      <g id="g-grid"></g>
-      <g id="g-walls"></g>
-      <g id="g-items"></g>
-      <g id="g-open"></g>
-      <g id="g-labels"></g>
-      <g id="g-dims"></g>
-      <g id="g-over"></g>
-    </svg>
-    <canvas id="c3d" hidden tabindex="0" aria-label="3D view of the flat"></canvas>
-    <div class="loading3d" id="loading3d" hidden>Loading 3D view…</div>
-    <div class="hud3d" id="hud3d" hidden>
-      <div class="seg" role="group" aria-label="Camera">
-        <button id="cam-over" aria-pressed="true">Overview</button>
-        <button id="cam-eye" aria-pressed="false">Eye level</button>
-      </div>
-      <div class="seg" role="group" aria-label="Walls">
-        <button id="walls-full" aria-pressed="true">Full walls</button>
-        <button id="walls-low" aria-pressed="false">Cut-away</button>
-      </div>
-      <span class="hint3d" id="hint3d"></span>
+  <div class="tr">
+    <div class="card iconbar">
+      <button class="iconbtn" id="undo" title="Undo (Ctrl+Z)" aria-label="Undo"><svg class="ic"><use href="#i-undo"/></svg></button>
+      <button class="iconbtn" id="redo" title="Redo (Ctrl+Shift+Z)" aria-label="Redo"><svg class="ic"><use href="#i-redo"/></svg></button>
     </div>
-    <div class="scale-note" id="scale-note">1 grid square = 500 mm</div>
-    <div class="plan-hud">
-      <div class="legend">
-        <span><i style="background:var(--struct)"></i>Structural (locked)</span>
-        <span><i style="background:var(--wall-ext)"></i>External</span>
-        <span><i style="background:var(--wall)"></i>Removable</span>
-      </div>
-    </div>
-    <div class="zoom">
-      <button id="z-in" aria-label="Zoom in"><svg class="ic" viewBox="0 0 24 24"><path d="M12 5v14M5 12h14"/></svg></button>
-      <button id="z-fit" aria-label="Fit plan"><svg class="ic" viewBox="0 0 24 24"><path d="M4 9V4h5M20 9V4h-5M4 15v5h5M20 15v5h-5"/></svg></button>
-      <button id="z-out" aria-label="Zoom out"><svg class="ic" viewBox="0 0 24 24"><path d="M5 12h14"/></svg></button>
-    </div>
-    <div class="pop" id="pop" hidden></div>
-  </main>
+    <button class="card pill" id="pill" title="Open budget">
+      <span class="row1"><span class="lab">Estimate</span><b id="pill-total">S$0</b></span>
+      <span class="meter"><i id="pill-bar" style="width:0"></i></span>
+    </button>
+    <button class="card iconbtn" id="menu-btn" title="Layouts" aria-label="Layouts and settings"><svg class="ic"><use href="#i-folder"/></svg></button>
+  </div>
 
-  <aside class="panel side" aria-label="Details">
-    <div class="tabs" role="tablist">
-      <button role="tab" id="tab-sel" aria-selected="true">Selection</button>
-      <button role="tab" id="tab-budget" aria-selected="false">Budget</button>
-      <button role="tab" id="tab-rates" aria-selected="false">Rates</button>
+  <nav class="card rail" id="rail" aria-label="Tools">
+    <button class="tool" data-tool="furnish" aria-pressed="false"><svg class="ic"><use href="#i-sofa"/></svg>Furnish</button>
+    <button class="tool" data-tool="finishes" aria-pressed="false"><svg class="ic"><use href="#i-roller"/></svg>Finishes</button>
+    <button class="tool" data-tool="walls" aria-pressed="false"><svg class="ic"><use href="#i-wall"/></svg>Walls</button>
+    <button class="tool" data-tool="measure" aria-pressed="false"><svg class="ic"><use href="#i-ruler"/></svg>Measure</button>
+    <hr>
+    <button class="tool" data-tool="budget" aria-pressed="false"><svg class="ic"><use href="#i-wallet"/></svg>Budget</button>
+  </nav>
+
+  <section class="card drawer" id="drawer" hidden aria-labelledby="drawer-title">
+    <div class="drawer-head"><h2 id="drawer-title"></h2><button class="iconbtn" id="drawer-close" aria-label="Close panel"><svg class="ic"><use href="#i-close"/></svg></button></div>
+    <div class="drawer-body" id="drawer-body"></div>
+  </section>
+
+  <div class="card zoom" id="zoom">
+    <button class="iconbtn" id="z-in" aria-label="Zoom in"><svg class="ic"><use href="#i-plus"/></svg></button>
+    <button class="iconbtn" id="z-out" aria-label="Zoom out"><svg class="ic"><use href="#i-minus"/></svg></button>
+    <button class="iconbtn" id="z-fit" aria-label="Reset view"><svg class="ic"><use href="#i-focus"/></svg></button>
+  </div>
+
+  <div class="card mini" id="mini">
+    <div class="mini-head">
+      <span class="mini-label" id="mini-label">Plan</span>
+      <span style="display:flex;gap:6px">
+        <button class="iconbtn" id="mini-swap" title="Swap views (Tab)" aria-label="Make this the main view"><svg class="ic sm"><use href="#i-expand"/></svg></button>
+        <button class="iconbtn" id="mini-toggle" title="Hide map" aria-label="Hide or show the inset"><svg class="ic sm"><use href="#i-map"/></svg></button>
+      </span>
     </div>
-    <div class="pane" id="pane"></div>
-  </aside>
+    <div class="view-mini" id="view-mini">
+      <svg id="plan" viewBox="-1500 -1500 15300 11700" preserveAspectRatio="xMidYMid meet" aria-label="Floor plan">
+        <defs id="defs"></defs>
+        <g id="g-floor"></g><g id="g-paint"></g><g id="g-ledge"></g><g id="g-grid"></g><g id="g-walls"></g>
+        <g id="g-items"></g><g id="g-open"></g><g id="g-labels"></g><g id="g-dims"></g><g id="g-over"></g><g id="g-cam"></g>
+      </svg>
+    </div>
+  </div>
+
+  <div class="bottom-zone" id="bottom-zone">
+    <div class="hintchip" id="hint" hidden></div>
+    <div class="card selbar" id="selbar" hidden></div>
+  </div>
+
+  <div class="card menu" id="menu" hidden></div>
+  <div class="toast" id="toast" hidden></div>
 </div>
-<div class="toast" id="toast" hidden></div>
 
 <script>
 (() => {
@@ -775,9 +865,9 @@ function persist() { ls.set(KEY_CUR, JSON.stringify(S)); }
 if (hot && hot.snapshot) { try { hot.snapshot(() => ({ state: S })); } catch (e) {} }
 
 /* UI state */
-const UI = { sel: null, tool: 'select', tab: 'sel', cat: 'All', q: '', show: { dims: true, grid: false, furn: true, snap: true }, measure: null, pop: null };
-try { const u = JSON.parse(ls.get(KEY_UI) || '{}'); if (u.show) Object.assign(UI.show, u.show); if (u.tab) UI.tab = u.tab; } catch (e) {}
-function saveUI() { ls.set(KEY_UI, JSON.stringify({ show: UI.show, tab: UI.tab })); }
+const UI = { sel: null, tool: null, main: '3d', cat: 'All', q: '', show: { dims: true, grid: false, furn: true, snap: true }, measure: null, cam: 'orbit', low: false, menu: null, hintOff: false, finRoom: 'liv' };
+try { const u = JSON.parse(ls.get(KEY_UI) || '{}'); if (u.show) Object.assign(UI.show, u.show); if (u.hintOff) UI.hintOff = true; if (u.main === '2d') UI.main = '2d'; } catch (e) {}
+function saveUI() { ls.set(KEY_UI, JSON.stringify({ show: UI.show, hintOff: UI.hintOff, main: UI.main })); }
 function validateSel() {
   if (!UI.sel) return;
   if (UI.sel.kind === 'item' && !S.items.find(i => i.id === UI.sel.id)) UI.sel = null;
@@ -1000,71 +1090,85 @@ function renderOverlay() {
   }
   G('g-over').innerHTML = s;
 }
-function renderPlan() { renderDefs(); renderFloors(); renderGrid(); renderWalls(); renderItems(); renderOpenings(); renderLabels(); renderDims(); renderOverlay(); }
+function renderPlan() { renderDefs(); renderFloors(); renderGrid(); renderWalls(); renderItems(); renderOpenings(); renderLabels(); renderDims(); renderOverlay(); renderCam(); }
 
-/* ---------------- View box, pan & zoom ---------------- */
+
+/* ================================================================
+   Plan view: view box, pan, zoom, camera marker
+================================================================ */
 const VB = { x: -1500, y: -1500, w: 15300, h: 11700 };
+const isMini = () => svg.classList.contains('is-mini');
 function applyVB() { svg.setAttribute('viewBox', `${VB.x} ${VB.y} ${VB.w} ${VB.h}`); }
 function fitView() {
-  const box = { x: -1450, y: -1400, w: 15100, h: 11550 }, r = svg.getBoundingClientRect();
-  const ar = r.width && r.height ? r.width / r.height : box.w / box.h;
-  if (box.w / box.h > ar) { VB.w = box.w; VB.h = box.w / ar; VB.x = box.x; VB.y = box.y - (VB.h - box.h) / 2; }
-  else { VB.h = box.h; VB.w = box.h * ar; VB.y = box.y; VB.x = box.x - (VB.w - box.w) / 2; }
-  applyVB(); renderOverlay();
+  const box = isMini() ? { x: -250, y: -250, w: 13250, h: 9550 } : { x: -1450, y: -1400, w: 15100, h: 11550 };
+  const r = svg.getBoundingClientRect(), W = r.width || 800, Hh = r.height || 600;
+  // keep the drawing clear of the floating chrome when the plan is the main view
+  const phone = W < 760, pad = isMini() ? [0, 0, 0, 0] : phone ? [124, 16, 84, 16] : [76, 56, 84, 104]; // top, right, bottom, left (px)
+  const aw = Math.max(50, W - pad[1] - pad[3]), ah = Math.max(50, Hh - pad[0] - pad[2]);
+  const k = Math.max(box.w / aw, box.h / ah);
+  VB.w = W * k; VB.h = Hh * k;
+  VB.x = box.x - pad[3] * k - (aw * k - box.w) / 2; VB.y = box.y - pad[0] * k - (ah * k - box.h) / 2;
+  applyVB(); renderOverlay(); renderCam();
 }
 function zoomAt(px, py, k) {
   const nw = Math.min(40000, Math.max(1500, VB.w * k)); k = nw / VB.w;
   VB.x = px - (px - VB.x) * k; VB.y = py - (py - VB.y) * k; VB.w *= k; VB.h *= k; applyVB(); renderOverlay();
 }
-function toMM(e, inv) {
-  const pt = svg.createSVGPoint(); pt.x = e.clientX; pt.y = e.clientY;
-  return pt.matrixTransform(inv || svg.getScreenCTM().inverse());
-}
+function toMM(e, inv) { const pt = svg.createSVGPoint(); pt.x = e.clientX; pt.y = e.clientY; return pt.matrixTransform(inv || svg.getScreenCTM().inverse()); }
+let lastPlanSize = '';
 new ResizeObserver(() => {
   const r = svg.getBoundingClientRect(); if (!r.width || !r.height) return;
-  const cx = VB.x + VB.w / 2, cy = VB.y + VB.h / 2, ar = r.width / r.height;
-  if (!fitView._done) { fitView._done = true; fitView(); return; }
-  VB.h = VB.w / ar; VB.x = cx - VB.w / 2; VB.y = cy - VB.h / 2; applyVB(); renderOverlay();
+  const key = (isMini() ? 'm' : 'M') + Math.round(r.width) + 'x' + Math.round(r.height);
+  if (isMini() || !lastPlanSize || lastPlanSize[0] !== key[0]) { lastPlanSize = key; fitView(); return; }
+  lastPlanSize = key; const cx = VB.x + VB.w / 2, cy = VB.y + VB.h / 2; VB.h = VB.w / (r.width / r.height); VB.x = cx - VB.w / 2; VB.y = cy - VB.h / 2; applyVB(); renderOverlay();
 }).observe(svg);
 
-/* ---------------- Pointer interaction ---------------- */
+function renderCam() {
+  const g = G('g-cam');
+  if (!V3.ready || UI.main !== '3d') { g.innerHTML = ''; return; }
+  const walk = UI.cam === 'walk';
+  const at = walk ? camera.position : controls.target;
+  const dir = new THREE.Vector3(); camera.getWorldDirection(dir);
+  const a = Math.atan2(dir.z, dir.x), L = walk ? 2600 : 2200, half = walk ? 0.6 : 0.5;
+  const x = at.x * 1000, y = at.z * 1000;
+  const p1 = [x + L * Math.cos(a - half), y + L * Math.sin(a - half)], p2 = [x + L * Math.cos(a + half), y + L * Math.sin(a + half)];
+  g.innerHTML = `<path d="M${x} ${y}L${p1[0]} ${p1[1]}A${L} ${L} 0 0 1 ${p2[0]} ${p2[1]}Z" class="cam-wedge"/><circle cx="${x}" cy="${y}" r="${walk ? 260 : 200}" class="cam-dot"/>`;
+}
+
+/* ---------------- Plan pointer interaction ---------------- */
 const pointers = new Map();
 let act = null;
+function snapPt(p) { const g = UI.show.snap ? 10 : 1; return { x: Math.round(p.x / g) * g, y: Math.round(p.y / g) * g }; }
 svg.addEventListener('pointerdown', e => {
   if (e.button > 1) return;
+  if (isMini()) { act = { kind: 'mini', sx: e.clientX, sy: e.clientY }; return; }
   svg.setPointerCapture(e.pointerId);
   pointers.set(e.pointerId, { x: e.clientX, y: e.clientY });
   if (pointers.size === 2) {
     const [a, b] = [...pointers.values()];
-    const inv = svg.getScreenCTM().inverse();
-    const mid = toMM({ clientX: (a.x + b.x) / 2, clientY: (a.y + b.y) / 2 }, inv);
-    if (act && act.kind === 'drag' && act.moved) { /* keep drag result */ pushUndo(act.snap); persist(); }
-    act = { kind: 'pinch', d0: Math.hypot(a.x - b.x, a.y - b.y), vb0: { ...VB }, mid };
-    return;
+    const mid = toMM({ clientX: (a.x + b.x) / 2, clientY: (a.y + b.y) / 2 });
+    if (act && act.kind === 'drag' && act.moved) { pushUndo(act.snap); persist(); }
+    act = { kind: 'pinch', d0: Math.hypot(a.x - b.x, a.y - b.y), vb0: { ...VB }, mid }; return;
   }
   const p = toMM(e);
   const handle = e.target.closest('[data-handle]'), itemEl = e.target.closest('[data-item]');
   const wallEl = e.target.closest('[data-wall]'), roomEl = e.target.closest('[data-room]');
-  if (UI.tool === 'measure') {
-    const q = snapPt(p); UI.measure = { x1: q.x, y1: q.y, x2: q.x, y2: q.y };
-    act = { kind: 'measure' }; renderOverlay(); return;
-  }
+  if (UI.tool === 'measure') { const q = snapPt(p); UI.measure = { x1: q.x, y1: q.y, x2: q.x, y2: q.y }; act = { kind: 'measure' }; renderOverlay(); return; }
   if (handle && selItem()) {
     if (handle.dataset.handle === 'rotate') { rotateSel(90); act = null; return; }
     act = { kind: 'resize', snap: JSON.stringify(S), id: selItem().id, moved: false }; return;
   }
   if (itemEl) {
     const it = S.items.find(i => i.id === itemEl.dataset.item);
-    if (!UI.sel || UI.sel.id !== it.id) { UI.sel = { kind: 'item', id: it.id }; UI.tab = 'sel'; renderPanel(); renderWalls(); }
+    if (!UI.sel || UI.sel.id !== it.id) { select({ kind: 'item', id: it.id }); }
     act = { kind: 'drag', snap: JSON.stringify(S), id: it.id, p0: p, start: { x: it.x, y: it.y }, moved: false, sx: e.clientX, sy: e.clientY };
-    renderOverlay(); return;
+    return;
   }
   act = { kind: 'pan', inv: svg.getScreenCTM().inverse(), p0: p, vb0: { ...VB }, sx: e.clientX, sy: e.clientY, moved: false, wall: wallEl && wallEl.dataset.wall, room: roomEl && roomEl.dataset.room };
 });
-function snapPt(p) { const g = UI.show.snap ? 10 : 1; return { x: Math.round(p.x / g) * g, y: Math.round(p.y / g) * g }; }
 svg.addEventListener('pointermove', e => {
   if (pointers.has(e.pointerId)) pointers.set(e.pointerId, { x: e.clientX, y: e.clientY });
-  if (!act) return;
+  if (!act || act.kind === 'mini') return;
   if (act.kind === 'pinch' && pointers.size >= 2) {
     const [a, b] = [...pointers.values()]; const d = Math.hypot(a.x - b.x, a.y - b.y) || 1;
     const k = Math.min(40000 / act.vb0.w, Math.max(1500 / act.vb0.w, act.d0 / d));
@@ -1097,400 +1201,175 @@ function endPointer(e) {
   if (!act) return;
   if (act.kind === 'pinch') { if (pointers.size === 0) act = null; return; }
   const a = act; act = null;
-  if (a.kind === 'drag' || a.kind === 'resize') { if (a.moved) { pushUndo(a.snap); persist(); renderAll(); } return; }
-  if (a.kind === 'measure') { renderOverlay(); const m = UI.measure; if (m && Math.hypot(m.x2 - m.x1, m.y2 - m.y1) > 1) toast(`Measured ${mmf(Math.hypot(m.x2 - m.x1, m.y2 - m.y1))} mm`); return; }
-  if (a.kind === 'pan' && !a.moved) {
-    if (a.wall) UI.sel = { kind: 'wall', id: a.wall };
-    else if (a.room) UI.sel = { kind: 'room', id: a.room };
-    else UI.sel = null;
-    UI.tab = 'sel'; renderWalls(); renderOverlay(); renderPanel();
+  if (a.kind === 'mini') {
+    if (Math.hypot(e.clientX - a.sx, e.clientY - a.sy) > 6) return;
+    const p = toMM(e);
+    if (UI.main === '3d' && V3.ready && roomAt(p.x, p.y)) focus3D(p.x / 1000, p.y / 1000);
+    else if (UI.main === '3d') setMain('2d');
+    return;
   }
+  if (a.kind === 'drag' || a.kind === 'resize') { if (a.moved) { pushUndo(a.snap); persist(); renderAll(); } return; }
+  if (a.kind === 'measure') { renderOverlay(); const m = UI.measure; if (m && Math.hypot(m.x2 - m.x1, m.y2 - m.y1) > 1) toast(`${mmf(Math.hypot(m.x2 - m.x1, m.y2 - m.y1))} mm`); return; }
+  if (a.kind === 'pan' && !a.moved) select(a.wall ? { kind: 'wall', id: a.wall } : a.room ? { kind: 'room', id: a.room } : null);
 }
 svg.addEventListener('pointerup', endPointer);
 svg.addEventListener('pointercancel', endPointer);
-svg.addEventListener('wheel', e => { e.preventDefault(); const p = toMM(e); const k = Math.exp(Math.sign(e.deltaY) * Math.min(Math.abs(e.deltaY), 120) / 600); zoomAt(p.x, p.y, k); }, { passive: false });
-function dolly3D(k) { if (V3.eye) return; const off = camera.position.clone().sub(controls.target).multiplyScalar(k); if (off.length() < controls.minDistance || off.length() > controls.maxDistance) return; camera.position.copy(controls.target).add(off); controls.update(); }
-$('#z-in').onclick = () => V3.on ? dolly3D(1 / 1.25) : zoomAt(VB.x + VB.w / 2, VB.y + VB.h / 2, 1 / 1.3);
-$('#z-out').onclick = () => V3.on ? dolly3D(1.25) : zoomAt(VB.x + VB.w / 2, VB.y + VB.h / 2, 1.3);
-$('#z-fit').onclick = () => V3.on ? overview() : fitView();
-
-// drag & drop from catalogue
-svg.addEventListener('dragover', e => { e.preventDefault(); e.dataTransfer.dropEffect = 'copy'; });
+svg.addEventListener('wheel', e => { if (isMini()) return; e.preventDefault(); const p = toMM(e); const k = Math.exp(Math.sign(e.deltaY) * Math.min(Math.abs(e.deltaY), 120) / 600); zoomAt(p.x, p.y, k); }, { passive: false });
+svg.addEventListener('dragover', e => { if (!isMini()) { e.preventDefault(); e.dataTransfer.dropEffect = 'copy'; } });
 svg.addEventListener('drop', e => { e.preventDefault(); const t = e.dataTransfer.getData('text/plain'); if (CAT[t]) { const p = toMM(e); addItem(t, p.x, p.y); } });
 
-/* ---------------- Item operations ---------------- */
-function addItem(type, cx, cy) {
-  if (cx == null) { cx = VB.x + VB.w / 2; cy = VB.y + VB.h / 2; }
-  const t = CAT[type];
-  const it = { id: uid(), type, w: t.w, d: t.d, rot: 0, x: cx - t.w / 2, y: cy - t.d / 2 };
-  mutate(() => { snapItem(it); S.items.push(it); UI.sel = { kind: 'item', id: it.id }; UI.tab = 'sel'; UI.show.furn = true; });
-  toast(`Added ${t.name.toLowerCase()}`);
-}
-function rotateSel(deg) {
-  const it = selItem(); if (!it) return;
-  mutate(() => { const f = fp(it), cx = f.x + f.w / 2, cy = f.y + f.h / 2; it.rot = ((it.rot + deg) % 360 + 360) % 360; const g = fp(it); it.x = cx - g.w / 2; it.y = cy - g.h / 2; snapItem(it); });
-}
-function deleteSel() { const it = selItem(); if (!it) return; mutate(() => { S.items = S.items.filter(i => i !== it); UI.sel = null; }); toast('Deleted'); }
-function dupSel() {
-  const it = selItem(); if (!it) return;
-  const c = { ...it, id: uid(), x: it.x + 200, y: it.y + 200 };
-  mutate(() => { S.items.push(c); UI.sel = { kind: 'item', id: c.id }; });
-}
-function nudge(dx, dy) { const it = selItem(); if (!it) return; mutate(() => { it.x += dx; it.y += dy; }); }
-
-/* ---------------- Panels ---------------- */
-const pane = $('#pane');
-function renderPanel() {
-  ['sel', 'budget', 'rates'].forEach(t => $('#tab-' + t).setAttribute('aria-selected', UI.tab === t));
-  if (UI.tab === 'budget') pane.innerHTML = budgetHTML();
-  else if (UI.tab === 'rates') pane.innerHTML = ratesHTML();
-  else pane.innerHTML = selHTML();
-  renderChip();
-}
-function selHTML() {
-  const sel = UI.sel;
-  if (!sel) {
-    const b = budget();
-    return `<div class="sec"><h3>4-Room Type 2, Blk 74A</h3><p class="hint">Click a room to change its flooring and paint. Click a grey wall to remove it; black walls are structural and locked. Add furniture from the catalogue and drag it into place. Clearances to the nearest walls show in mm when an item is selected. Switch to 3D at the top to see the result in perspective.</p></div>
-    <div class="sec"><dl class="kv"><dt>Rooms (to wall centrelines)</dt><dd>${UNIT_AREA.toFixed(1)} m²</dd><dt>Items placed</dt><dd>${S.items.length}</dd><dt>Walls removed</dt><dd>${Object.values(S.walls).filter(w => w.removed).length}</dd><dt>Estimated total</dt><dd>${money(b.total)}</dd></dl></div>
-    <div class="sec"><h2>Rooms</h2><div class="roomlist">${ROOMS.map(r => { const st = S.rooms[r.id]; return `<button data-goroom="${r.id}"><span>${esc(r.name)}<br><small style="color:var(--muted)">${esc(FLOORS[st.floor].name)}${st.paint !== 'keep' ? ' · ' + esc(PAINTS.find(p => p.id === st.paint).name) : ''}</small></span><span>${r.area.toFixed(1)} m²</span></button>`; }).join('')}</div></div>
-    <p class="hint">Keys: R rotate · Del delete · Ctrl+D duplicate · arrows nudge 10 mm (Shift 100 mm) · M measure · Esc deselect.</p>`;
-  }
-  if (sel.kind === 'room') {
-    const r = ROOM_BY[sel.id], st = S.rooms[r.id], f = FLOORS[st.floor];
-    const allowed = Object.entries(FLOORS).filter(([k]) => !(r.wet && (k === 'carpet' || k === 'timber' || k === 'spc')));
-    let notes = '';
-    if (r.wet) notes = `<p class="note bad">HDB: bathroom floor and wall tiles can't be hacked for the first 3 years after key collection. Overlaying new tiles is allowed. Waterproofing must stay intact.</p>`;
-    if (r.shelter) notes = `<p class="note bad">Household shelter: don't hack or drill into the shelter's walls, floor or ceiling, and don't change the blast door.</p>`;
-    if (r.id === 'kit') notes = `<p class="note">Kitchen tiles fall under the same 3-year no-hacking rule as bathrooms. Overlay is fine.</p>`;
-    return `<div class="sec"><span class="badge">Room</span><h3>${esc(r.name)}</h3>
-      <dl class="kv"><dt>Floor area</dt><dd>${r.area.toFixed(2)} m²</dd><dt>Perimeter</dt><dd>${r.perim.toFixed(2)} m</dd><dt>Wall area</dt><dd>${r.tiled ? 'tiled' : (r.perim * S.rates.ceiling / 1000).toFixed(1) + ' m²'}</dd></dl></div>
-      ${notes}
-      <div class="sec"><h2>Flooring</h2><div class="opts">${allowed.map(([k, v]) => `<button class="opt" data-floor="${k}" aria-pressed="${st.floor === k}"><span>${esc(v.name)}</span><small>${k === 'asis' ? 'S$0' : money(S.rates[v.rate]) + '/m² · ' + money(r.area * S.rates[v.rate])}</small></button>`).join('')}</div>
-      ${st.floor !== 'asis' ? `<div class="swatches" aria-label="Tone">${Object.entries(f.tones).map(([k, t]) => `<button class="sw tone" title="${esc(t.label)}" aria-label="${esc(t.label)}" data-tone="${k}" aria-pressed="${st.tone === k}" style="background:${t.c[0]};border-color:${t.c[1]}"></button>`).join('')}</div><p class="hint">${esc((f.tones[st.tone] || {}).label || '')}</p>` : ''}</div>
-      <div class="sec"><h2>Wall paint</h2><div class="swatches">${PAINTS.map(p => `<button class="sw${p.c ? '' : ' none'}" title="${esc(p.name)}" aria-label="${esc(p.name)}" data-paint="${p.id}" aria-pressed="${st.paint === p.id}" ${p.c ? `style="background:${p.c}"` : ''}></button>`).join('')}</div>
-      <p class="hint">${esc(PAINTS.find(p => p.id === st.paint).name)}${st.paint !== 'keep' ? ' · ' + money(paintCost(r, st)) + (r.tiled ? ' (ceiling only)' : ' incl. ceiling') : ''}</p></div>
-      <div class="sec"><dl class="kv"><dt>Room cost</dt><dd>${money(floorCost(r, st) + paintCost(r, st))}</dd></dl></div>`;
-  }
-  if (sel.kind === 'wall') {
-    const w = WALL_BY[sel.id], rem = S.walls[w.id] && S.walls[w.id].removed;
-    if (w.kind === 'struct') return `<div class="sec"><span class="badge struct">Structural</span><h3>${esc(w.name)}</h3><p class="note bad">Shaded black on the HDB plan. Structural columns, walls, beams and slabs must not be hacked, removed or tampered with.</p></div>`;
-    if (w.kind === 'ext') return `<div class="sec"><span class="badge">External / fixed</span><h3>${esc(w.name)}</h3><p class="note bad">External and wet-area boundary walls stay. You can still paint them, add carpentry against them, or change window grilles and curtains.</p></div>`;
-    const cost = wallCost(w);
-    return `<div class="sec"><span class="badge ${rem ? 'bad' : 'ok'}">${rem ? 'Marked for removal' : (w.kind === 'wet' ? 'Bathroom wall' : 'Non-structural partition')}</span><h3>${esc(w.name)}</h3>
-      <dl class="kv"><dt>Length</dt><dd>${mmf(w.len)} mm</dd><dt>Wall area</dt><dd>${(w.len * S.rates.ceiling / 1e6).toFixed(2)} m²</dd><dt>Hacking estimate</dt><dd>${money(cost)}</dd></dl></div>
-      ${w.kind === 'wet' ? `<p class="note bad">Removing a bathroom wall needs HDB approval, and the waterproofing and tiles must be redone. The 3-year no-hacking rule for new flats also applies.</p>` : `<p class="note">Non-structural partitions can usually be hacked with an HDB renovation permit, which your contractor applies for.</p>`}
-      ${w.door ? `<p class="hint">The door in this wall goes too.</p>` : ''}
-      <div class="row"><button class="btn ${rem ? 'primary' : 'danger'}" data-togglewall="${w.id}">${rem ? 'Restore wall' : 'Remove wall'}</button></div>`;
-  }
-  if (sel.kind === 'item') {
-    const it = selItem(); if (!it) return '';
-    const t = CAT[it.type], f = fp(it), c = clearances(f), bad = BAD.get(it.id), room = roomAt(f.x + f.w / 2, f.y + f.h / 2);
-    const cl = v => isFinite(v) ? mmf(v) + ' mm' : '—';
-    return `<div class="sec"><span class="badge ${t.rate ? 'ok' : ''}">${t.rate ? 'Built-in carpentry' : esc(t.cat)}</span><h3>${esc(it.label || t.name)}</h3>
-      <p class="hint">${room ? esc(room.name) : 'Outside the rooms'}</p></div>
-      ${bad ? `<p class="note bad">${esc(bad)}. Move or resize it.</p>` : ''}
-      <div class="sec grid2">
-        <label class="field">Width (mm)<input type="number" id="f-w" min="100" step="10" value="${Math.round(it.w)}"></label>
-        <label class="field">Depth (mm)<input type="number" id="f-d" min="100" step="10" value="${Math.round(it.d)}"></label>
-        <label class="field" style="grid-column:1/-1">Label<input type="text" id="f-label" placeholder="${esc(t.name)}" value="${esc(it.label || '')}"></label>
-        ${t.rate ? `<div class="field" style="grid-column:1/-1">Cost<span style="color:var(--ink);font-family:var(--font-mono)">${(it.w / 1000).toFixed(2)} m × ${money(S.rates[t.rate])}/m = ${money(itemCost(it))}</span></div>` : `<label class="field" style="grid-column:1/-1">Price (S$)<input type="number" id="f-price" min="0" step="10" value="${Math.round(itemCost(it))}"></label>`}
-      </div>
-      <div class="sec"><h2>Clearance to walls</h2><dl class="kv"><dt>Left</dt><dd>${cl(c.l)}</dd><dt>Right</dt><dd>${cl(c.r)}</dd><dt>Above</dt><dd>${cl(c.t)}</dd><dt>Below</dt><dd>${cl(c.b)}</dd></dl>
-      <p class="hint">Leave at least 600–800 mm walkways, and about 900 mm in front of wardrobes and appliances.</p></div>
-      <div class="row">
-        <button class="btn" data-act="rotl"><svg class="ic" viewBox="0 0 24 24"><path d="M4 4v6h6"/><path d="M5 15a8 8 0 102-8L4 10"/></svg>Rotate</button>
-        <button class="btn" data-act="rotr"><svg class="ic" viewBox="0 0 24 24"><path d="M20 4v6h-6"/><path d="M19 15a8 8 0 11-2-8l3 3"/></svg>Rotate</button>
-        <button class="btn" data-act="dup">Duplicate</button>
-        <button class="btn danger" data-act="del">Delete</button>
-      </div>`;
-  }
-  return '';
-}
-function budgetHTML() {
-  const b = budget(), over = b.total > S.budget, pct = S.budget ? Math.min(100, b.total / S.budget * 100) : 0;
-  const bar = b.groups.filter(g => g.total > 0).map(g => `<i style="width:${(g.total / Math.max(b.sub, 1) * 100).toFixed(2)}%;background:${g.c}" title="${esc(g.name)}"></i>`).join('');
-  return `<div class="sec"><h2>Estimated total</h2><div class="big">${money(b.total)} <small>incl. ${S.contingency}% buffer${S.gst ? ' + GST' : ''}</small></div>
-    <div class="stack">${bar}</div>
-    <div class="row" style="justify-content:space-between"><label class="field" style="flex:1">Your budget (S$)<input type="number" id="f-budget" step="1000" min="0" value="${S.budget}"></label>
-    <span class="badge ${over ? 'bad' : 'ok'}" style="align-self:flex-end;margin-bottom:6px">${over ? money(b.total - S.budget) + ' over' : money(S.budget - b.total) + ' left'}</span></div>
-    <div class="stack"><i style="width:${pct}%;background:${over ? 'var(--danger)' : 'var(--accent)'}"></i></div></div>
-    <div class="glist">${b.groups.map(g => `<details${g.lines.length && g.id !== 'furn' ? '' : ''}><summary><span class="chev">›</span><span class="dot" style="background:${g.c}"></span>${esc(g.name)}<span class="amt">${money(g.total)}</span></summary><div class="lines">${g.lines.length ? g.lines.map(l => `<div class="line"><span>${esc(l.label)}</span><span class="a">${money(l.amt)}</span><span class="d">${esc(l.detail)}</span></div>`).join('') : '<span class="hint">Nothing yet.</span>'}</div></details>`).join('')}</div>
-    <div class="sec"><h2>Electrical &amp; services</h2><div class="extras">${EXTRAS.map(x => `<div class="extra"><span>${esc(x.name)}<small>${money(S.rates[x.id])} each</small></span><span class="step"><button data-ex="${x.id}" data-dx="-1" aria-label="Fewer">−</button><output>${S.extras[x.id] || 0}</output><button data-ex="${x.id}" data-dx="1" aria-label="More">+</button></span></div>`).join('')}</div></div>
-    <div class="sec"><div class="totals">
-      <span>Subtotal</span><span class="a">${money(b.sub)}</span>
-      <span class="row">Contingency <input type="number" id="f-cont" min="0" max="50" step="1" value="${S.contingency}" style="width:56px;border:1px solid var(--line);border-radius:6px;background:var(--paper);padding:2px 4px;font-family:var(--font-mono)"> %</span><span class="a">${money(b.cont)}</span>
-      <label class="row"><input type="checkbox" id="f-gst" ${S.gst ? 'checked' : ''}> GST 9%</label><span class="a">${money(b.gst)}</span>
-      <span class="grand">Total</span><span class="a grand">${money(b.total)}</span>
-    </div></div>
-    <p class="hint">Indicative Singapore prices for planning. Get itemised quotes from HDB-registered renovation contractors (DRC) before committing. Edit any rate in the Rates tab.</p>`;
-}
-function ratesHTML() {
-  return `<div class="sec"><h2>Rates used in the estimate</h2><p class="hint">Change these to match your contractor's quotation. Everything updates live.</p></div>
-    <div class="rates">${RATE_LABELS.map(([h, list]) => `<h4>${esc(h)}</h4>` + list.map(([k, l]) => `<label for="r-${k}">${esc(l)}</label><input type="number" min="0" step="${k === 'ceiling' ? 10 : 5}" id="r-${k}" data-rate="${k}" value="${S.rates[k]}">`).join('')).join('')}</div>
-    <div class="row"><button class="btn" id="rates-reset">Reset to defaults</button></div>`;
-}
-function renderChip() {
-  const b = budget(), over = b.total > S.budget;
-  $('#chip-total').textContent = money(b.total);
-  $('#chip-bar').style.width = (S.budget ? Math.min(100, b.total / S.budget * 100) : 0) + '%';
-  $('#total-chip').classList.toggle('over', over);
-  $('#total-chip').title = `Budget ${money(S.budget)} · ${over ? 'over' : 'within'}`;
-}
-
-pane.addEventListener('click', e => {
-  const b = e.target.closest('button'); if (!b) return;
-  const room = UI.sel && UI.sel.kind === 'room' ? UI.sel.id : null;
-  if (b.dataset.goroom) { UI.sel = { kind: 'room', id: b.dataset.goroom }; renderOverlay(); renderPanel(); if (V3.on) build3D(); return; }
-  if (b.dataset.floor && room) { mutate(() => { const st = S.rooms[room]; st.floor = b.dataset.floor; const tones = Object.keys(FLOORS[st.floor].tones); if (!tones.includes(st.tone)) st.tone = tones[0]; }); return; }
-  if (b.dataset.tone && room) { mutate(() => { S.rooms[room].tone = b.dataset.tone; }); return; }
-  if (b.dataset.paint && room) { mutate(() => { S.rooms[room].paint = b.dataset.paint; }); return; }
-  if (b.dataset.togglewall) { const id = b.dataset.togglewall; mutate(() => { const cur = S.walls[id] && S.walls[id].removed; S.walls[id] = { removed: !cur }; }); toast(S.walls[id].removed ? 'Wall marked for removal' : 'Wall restored'); return; }
-  if (b.dataset.ex) { const id = b.dataset.ex; mutate(() => { S.extras[id] = Math.max(0, (S.extras[id] || 0) + +b.dataset.dx); }); return; }
-  if (b.dataset.act === 'rotl') return rotateSel(-90);
-  if (b.dataset.act === 'rotr') return rotateSel(90);
-  if (b.dataset.act === 'dup') return dupSel();
-  if (b.dataset.act === 'del') return deleteSel();
-  if (b.id === 'rates-reset') { mutate(() => { S.rates = { ...DEFAULT_RATES }; }); toast('Rates reset'); }
-});
-pane.addEventListener('change', e => {
-  const t = e.target; const it = selItem();
-  if (t.id === 'f-w' && it) return mutate(() => { it.w = Math.max(100, +t.value || it.w); });
-  if (t.id === 'f-d' && it) return mutate(() => { it.d = Math.max(100, +t.value || it.d); });
-  if (t.id === 'f-label' && it) return mutate(() => { it.label = t.value.trim().slice(0, 40) || undefined; });
-  if (t.id === 'f-price' && it) return mutate(() => { it.price = Math.max(0, +t.value || 0); });
-  if (t.id === 'f-budget') return mutate(() => { S.budget = Math.max(0, +t.value || 0); });
-  if (t.id === 'f-cont') return mutate(() => { S.contingency = Math.min(50, Math.max(0, +t.value || 0)); });
-  if (t.id === 'f-gst') return mutate(() => { S.gst = t.checked; });
-  if (t.dataset.rate) return mutate(() => { S.rates[t.dataset.rate] = Math.max(0, +t.value || 0); });
-});
-['sel', 'budget', 'rates'].forEach(t => { $('#tab-' + t).onclick = () => { UI.tab = t; saveUI(); renderPanel(); }; });
-$('#total-chip').onclick = () => { UI.tab = 'budget'; saveUI(); renderPanel(); if (window.matchMedia('(max-width: 1080px)').matches) $('.side').scrollIntoView({ behavior: 'smooth' }); };
-
-/* ---------------- Catalogue ---------------- */
-function renderCatalogue() {
-  $('#cat-chips').innerHTML = CATS.map(c => `<button class="chip" data-cat="${esc(c)}" aria-pressed="${UI.cat === c}">${esc(c)}</button>`).join('');
-  const q = UI.q.trim().toLowerCase();
-  const list = Object.entries(CAT).filter(([k, t]) => (UI.cat === 'All' || t.cat === UI.cat || ALSO_IN[k] === UI.cat) && (!q || t.name.toLowerCase().includes(q) || t.cat.toLowerCase().includes(q)));
-  $('#cat-list').innerHTML = list.length ? list.map(([k, t]) => `<button class="card${t.rate ? ' built' : ''}" draggable="true" data-add="${k}" title="Add ${esc(t.name)}">
-      <svg viewBox="${-60} ${-60} ${t.w + 120} ${t.d + 120}" preserveAspectRatio="xMidYMid meet" aria-hidden="true"><g class="item${t.rate ? ' built' : ''}">${drawItem(k, t.w, t.d)}</g></svg>
-      ${t.rate ? '<span class="tag">Built-in</span>' : ''}<span class="nm">${esc(t.name)}</span><span class="mt">${mmf(t.w)} × ${mmf(t.d)}</span><span class="mt">${t.rate ? money(S.rates[t.rate]) + '/m' : money(t.price)}</span></button>`).join('')
-    : `<p class="hint" style="grid-column:1/-1">No items match “${esc(UI.q)}”.</p>`;
-}
-$('#cat-chips').addEventListener('click', e => { const b = e.target.closest('[data-cat]'); if (!b) return; UI.cat = b.dataset.cat; renderCatalogue(); });
-$('#cat-search').addEventListener('input', e => { UI.q = e.target.value; renderCatalogue(); });
-$('#cat-list').addEventListener('click', e => { const b = e.target.closest('[data-add]'); if (b) addItem(b.dataset.add); });
-$('#cat-list').addEventListener('dragstart', e => { const b = e.target.closest('[data-add]'); if (b) { e.dataTransfer.setData('text/plain', b.dataset.add); e.dataTransfer.effectAllowed = 'copy'; } });
-
-/* ---------------- Toolbar ---------------- */
-function setTool(t) { UI.tool = t; $('#tool-select').setAttribute('aria-pressed', t === 'select'); $('#tool-measure').setAttribute('aria-pressed', t === 'measure'); svg.classList.toggle('measure', t === 'measure'); if (t === 'select') { UI.measure = null; renderOverlay(); } else toast('Drag on the plan to measure'); }
-$('#tool-select').onclick = () => setTool('select');
-$('#tool-measure').onclick = () => setTool('measure');
-$('#undo').onclick = undo; $('#redo').onclick = redo;
-const toggles = { 'v-dims': 'dims', 'v-grid': 'grid', 'v-furn': 'furn', 'v-snap': 'snap' };
-Object.entries(toggles).forEach(([id, k]) => { $('#' + id).onclick = () => { UI.show[k] = !UI.show[k]; saveUI(); renderAll(); }; });
-function renderToolbar() {
-  Object.entries(toggles).forEach(([id, k]) => $('#' + id).setAttribute('aria-pressed', UI.show[k]));
-  $('#undo').disabled = !undoStack.length; $('#redo').disabled = !redoStack.length;
-  $('#scale-note').hidden = !UI.show.grid || V3.on;
-}
-
-/* ---------------- Layouts popover ---------------- */
-function readSaves() { try { return JSON.parse(ls.get(KEY_SAVES) || '{}'); } catch (e) { return {}; } }
-function renderPop() {
-  const pop = $('#pop'); if (!UI.pop) { pop.hidden = true; return; }
-  const saves = readSaves(); const names = Object.keys(saves).sort((a, b) => (saves[b].t || 0) - (saves[a].t || 0));
-  pop.hidden = false;
-  pop.innerHTML = `<div class="row" style="justify-content:space-between"><h3>Layouts</h3><button class="btn small" data-pop="close">Close</button></div>
-    <div class="sec"><label class="field">Save this layout as<input id="save-name" type="text" maxlength="40" placeholder="e.g. Open-concept study"></label><div class="row"><button class="btn primary" data-pop="save">Save</button></div></div>
-    <div class="sec"><h2>Saved on this device</h2><div class="saved">${names.length ? names.map(n => `<div class="srow"><span>${esc(n)}</span><small>${new Date(saves[n].t || 0).toLocaleDateString('en-SG')}</small><button class="btn small" data-load="${esc(n)}">Load</button><button class="btn small danger${UI.pop.confirm === 'del:' + n ? ' confirm' : ''}" data-del="${esc(n)}">${UI.pop.confirm === 'del:' + n ? 'Confirm' : 'Delete'}</button></div>`).join('') : '<p class="hint">No saved layouts yet.</p>'}</div></div>
-    <div class="sec"><h2>Start over</h2><div class="row"><button class="btn${UI.pop.confirm === 'starter' ? ' danger confirm' : ''}" data-pop="starter">${UI.pop.confirm === 'starter' ? 'Replace current? Confirm' : 'Example layout'}</button><button class="btn${UI.pop.confirm === 'empty' ? ' danger confirm' : ''}" data-pop="empty">${UI.pop.confirm === 'empty' ? 'Clear everything? Confirm' : 'Empty unit'}</button></div><p class="hint">You can undo either one.</p></div>
-    <div class="sec"><h2>Share or back up</h2><div class="row"><button class="btn" data-pop="copy">Copy layout code</button><label class="btn" for="imp-file">Open .json file</label><input type="file" id="imp-file" accept=".json,application/json" hidden></div>
-    <textarea id="imp-text" placeholder="Paste layout code here to load it" aria-label="Layout code"></textarea><div class="row"><button class="btn" data-pop="import">Load pasted code</button></div></div>`;
-}
-$('#open-layouts').onclick = () => { UI.pop = UI.pop ? null : {}; renderPop(); };
-$('#pop').addEventListener('click', e => {
-  const b = e.target.closest('button'); if (!b) return;
-  const a = b.dataset.pop;
-  if (a === 'close') { UI.pop = null; return renderPop(); }
-  if (a === 'save') {
-    const n = ($('#save-name').value || '').trim() || 'Layout ' + new Date().toLocaleString('en-SG', { dateStyle: 'medium', timeStyle: 'short' });
-    const saves = readSaves(); saves[n] = { t: Date.now(), s: S };
-    if (ls.set(KEY_SAVES, JSON.stringify(saves))) toast(`Saved “${n}”`); else toast('This browser blocked saving. Use “Copy layout code” instead.');
-    return renderPop();
-  }
-  if (b.dataset.load) { const s = readSaves()[b.dataset.load]; if (s) { mutate(() => { S = normalize(s.s); UI.sel = null; }); toast(`Loaded “${b.dataset.load}”`); } return; }
-  if (b.dataset.del) {
-    const key = 'del:' + b.dataset.del;
-    if (UI.pop.confirm !== key) { UI.pop.confirm = key; return renderPop(); }
-    const saves = readSaves(); delete saves[b.dataset.del]; ls.set(KEY_SAVES, JSON.stringify(saves)); UI.pop.confirm = null; toast('Deleted'); return renderPop();
-  }
-  if (a === 'starter' || a === 'empty') {
-    if (UI.pop.confirm !== a) { UI.pop.confirm = a; return renderPop(); }
-    UI.pop.confirm = null; mutate(() => { S = newState(a === 'starter'); UI.sel = null; }); toast(a === 'starter' ? 'Example layout loaded' : 'Unit cleared'); return renderPop();
-  }
-  if (a === 'copy') {
-    const txt = JSON.stringify(S);
-    const fallback = () => { const ta = $('#imp-text'); ta.value = txt; ta.focus(); ta.select(); toast('Copy the selected text'); };
-    try { navigator.clipboard.writeText(txt).then(() => toast('Layout code copied'), fallback); } catch (err) { fallback(); }
-    return;
-  }
-  if (a === 'import') importText($('#imp-text').value);
-});
-$('#pop').addEventListener('change', e => {
-  if (e.target.id !== 'imp-file' || !e.target.files[0]) return;
-  const fr = new FileReader(); fr.onload = () => importText(String(fr.result)); fr.readAsText(e.target.files[0]);
-});
-function importText(txt) {
-  try { const o = normalize(JSON.parse(txt)); mutate(() => { S = o; UI.sel = null; }); toast('Layout loaded'); UI.pop = null; renderPop(); }
-  catch (err) { toast('That isn’t a valid layout code. Copy it again from “Copy layout code”.'); }
-}
-
-/* ---------------- Keyboard ---------------- */
-document.addEventListener('keydown', e => {
-  if (e.target.closest('input, textarea, select')) return;
-  const mod = e.ctrlKey || e.metaKey;
-  if (mod && e.key.toLowerCase() === 'z') { e.preventDefault(); e.shiftKey ? redo() : undo(); return; }
-  if (mod && e.key.toLowerCase() === 'y') { e.preventDefault(); redo(); return; }
-  if (mod && e.key.toLowerCase() === 'd') { e.preventDefault(); dupSel(); return; }
-  if (mod) return;
-  if (V3.on && V3.eye) { const k = e.key.toLowerCase(); if (k === 'w') return walk(1, 0); if (k === 's') return walk(-1, 0); if (k === 'a') return walk(0, -1); if (k === 'd') return walk(0, 1); }
-  const step = e.shiftKey ? 100 : 10;
-  switch (e.key) {
-    case 'Delete': case 'Backspace': if (selItem()) { e.preventDefault(); deleteSel(); } break;
-    case 'r': case 'R': rotateSel(e.shiftKey ? -90 : 90); break;
-    case 'm': case 'M': setTool(UI.tool === 'measure' ? 'select' : 'measure'); break;
-    case 'v': case 'V': setTool('select'); break;
-    case 'Escape': UI.sel = null; UI.measure = null; UI.pop = null; renderPop(); renderAll(); break;
-    case 'ArrowLeft': if (selItem()) { e.preventDefault(); nudge(-step, 0); } break;
-    case 'ArrowRight': if (selItem()) { e.preventDefault(); nudge(step, 0); } break;
-    case 'ArrowUp': if (selItem()) { e.preventDefault(); nudge(0, -step); } break;
-    case 'ArrowDown': if (selItem()) { e.preventDefault(); nudge(0, step); } break;
-  }
-});
-
-/* ---------------- Toast ---------------- */
-let toastT;
-function toast(msg) { const t = $('#toast'); t.textContent = msg; t.hidden = false; clearTimeout(toastT); toastT = setTimeout(() => { t.hidden = true; }, 2200); }
-
-/* ---------------- 3D view (three.js, loaded on first use) ---------------- */
-const V3 = { on: false, ready: false, low: false, eye: false };
-let renderer, scene, camera, controls, root, raf;
-const cv = $('#c3d'), wrapEl = $('#plan-wrap');
-const C3 = { wood: '#a9825a', woodLight: '#cdb08a', woodDark: '#5e4836', fabric: '#87949a', fabricWarm: '#b58f6a', cushion: '#a3adb1', white: '#f3f2ee', lam: '#e6dfd2', lamDark: '#7d7568', quartz: '#efede8', metal: '#45494c', steel: '#b8bdc0', black: '#232628', green: '#5d8a55', pot: '#b9805c', rug: '#cdbfa5', blanket: '#6f8fa0', ceramic: '#fbfbfa', glass: '#bcd7e0', door: '#d6c3a3', mainDoor: '#6d5a48', hsDoor: '#8a8f93', outside: '#d8d5ce', tile: '#e1e5e1' };
-const hint3d = () => V3.eye ? 'Drag to look around · W A S D to walk · double-click the floor to jump there' : 'Drag to orbit · right-drag to pan · scroll to zoom · drag furniture to move it · double-click a floor for eye level';
+/* ================================================================
+   3D engine — built once, updated incrementally, rendered on demand
+================================================================ */
+const V3 = { ready: false, failed: false };
+let renderer, scene, camera, controls, gStatic, gItems, gMarks, root;
+let UNIT_BOX, UNIT_CYL, UNIT_SPH, EDGE_BOX;
+const cv = document.createElement('canvas'); cv.id = 'c3d'; cv.tabIndex = 0; cv.setAttribute('aria-label', '3D view of the flat');
+const C3 = { wood: '#a9825a', woodLight: '#cfb28c', woodDark: '#5e4836', fabric: '#8b979c', fabricWarm: '#b58f6a', cushion: '#a7b1b5', white: '#f3f2ee', lam: '#e8e1d5', lamDark: '#7d7568', quartz: '#efede8', metal: '#45494c', steel: '#b8bdc0', black: '#232628', green: '#5d8a55', pot: '#b9805c', rug: '#cdbfa5', blanket: '#6f8fa0', ceramic: '#fbfbfa', glass: '#bcd7e0', door: '#d9c7a8', mainDoor: '#6d5a48', hsDoor: '#8a8f93', outside: '#dad7d0', tile: '#e2e6e2', slab: '#cfcec8' };
 function loadScript(src) { return new Promise((res, rej) => { const el = document.createElement('script'); el.src = src; el.onload = res; el.onerror = () => rej(new Error(src)); document.head.appendChild(el); }); }
-async function ensure3D() {
-  if (V3.ready) return;
+function cssVar(n) { return getComputedStyle(document.documentElement).getPropertyValue(n).trim() || '#ffffff'; }
+
+async function init3D() {
   if (!window.THREE) await loadScript('https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js');
   if (!THREE.OrbitControls) await loadScript('https://cdn.jsdelivr.net/npm/three@0.128.0/examples/js/controls/OrbitControls.js');
-  renderer = new THREE.WebGLRenderer({ canvas: cv, antialias: true });
-  renderer.setPixelRatio(Math.min(2, window.devicePixelRatio || 1));
-  renderer.shadowMap.enabled = true; renderer.shadowMap.type = THREE.PCFSoftShadowMap;
+  renderer = new THREE.WebGLRenderer({ canvas: cv, antialias: true, powerPreference: 'high-performance' });
+  renderer.setPixelRatio(Math.min(1.75, window.devicePixelRatio || 1));
   renderer.outputEncoding = THREE.sRGBEncoding;
+  renderer.toneMapping = THREE.ACESFilmicToneMapping; renderer.toneMappingExposure = 1.05;
+  renderer.shadowMap.enabled = true; renderer.shadowMap.type = THREE.PCFSoftShadowMap; renderer.shadowMap.autoUpdate = false;
   scene = new THREE.Scene();
-  camera = new THREE.PerspectiveCamera(45, 1, 0.03, 200);
+  camera = new THREE.PerspectiveCamera(40, 1, 0.03, 200);
   controls = new THREE.OrbitControls(camera, cv);
-  controls.enableDamping = true; controls.dampingFactor = 0.09;
-  scene.add(new THREE.HemisphereLight(0xffffff, 0x80857e, 0.72));
-  const sun = new THREE.DirectionalLight(0xfff6ea, 0.8);
-  sun.position.set(1.5, 16, 12); sun.target.position.set(6.3, 0, 4.5);
+  controls.enableDamping = true; controls.dampingFactor = 0.1; controls.screenSpacePanning = false;
+  controls.addEventListener('change', requestRender);
+  scene.add(new THREE.HemisphereLight(0xffffff, 0x9aa09a, 0.62));
+  const sun = new THREE.DirectionalLight(0xfff2e0, 1.15);
+  sun.position.set(2.5, 17, 13); sun.target.position.set(6.3, 0, 4.5);
   sun.castShadow = true; sun.shadow.mapSize.set(2048, 2048);
-  Object.assign(sun.shadow.camera, { left: -11, right: 11, top: 11, bottom: -11, near: 1, far: 45 });
-  sun.shadow.bias = -0.0004; sun.shadow.normalBias = 0.02;
-  scene.add(sun, sun.target);
+  Object.assign(sun.shadow.camera, { left: -9.5, right: 9.5, top: 8.5, bottom: -8.5, near: 2, far: 45 });
+  sun.shadow.bias = -0.0004; sun.shadow.normalBias = 0.025; sun.shadow.radius = 3;
+  const fill = new THREE.DirectionalLight(0xdde7ff, 0.28); fill.position.set(16, 9, -6);
+  scene.add(sun, sun.target, fill);
   root = new THREE.Group(); root.scale.setScalar(0.001); scene.add(root);
-  new ResizeObserver(size3D).observe(wrapEl);
+  gStatic = new THREE.Group(); gItems = new THREE.Group(); gMarks = new THREE.Group(); root.add(gStatic, gItems, gMarks);
+  UNIT_BOX = new THREE.BoxGeometry(1, 1, 1); UNIT_CYL = new THREE.CylinderGeometry(1, 1, 1, 28); UNIT_SPH = new THREE.SphereGeometry(1, 20, 14); EDGE_BOX = new THREE.EdgesGeometry(UNIT_BOX);
+  new ResizeObserver(size3D).observe(cv);
   bind3D();
-  overview();
   V3.ready = true;
+  size3D(); camOrbit(false);
+  sync3D();
 }
-function size3D() { if (!renderer) return; const r = wrapEl.getBoundingClientRect(); if (!r.width || !r.height) return; renderer.setSize(r.width, r.height, false); camera.aspect = r.width / r.height; camera.updateProjectionMatrix(); }
-function overview() {
-  V3.eye = false; camera.fov = 45; camera.updateProjectionMatrix();
-  camera.position.set(6.3, 12.5, 15.5); controls.target.set(6.3, 0, 4.4);
-  Object.assign(controls, { minDistance: 2, maxDistance: 45, enablePan: true, enableZoom: true, rotateSpeed: 1, maxPolarAngle: Math.PI * 0.49, minPolarAngle: 0 });
-  controls.update(); syncHud();
-}
-function eyeAt(x, z, fx, fz) {
-  const dir = new THREE.Vector3(); camera.getWorldDirection(dir); dir.y = 0;
-  if (fx != null) dir.set(fx, 0, fz);
-  if (dir.lengthSq() < 1e-6) dir.set(0, 0, -1); dir.normalize();
-  V3.eye = true; camera.fov = 70; camera.updateProjectionMatrix();
-  camera.position.set(x, 1.6, z); controls.target.set(x + dir.x * 0.05, 1.6, z + dir.z * 0.05);
-  Object.assign(controls, { minDistance: 0.05, maxDistance: 0.05, enablePan: false, enableZoom: false, rotateSpeed: -0.35, maxPolarAngle: Math.PI * 0.85, minPolarAngle: Math.PI * 0.15 });
-  controls.update(); syncHud();
-}
-function walk(fw, side) {
-  const dir = new THREE.Vector3(); camera.getWorldDirection(dir); dir.y = 0; dir.normalize();
-  const right = new THREE.Vector3(-dir.z, 0, dir.x), step = 0.25;
-  const mv = dir.multiplyScalar(fw * step).add(right.multiplyScalar(side * step));
-  camera.position.add(mv); controls.target.add(mv); controls.update();
-}
-function syncHud() {
-  $('#cam-over').setAttribute('aria-pressed', !V3.eye); $('#cam-eye').setAttribute('aria-pressed', V3.eye);
-  $('#walls-full').setAttribute('aria-pressed', !V3.low); $('#walls-low').setAttribute('aria-pressed', V3.low);
-  $('#hint3d').textContent = hint3d();
-}
-function loop() { if (!V3.on) return; raf = requestAnimationFrame(loop); controls.update(); renderer.render(scene, camera); }
-async function setView(mode) {
-  $('#view-2d').setAttribute('aria-pressed', mode === '2d'); $('#view-3d').setAttribute('aria-pressed', mode === '3d');
-  if (mode === '3d') {
-    $('#loading3d').hidden = false;
-    try { await ensure3D(); } catch (err) { $('#loading3d').hidden = true; toast('Couldn’t load the 3D engine. Check your connection and try again.'); return setView('2d'); }
-    $('#loading3d').hidden = true;
-    V3.on = true; svg.hidden = true; cv.hidden = false; $('#hud3d').hidden = false; $('.plan-hud').hidden = true; $('#scale-note').hidden = true;
-    $('#tool-measure').disabled = true; if (UI.tool === 'measure') setTool('select');
-    size3D(); build3D(); syncHud(); cancelAnimationFrame(raf); loop();
-  } else {
-    V3.on = false; cancelAnimationFrame(raf); svg.hidden = false; cv.hidden = true; $('#hud3d').hidden = true; $('.plan-hud').hidden = false; $('#tool-measure').disabled = false;
-    renderToolbar(); renderOverlay();
-  }
-}
-$('#view-2d').onclick = () => setView('2d');
-$('#view-3d').onclick = () => setView('3d');
-$('#cam-over').onclick = overview;
-$('#cam-eye').onclick = () => eyeAt(11.4, 4.7, -1, -0.15);
-$('#walls-full').onclick = () => { V3.low = false; build3D(); syncHud(); };
-$('#walls-low').onclick = () => { V3.low = true; build3D(); syncHud(); };
+function size3D() { if (!renderer) return; const r = cv.getBoundingClientRect(); if (!r.width || !r.height) return; renderer.setSize(r.width, r.height, false); camera.aspect = r.width / r.height; camera.updateProjectionMatrix(); requestRender(); }
 
-const matCache = new Map(), texCache = new Map();
+/* render loop on demand */
+let frameReq = false, lastT = 0;
+const keys = new Set(), tw = { on: false };
+function requestRender() { if (!frameReq && V3.ready) { frameReq = true; requestAnimationFrame(renderFrame); } }
+function renderFrame(t) {
+  frameReq = false;
+  const dt = Math.min(0.05, lastT ? (t - lastT) / 1000 : 0.016); lastT = t;
+  let busy = false;
+  if (tw.on) { busy = stepTween(t) || busy; }
+  if (keys.size && UI.cam === 'walk' && !tw.on) { walkStep(dt); busy = true; }
+  if (controls.update()) busy = true;
+  renderer.render(scene, camera);
+  if (UI.main === '3d') renderCamThrottled();
+  if (busy) requestRender(); else lastT = 0;
+}
+let camPending = false;
+function renderCamThrottled() { if (camPending) return; camPending = true; setTimeout(() => { camPending = false; renderCam(); }, 60); }
+
+/* camera modes */
+function setControls(o) { Object.assign(controls, o); }
+function tweenTo(pos, tgt, fov, ms = 650, done) {
+  Object.assign(tw, { on: true, t0: performance.now(), ms, p0: camera.position.clone(), q0: controls.target.clone(), f0: camera.fov, p1: pos, q1: tgt, f1: fov, done });
+  setControls({ minDistance: 0.01, maxDistance: 200 });
+  requestRender();
+}
+function stepTween(t) {
+  let k = Math.min(1, (t - tw.t0) / tw.ms); const e = k < 0.5 ? 4 * k * k * k : 1 - Math.pow(-2 * k + 2, 3) / 2;
+  camera.position.lerpVectors(tw.p0, tw.p1, e); controls.target.lerpVectors(tw.q0, tw.q1, e);
+  camera.fov = tw.f0 + (tw.f1 - tw.f0) * e; camera.updateProjectionMatrix();
+  if (k >= 1) { tw.on = false; tw.done && tw.done(); }
+  return true;
+}
+function camOrbit(animate = true) {
+  UI.cam = 'orbit';
+  const tgt = new THREE.Vector3(6.3, 0, 4.4), off = new THREE.Vector3(3.9, 13.8, 12.4);
+  const asp = camera.aspect || 1.6; if (asp < 1.25) off.multiplyScalar(Math.min(2.1, 1.25 / asp)); // portrait screens: step back so the whole flat fits
+  const pos = tgt.clone().add(off);
+  const fin = () => setControls({ minDistance: 3, maxDistance: 40, enablePan: true, enableZoom: true, rotateSpeed: 0.9, maxPolarAngle: Math.PI * 0.47, minPolarAngle: 0.05 });
+  if (animate) tweenTo(pos, tgt, 40, 700, fin); else { camera.position.copy(pos); controls.target.copy(tgt); camera.fov = 40; camera.updateProjectionMatrix(); fin(); controls.update(); }
+  renderTC(); renderHint();
+}
+function camWalk(x, z, dir) {
+  UI.cam = 'walk';
+  if (!dir) { dir = new THREE.Vector3(); camera.getWorldDirection(dir); }
+  dir = new THREE.Vector3(dir.x, 0, dir.z); if (dir.lengthSq() < 1e-6) dir.set(0, 0, -1); dir.normalize();
+  const pos = new THREE.Vector3(x, 1.6, z), tgt = pos.clone().add(dir.multiplyScalar(0.05));
+  tweenTo(pos, tgt, 70, 750, () => setControls({ minDistance: 0.05, maxDistance: 0.05, enablePan: false, enableZoom: false, rotateSpeed: -0.32, maxPolarAngle: Math.PI * 0.82, minPolarAngle: Math.PI * 0.18 }));
+  renderTC(); renderHint();
+}
+function focus3D(x, z) {
+  if (UI.cam === 'walk') return camWalk(x, z);
+  const off = camera.position.clone().sub(controls.target), tgt = new THREE.Vector3(x, 0, z);
+  tweenTo(tgt.clone().add(off), tgt, camera.fov, 550, () => setControls({ minDistance: 3, maxDistance: 40 }));
+}
+function walkStep(dt) {
+  const dir = new THREE.Vector3(); camera.getWorldDirection(dir); dir.y = 0; dir.normalize();
+  const right = new THREE.Vector3(-dir.z, 0, dir.x), v = new THREE.Vector3();
+  if (keys.has('w') || keys.has('arrowup')) v.add(dir);
+  if (keys.has('s') || keys.has('arrowdown')) v.sub(dir);
+  if (keys.has('d') || keys.has('arrowright')) v.add(right);
+  if (keys.has('a') || keys.has('arrowleft')) v.sub(right);
+  if (!v.lengthSq()) return;
+  v.normalize().multiplyScalar(1.7 * dt);
+  const nx = Math.min(12.6, Math.max(0.1, camera.position.x + v.x)), nz = Math.min(9, Math.max(0.1, camera.position.z + v.z));
+  const d = new THREE.Vector3(nx - camera.position.x, 0, nz - camera.position.z);
+  camera.position.add(d); controls.target.add(d);
+}
+function dolly3D(k) {
+  if (UI.cam === 'walk') return;
+  const off = camera.position.clone().sub(controls.target).multiplyScalar(k);
+  const L = Math.min(controls.maxDistance, Math.max(controls.minDistance, off.length()));
+  off.setLength(L); tweenTo(controls.target.clone().add(off), controls.target.clone(), camera.fov, 260, () => setControls({ minDistance: 3, maxDistance: 40 }));
+}
+
+/* materials, textures */
+const matCache = new Map(), texMatCache = new Map(), lineMatCache = new Map();
 function mat(hex, o = {}) {
-  const k = hex + '|' + (o.opacity || '') + '|' + (o.rough || '') + '|' + (o.metal || '');
+  const k = hex + '|' + (o.opacity || '') + '|' + (o.rough != null ? o.rough : '') + '|' + (o.metal || '');
   if (!matCache.has(k)) matCache.set(k, new THREE.MeshStandardMaterial({ color: new THREE.Color(hex).convertSRGBToLinear(), roughness: o.rough != null ? o.rough : 0.85, metalness: o.metal || 0, transparent: !!o.opacity, opacity: o.opacity || 1, depthWrite: !o.opacity }));
   return matCache.get(k);
 }
-const GLASS = () => mat(C3.glass, { opacity: 0.32, rough: 0.1 });
-function cssVar(n) { return getComputedStyle(document.documentElement).getPropertyValue(n).trim() || '#ffffff'; }
-function floorTex(sp) {
+function lineMat(hex) { if (!lineMatCache.has(hex)) lineMatCache.set(hex, new THREE.LineBasicMaterial({ color: new THREE.Color(hex).convertSRGBToLinear() })); return lineMatCache.get(hex); }
+const GLASS = () => mat(C3.glass, { opacity: 0.3, rough: 0.08 });
+function floorMat(sp) {
   const key = sp.pat + sp.c.join('');
-  if (texCache.has(key)) return texCache.get(key);
+  if (texMatCache.has(key)) return texMatCache.get(key);
   const D = { grid300: [300, 300], grid600: [600, 600], grid1200: [1200, 600], plank: [1220, 360], timber: [1900, 380], flat: [900, 900], screed: [400, 400], dots: [90, 90] }[sp.pat] || [600, 600];
   const k = Math.min(1, 512 / Math.max(...D)), W = Math.round(D[0] * k), Hh = Math.round(D[1] * k);
   const c = document.createElement('canvas'); c.width = W; c.height = Hh; const g = c.getContext('2d');
-  const [c0, c1] = sp.c, lw = Math.max(1.5, 7 * k);
+  const [c0, c1] = sp.c, lw = Math.max(1.5, 6 * k);
   g.fillStyle = c0; g.fillRect(0, 0, W, Hh); g.fillStyle = c1;
   const hl = y => g.fillRect(0, y - lw / 2, W, lw), vl = (x, y0, y1) => g.fillRect(x - lw / 2, y0, lw, y1 - y0);
   if (sp.pat.startsWith('grid')) { hl(0); hl(Hh); vl(0, 0, Hh); vl(W, 0, Hh); }
   else if (sp.pat === 'plank' || sp.pat === 'timber') {
-    if (sp.pat === 'timber') { g.globalAlpha = 0.22; g.fillRect(0, Hh / 2, W, Hh / 2); g.globalAlpha = 1; }
+    g.globalAlpha = 0.18; g.fillRect(0, Hh / 2, W, Hh / 2); g.globalAlpha = 1;
     hl(0); hl(Hh / 2); hl(Hh); vl(0, 0, Hh / 2); vl(W, 0, Hh / 2); vl(W / 2, Hh / 2, Hh);
-  } else if (sp.pat === 'flat') { g.globalAlpha = 0.16; g.beginPath(); g.arc(W * 0.22, Hh * 0.3, W * 0.2, 0, 7); g.arc(W * 0.7, Hh * 0.72, W * 0.25, 0, 7); g.fill(); g.globalAlpha = 1; }
+  } else if (sp.pat === 'flat') { g.globalAlpha = 0.14; g.beginPath(); g.arc(W * 0.22, Hh * 0.3, W * 0.2, 0, 7); g.arc(W * 0.7, Hh * 0.72, W * 0.25, 0, 7); g.fill(); g.globalAlpha = 1; }
   else { const dots = sp.pat === 'dots' ? [[0.5, 0.5, 0.12]] : [[0.15, 0.22, 0.025], [0.62, 0.1, 0.02], [0.8, 0.72, 0.025], [0.35, 0.82, 0.016]]; dots.forEach(([x, y, r]) => { g.beginPath(); g.arc(x * W, y * Hh, r * W, 0, 7); g.fill(); }); }
-  const t = new THREE.CanvasTexture(c); t.wrapS = t.wrapT = THREE.RepeatWrapping; t.repeat.set(1 / D[0], 1 / D[1]); t.encoding = THREE.sRGBEncoding; t.anisotropy = renderer.capabilities.getMaxAnisotropy();
-  texCache.set(key, t); return t;
+  const t = new THREE.CanvasTexture(c); t.wrapS = t.wrapT = THREE.RepeatWrapping; t.repeat.set(1 / D[0], 1 / D[1]); t.encoding = THREE.sRGBEncoding; t.anisotropy = Math.min(8, renderer.capabilities.getMaxAnisotropy());
+  const m = new THREE.MeshStandardMaterial({ map: t, roughness: sp.pat === 'grid1200' || sp.pat === 'grid600' ? 0.45 : 0.75 });
+  texMatCache.set(key, m); return m;
 }
-function clearGroup(g) {
-  g.traverse(o => { if (o.geometry) o.geometry.dispose(); if (o.material && o.material.userData && o.material.userData.own) o.material.dispose(); });
-  while (g.children.length) g.remove(g.children[0]);
-}
-// box from plan coords: x..x+w, y..y+h (plan), z0..z1 height, all mm
+
+/* geometry helpers (all in mm inside `root`) */
 function pbox(parent, x, y, w, h, z0, z1, m, tag) {
-  if (w <= 0 || h <= 0 || z1 <= z0) return;
-  const mesh = new THREE.Mesh(new THREE.BoxGeometry(w, z1 - z0, h), m);
-  mesh.position.set(x + w / 2, (z0 + z1) / 2, y + h / 2);
-  mesh.castShadow = !(Array.isArray(m) ? false : m.transparent); mesh.receiveShadow = true;
-  if (Array.isArray(m)) mesh.castShadow = true;
+  if (w <= 0 || h <= 0 || z1 <= z0) return null;
+  const mesh = new THREE.Mesh(UNIT_BOX, m);
+  mesh.scale.set(w, z1 - z0, h); mesh.position.set(x + w / 2, (z0 + z1) / 2, y + h / 2);
+  mesh.castShadow = Array.isArray(m) || !m.transparent; mesh.receiveShadow = true;
   if (tag) mesh.userData = tag;
   parent.add(mesh); return mesh;
 }
@@ -1501,71 +1380,74 @@ function faceMat(px, py) {
   const p = PAINTS.find(q => q.id === S.rooms[r.id].paint);
   return mat(p && p.c ? p.c : '#efeee9');
 }
-function wallMats(x, y, w, h, kind) {
-  const top = mat(kind === 'struct' ? '#2b2f2d' : '#8f9792');
+function wallMats(x, y, w, h, kind, hl) {
+  const top = mat(hl && (kind === 'part' || kind === 'wet') ? cssVar('--accent') : kind === 'struct' ? '#2b2f2d' : kind === 'ext' ? '#6b736e' : '#9aa29c');
   return [faceMat(x + w + 40, y + h / 2), faceMat(x - 40, y + h / 2), top, top, faceMat(x + w / 2, y + h + 40), faceMat(x + w / 2, y - 40)];
 }
-function build3D() {
-  if (!V3.ready || !V3.on) return;
-  clearGroup(root);
-  scene.background = new THREE.Color(cssVar('--paper'));
-  const H = V3.low ? 1100 : S.rates.ceiling;
-  // ground
-  pbox(root, -3000, -3000, 18700, 15100, -60, -20, mat(cssVar('--bg')));
-  // floors
+function disposeOwn(g) { g.traverse(o => { if (o.userData && o.userData.ownGeo && o.geometry) o.geometry.dispose(); }); while (g.children.length) g.remove(g.children[0]); }
+
+/* static shell: floors, walls, windows, doors */
+let staticKey = '';
+function buildStatic() {
+  const wallsMode = UI.tool === 'walls';
+  const key = JSON.stringify([S.rooms, S.walls, S.rates.ceiling, UI.low, wallsMode, cssVar('--stage'), cssVar('--accent')]);
+  if (key === staticKey) return false;
+  staticKey = key;
+  disposeOwn(gStatic);
+  scene.background = new THREE.Color(cssVar('--stage'));
+  const H = UI.low ? 1100 : S.rates.ceiling;
+  const ground = pbox(gStatic, -6000, -6000, 25000, 21000, -400, -380, mat(cssVar('--ground'), { rough: 1 })); ground.castShadow = false;
   ROOMS.forEach(r => {
     const shape = new THREE.Shape(r.poly.map(([x, y]) => new THREE.Vector2(x, -y)));
+    const slab = new THREE.ExtrudeGeometry(shape, { depth: 360, bevelEnabled: false }); slab.rotateX(-Math.PI / 2); slab.translate(0, -381, 0);
+    const sm = new THREE.Mesh(slab, mat(C3.slab)); sm.userData = { ownGeo: true }; sm.receiveShadow = true; gStatic.add(sm);
     const g = new THREE.ShapeGeometry(shape); g.rotateX(-Math.PI / 2);
-    const m = new THREE.MeshStandardMaterial({ map: floorTex(patSpec(r, S.rooms[r.id])), roughness: 0.75 }); m.userData.own = true;
-    const mesh = new THREE.Mesh(g, m); mesh.receiveShadow = true; mesh.userData = { room: r.id }; root.add(mesh);
-    if (UI.sel && UI.sel.kind === 'room' && UI.sel.id === r.id) {
-      const pts = r.poly.concat([r.poly[0]]).map(([x, y]) => new THREE.Vector3(x, 8, y));
-      root.add(new THREE.Line(new THREE.BufferGeometry().setFromPoints(pts), new THREE.LineBasicMaterial({ color: cssVar('--accent') })));
-    }
+    const mesh = new THREE.Mesh(g, floorMat(patSpec(r, S.rooms[r.id]))); mesh.receiveShadow = true; mesh.userData = { room: r.id, ownGeo: true }; gStatic.add(mesh);
   });
-  pbox(root, LEDGE.x, LEDGE.y, LEDGE.w, LEDGE.h, -200, -40, mat('#b9bcb7'));
-  // walls, split around windows
+  pbox(gStatic, LEDGE.x, LEDGE.y, LEDGE.w, LEDGE.h, -300, -40, mat('#b9bcb7'));
   WALLS.forEach(w => {
-    if (S.walls[w.id] && S.walls[w.id].removed) return;
+    const removed = S.walls[w.id] && S.walls[w.id].removed;
+    if (removed) { // footprint of the removed wall, drawn on the floor
+      w.rects.forEach(([x, y, rw, rh]) => { const m = pbox(gStatic, x, y, rw, rh, 0, 6, mat(cssVar('--danger'), { opacity: 0.35 }), { wall: w.id }); if (m) m.castShadow = false; });
+      return;
+    }
     w.rects.forEach(rc => {
       const [x, y, rw, rh] = rc, horiz = rw >= rh, a = horiz ? x : y, b = horiz ? x + rw : y + rh;
       const wins = WINDOWS.filter(wi => horiz ? (wi.y1 === wi.y2 && wi.y1 >= y && wi.y1 <= y + rh && wi.x2 > x && wi.x1 < x + rw) : (wi.x1 === wi.x2 && wi.x1 >= x && wi.x1 <= x + rw && wi.y2 > y && wi.y1 < y + rh))
         .map(wi => horiz ? [Math.max(a, wi.x1), Math.min(b, wi.x2)] : [Math.max(a, wi.y1), Math.min(b, wi.y2)]).sort((p, q) => p[0] - q[0]);
-      const seg = (s0, s1, z0, z1, m) => horiz ? pbox(root, s0, y, s1 - s0, rh, z0, z1, m || wallMats(s0, y, s1 - s0, rh, w.kind), { wall: w.id }) : pbox(root, x, s0, rw, s1 - s0, z0, z1, m || wallMats(x, s0, rw, s1 - s0, w.kind), { wall: w.id });
+      const seg = (s0, s1, z0, z1, m) => horiz ? pbox(gStatic, s0, y, s1 - s0, rh, z0, z1, m || wallMats(s0, y, s1 - s0, rh, w.kind, wallsMode), { wall: w.id }) : pbox(gStatic, x, s0, rw, s1 - s0, z0, z1, m || wallMats(x, s0, rw, s1 - s0, w.kind, wallsMode), { wall: w.id });
       let cur = a;
       wins.forEach(([s0, s1]) => {
         seg(cur, s0, 0, H);
         seg(s0, s1, 0, Math.min(900, H));
         if (H > 2100) seg(s0, s1, 2100, H);
-        if (H > 900) { const gm = GLASS(); horiz ? pbox(root, s0, y + rh / 2 - 8, s1 - s0, 16, 900, Math.min(2100, H), gm) : pbox(root, x + rw / 2 - 8, s0, 16, s1 - s0, 900, Math.min(2100, H), gm); }
+        if (H > 900) { const gm = GLASS(); horiz ? pbox(gStatic, s0, y + rh / 2 - 8, s1 - s0, 16, 900, Math.min(2100, H), gm) : pbox(gStatic, x + rw / 2 - 8, s0, 16, s1 - s0, 900, Math.min(2100, H), gm); }
         cur = s1;
       });
       seg(cur, b, 0, H);
     });
   });
-  // doors: lintels and open leaves
   const removedDoors = new Set(WALLS.filter(w => w.door && S.walls[w.id] && S.walls[w.id].removed).map(w => w.door));
   DOORS.forEach(d => {
     if (removedDoors.has(d.id)) return;
     const rad = Math.PI / 180, ex = d.hx + d.len * Math.cos(d.a0 * rad), ey = d.hy + d.len * Math.sin(d.a0 * rad);
-    const t = d.main ? 150 : 100, x0 = Math.min(d.hx, ex), y0 = Math.min(d.hy, ey);
-    const horiz = Math.abs(ey - d.hy) < 1;
-    if (H > 2100) horiz ? pbox(root, x0, d.hy - t / 2, Math.abs(ex - d.hx), t, 2100, H, wallMats(x0, d.hy - t / 2, Math.abs(ex - d.hx), t, 'part')) : pbox(root, d.hx - t / 2, y0, t, Math.abs(ey - d.hy), 2100, H, wallMats(d.hx - t / 2, y0, t, Math.abs(ey - d.hy), 'part'));
-    const leaf = new THREE.Mesh(new THREE.BoxGeometry(d.len, Math.min(2080, H > 2100 ? 2080 : H), 40), mat(d.main ? C3.mainDoor : d.id === 'd_hs' ? C3.hsDoor : C3.door));
-    const a1 = d.a1 * rad; leaf.position.set(d.hx + Math.cos(a1) * d.len / 2, Math.min(2080, H) / 2, d.hy + Math.sin(a1) * d.len / 2); leaf.rotation.y = -a1;
-    leaf.castShadow = true; leaf.receiveShadow = true; root.add(leaf);
+    const t = d.main ? 150 : 100, x0 = Math.min(d.hx, ex), y0 = Math.min(d.hy, ey), horiz = Math.abs(ey - d.hy) < 1;
+    if (H > 2100) horiz ? pbox(gStatic, x0, d.hy - t / 2, Math.abs(ex - d.hx), t, 2100, H, wallMats(x0, d.hy - t / 2, Math.abs(ex - d.hx), t, 'part')) : pbox(gStatic, d.hx - t / 2, y0, t, Math.abs(ey - d.hy), 2100, H, wallMats(d.hx - t / 2, y0, t, Math.abs(ey - d.hy), 'part'));
+    const lh = Math.min(2080, H), leaf = new THREE.Mesh(UNIT_BOX, mat(d.main ? C3.mainDoor : d.id === 'd_hs' ? C3.hsDoor : C3.door));
+    const a1 = d.a1 * rad; leaf.scale.set(d.len, lh, 40); leaf.position.set(d.hx + Math.cos(a1) * d.len / 2, lh / 2, d.hy + Math.sin(a1) * d.len / 2); leaf.rotation.y = -a1;
+    leaf.castShadow = true; leaf.receiveShadow = true; gStatic.add(leaf);
   });
-  // furniture
-  if (UI.show.furn) S.items.forEach(it => root.add(build3DItem(it)));
+  return true;
 }
-function build3DItem(it) {
+
+/* furniture: one cached group per item, rebuilt only when its shape changes */
+const ITEMS3D = new Map();
+function buildItem(it) {
   const t = CAT[it.type], w = it.w, d = it.d, g = new THREE.Group();
-  const sel = UI.sel && UI.sel.kind === 'item' && UI.sel.id === it.id, bad = BAD.has(it.id);
-  const M = (hex, o) => { let m = mat(hex, o); if (sel || bad) { m = m.clone(); m.emissive = new THREE.Color(sel ? cssVar('--accent') : '#c0392b').convertSRGBToLinear(); m.emissiveIntensity = sel ? 0.35 : 0.3; m.userData.own = true; } return m; };
-  const B = (x0, y0, z0, x1, y1, z1, hex, o) => pbox(g, x0 - w / 2, z0 - d / 2, x1 - x0, z1 - z0, y0, y1, M(hex, o)); // local x, height y, depth z
-  const Cy = (cx, cz, r, y0, y1, hex, sz = 1, o) => { const m = new THREE.Mesh(new THREE.CylinderGeometry(r, r, y1 - y0, 28), M(hex, o)); m.position.set(cx - w / 2, (y0 + y1) / 2, cz - d / 2); m.scale.z = sz; m.castShadow = true; m.receiveShadow = true; g.add(m); return m; };
+  const B = (x0, y0, z0, x1, y1, z1, hex, o) => pbox(g, x0 - w / 2, z0 - d / 2, x1 - x0, z1 - z0, y0, y1, mat(hex, o));
+  const Cy = (cx, cz, r, y0, y1, hex, sz = 1, o) => { const m = new THREE.Mesh(UNIT_CYL, mat(hex, o)); m.scale.set(r, y1 - y0, r * sz); m.position.set(cx - w / 2, (y0 + y1) / 2, cz - d / 2); m.castShadow = true; m.receiveShadow = true; g.add(m); return m; };
   const legs = (x0, z0, x1, z1, h, hex, s = 45) => { B(x0, 0, z0, x0 + s, h, z0 + s, hex); B(x1 - s, 0, z0, x1, h, z0 + s, hex); B(x0, 0, z1 - s, x0 + s, h, z1, hex); B(x1 - s, 0, z1 - s, x1, h, z1, hex); };
-  const chair = (x, z, cw, cd, backAt) => { legs(x + 20, z + 20, x + cw - 20, z + cd - 20, 440, C3.woodDark, 30); B(x, 440, z, x + cw, 480, z + cd, C3.wood); if (backAt === 'n') B(x, 480, z, x + cw, 900, z + 40, C3.wood); if (backAt === 's') B(x, 480, z + cd - 40, x + cw, 900, z + cd, C3.wood); if (backAt === 'w') B(x, 480, z, x + 40, 900, z + cd, C3.wood); if (backAt === 'e') B(x + cw - 40, 480, z, x + cw, 900, z + cd, C3.wood); };
+  const chair = (x, z, cw, cd, back) => { legs(x + 20, z + 20, x + cw - 20, z + cd - 20, 440, C3.woodDark, 30); B(x, 440, z, x + cw, 480, z + cd, C3.wood); if (back === 'n') B(x, 480, z, x + cw, 900, z + 40, C3.wood); if (back === 's') B(x, 480, z + cd - 40, x + cw, 900, z + cd, C3.wood); if (back === 'w') B(x, 480, z, x + 40, 900, z + cd, C3.wood); if (back === 'e') B(x + cw - 40, 480, z, x + cw, 900, z + cd, C3.wood); };
   const built = !!t.rate, body = built ? C3.lam : C3.woodLight;
   switch (t.icon) {
     case 'bed': {
@@ -1599,18 +1481,21 @@ function build3DItem(it) {
       Cy(w / 2, d / 2, R, 720, 760, C3.wood); Cy(w / 2, d / 2, 60, 20, 720, C3.woodDark); Cy(w / 2, d / 2, 260, 0, 20, C3.woodDark); break;
     }
     case 'desk': {
-      B(0, 720, 0, w, 750, d, built ? C3.lam : C3.woodLight); B(0, 0, 0, 40, 720, d, built ? C3.lam : C3.metal); B(w - 40, 0, 0, w, 720, d, built ? C3.lam : C3.metal);
-      B(w * 0.35, 750, 80, w * 0.65, 1150, 110, C3.black); B(w * 0.48, 750, 110, w * 0.52, 900, 180, C3.metal); break;
+      const top = built ? C3.lam : C3.woodLight, side = built ? C3.lam : C3.metal;
+      B(0, 720, 0, w, 750, d, top); B(0, 0, 0, 40, 720, d, side); B(w - 40, 0, 0, w, 720, d, side);
+      B(w * 0.35, 760, 80, w * 0.65, 1150, 110, C3.black); B(w * 0.48, 750, 110, w * 0.52, 900, 180, C3.metal); break;
     }
     case 'deskL': {
       const k = Math.min(650, w * 0.45);
       B(0, 720, 0, w, 750, k, C3.woodLight); B(w - k, 720, k, w, 750, d, C3.woodLight);
       B(0, 0, 0, 40, 720, k, C3.metal); B(w - k, 0, d - 40, w, 720, d, C3.metal); B(w - 40, 0, 0, w, 720, 300, C3.metal);
-      B(w * 0.25, 750, 80, w * 0.55, 1150, 110, C3.black); break;
+      B(w * 0.25, 760, 80, w * 0.55, 1150, 110, C3.black); break;
     }
     case 'wardrobe': {
       const Hh = built ? 2400 : 2000; B(0, 0, 0, w, Hh, d, built ? C3.lam : C3.woodLight);
-      const n = Math.max(1, Math.round(w / 500)); for (let i = 0; i < n; i++) { const x = (i + 0.5) * w / n + (i % 2 ? -w / n / 2 + 60 : w / n / 2 - 60); B(x - 10, 950, d, x + 10, 1350, d + 20, C3.metal); }
+      const n = Math.max(1, Math.round(w / 500));
+      for (let i = 1; i < n; i++) B(i * w / n - 3, 30, d, i * w / n + 3, Hh - 30, d + 4, C3.lamDark);
+      for (let i = 0; i < n; i += 2) { const x = Math.min(w - 60, (i + 1) * w / n); B(x - 40, 950, d, x - 25, 1350, d + 22, C3.metal); }
       break;
     }
     case 'kbase': { B(0, 100, 0, w, 860, d - 20, C3.lam); B(0, 0, 0, w, 100, d - 60, C3.lamDark); B(0, 860, 0, w, 900, d, C3.quartz, { rough: 0.35 }); break; }
@@ -1618,7 +1503,7 @@ function build3DItem(it) {
     case 'cab': { const Hh = it.type === 'bi_seat' ? 450 : 1050; B(0, 0, 0, w, Hh, d, C3.lam); if (it.type === 'bi_seat') B(20, 450, 20, w - 20, 520, d - 20, C3.cushion); break; }
     case 'tv': {
       B(0, built ? 200 : 0, 0, w, built ? 550 : 480, d, built ? C3.lam : C3.wood);
-      const tw = Math.min(1450, w * 0.75), th = tw * 0.5625; B(w / 2 - tw / 2, 800, 20, w / 2 + tw / 2, 800 + th, 70, C3.black, { rough: 0.3 }); break;
+      const tvw = Math.min(1450, w * 0.75), th = tvw * 0.5625; B(w / 2 - tvw / 2, 800, 20, w / 2 + tvw / 2, 800 + th, 70, C3.black, { rough: 0.3 }); break;
     }
     case 'drawer': { const Hh = it.type === 'bedside' ? 520 : it.type === 'dresser' ? 760 : 800; B(0, 0, 0, w, Hh - 20, d, C3.wood); B(0, Hh - 20, 0, w, Hh, d, C3.woodLight); if (it.type === 'dresser') B(w * 0.2, Hh, 0, w * 0.8, Hh + 700, 30, C3.glass, { rough: 0.15 }); break; }
     case 'cot': { B(40, 300, 40, w - 40, 380, d - 40, C3.white); B(0, 0, 0, w, 900, 30, C3.white); B(0, 0, d - 30, w, 900, d, C3.white); B(0, 600, 0, 30, 900, d, C3.white); B(w - 30, 600, 0, w, 900, d, C3.white); legs(0, 0, w, d, 600, C3.white, 30); break; }
@@ -1630,9 +1515,9 @@ function build3DItem(it) {
       for (let sh = 1; sh < 5; sh++) for (let x = 40, i = 0; x < w - 120; i++) { const bw = 40 + ((i * 37 + sh * 11) % 50); B(x, sh * Hh / 5 - 300, d, x + bw, sh * Hh / 5 - 40, d + 10, cols[(i + sh) % 5]); x += bw + 8; }
       break;
     }
-    case 'plant': { const R = Math.min(w, d) / 2; Cy(w / 2, d / 2, R * 0.55, 0, 420, C3.pot); const s = new THREE.Mesh(new THREE.SphereGeometry(R * 0.95, 18, 14), M(C3.green)); s.position.set(0, 950, 0); s.scale.y = 1.25; s.castShadow = true; g.add(s); Cy(w / 2, d / 2, 20, 420, 700, C3.woodDark); break; }
+    case 'plant': { const R = Math.min(w, d) / 2; Cy(w / 2, d / 2, R * 0.55, 0, 420, C3.pot); Cy(w / 2, d / 2, 20, 420, 700, C3.woodDark); const s = new THREE.Mesh(UNIT_SPH, mat(C3.green)); s.scale.set(R * 0.95, R * 1.2, R * 0.95); s.position.set(0, 950, 0); s.castShadow = true; g.add(s); break; }
     case 'fridge': { B(0, 0, 0, w, 1800, d, C3.steel, { rough: 0.35, metal: 0.3 }); B(w * 0.45, 1000, d, w * 0.47, 1500, d + 25, C3.metal); break; }
-    case 'washer': { B(0, 0, 0, w, 850, d, C3.white); const dr = new THREE.Mesh(new THREE.CylinderGeometry(w * 0.3, w * 0.3, 20, 28), M(C3.metal)); dr.rotation.x = Math.PI / 2; dr.position.set(0, 430, d / 2 + 5); g.add(dr); break; }
+    case 'washer': { B(0, 0, 0, w, 850, d, C3.white); const dr = new THREE.Mesh(UNIT_CYL, mat(C3.metal)); dr.scale.set(w * 0.3, 20, w * 0.3); dr.rotation.x = Math.PI / 2; dr.position.set(0, 430, d / 2 + 5); g.add(dr); break; }
     case 'island': { B(0, 100, 0, w, 860, d, C3.lamDark); B(0, 860, 0, w, 900, d, C3.quartz, { rough: 0.35 }); break; }
     case 'stool': { const R = Math.min(w, d) / 2; Cy(w / 2, d / 2, R * 0.6, 0, 20, C3.metal); Cy(w / 2, d / 2, 25, 20, 640, C3.metal); Cy(w / 2, d / 2, R * 0.9, 640, 690, C3.woodDark); break; }
     case 'hob': { B(0, 900, 0, w, 915, d, C3.black, { rough: 0.25 }); B(w * 0.1, 1600, -60, w * 0.9, 2100, d * 0.6, C3.steel, { metal: 0.3, rough: 0.4 }); break; }
@@ -1642,55 +1527,485 @@ function build3DItem(it) {
     case 'shower': { B(0, 0, 0, w, 40, d, C3.ceramic); const gm = GLASS(); pbox(g, -w / 2, d / 2 - 10, w, 10, 40, 2000, gm); pbox(g, w / 2 - 10, -d / 2, 10, d, 40, 2000, gm); Cy(w / 2, 80, 60, 1950, 1980, C3.steel); break; }
     default: B(0, 0, 0, w, 800, d, body);
   }
-  const f = fp(it);
-  const lift = (t.over && !['hob', 'sink', 'wallcab'].includes(t.icon)) ? 0 : 0;
-  g.position.set(f.x + f.w / 2, lift, f.y + f.h / 2);
-  g.rotation.y = -it.rot * Math.PI / 180;
   g.traverse(o => { if (o.isMesh) o.userData = { item: it.id }; });
   g.userData = { item: it.id };
+  const bb = new THREE.Box3().setFromObject(g);
+  g.userData.h = Math.max(30, bb.max.y);
   return g;
 }
+function syncItems() {
+  let changed = false; const seen = new Set();
+  gItems.visible = UI.show.furn;
+  S.items.forEach(it => {
+    seen.add(it.id);
+    const sig = it.type + '|' + it.w + '|' + it.d;
+    let e = ITEMS3D.get(it.id);
+    if (!e || e.sig !== sig) { if (e) gItems.remove(e.g); e = { sig, g: buildItem(it) }; ITEMS3D.set(it.id, e); gItems.add(e.g); changed = true; }
+    if (placeItem3D(it, e.g)) changed = true;
+  });
+  ITEMS3D.forEach((e, id) => { if (!seen.has(id)) { gItems.remove(e.g); ITEMS3D.delete(id); changed = true; } });
+  return changed;
+}
+function placeItem3D(it, g) {
+  const f = fp(it), px = f.x + f.w / 2, pz = f.y + f.h / 2, ry = -it.rot * Math.PI / 180;
+  if (g.position.x === px && g.position.z === pz && g.rotation.y === ry) return false;
+  g.position.set(px, 0, pz); g.rotation.y = ry; return true;
+}
+function buildMarks() {
+  disposeOwn(gMarks);
+  const H = UI.low ? 1100 : S.rates.ceiling;
+  const box = (x, y, w, h, z0, z1, hex) => { const l = new THREE.LineSegments(EDGE_BOX, lineMat(hex)); l.scale.set(w, z1 - z0, h); l.position.set(x + w / 2, (z0 + z1) / 2, y + h / 2); gMarks.add(l); };
+  const pad = (x, y, w, h, hex, op) => { const m = pbox(gMarks, x, y, w, h, 2, 8, mat(hex, { opacity: op })); if (m) m.castShadow = false; };
+  const acc = cssVar('--accent'), dan = cssVar('--danger');
+  if (UI.show.furn) S.items.forEach(it => {
+    const sel = UI.sel && UI.sel.kind === 'item' && UI.sel.id === it.id, bad = BAD.has(it.id);
+    if (!sel && !bad) return;
+    const e = ITEMS3D.get(it.id); const h = e ? e.g.userData.h : 800; const f = fp(it);
+    pad(f.x - 60, f.y - 60, f.w + 120, f.h + 120, sel ? acc : dan, 0.3);
+    box(f.x - 20, f.y - 20, f.w + 40, f.h + 40, 0, h + 20, sel ? acc : dan);
+  });
+  if (UI.sel && UI.sel.kind === 'room') {
+    const r = ROOM_BY[UI.sel.id], shape = new THREE.Shape(r.poly.map(([x, y]) => new THREE.Vector2(x, -y)));
+    const g = new THREE.ShapeGeometry(shape); g.rotateX(-Math.PI / 2); g.translate(0, 4, 0);
+    const m = new THREE.Mesh(g, mat(acc, { opacity: 0.16 })); m.userData = { ownGeo: true }; gMarks.add(m);
+    const pts = r.poly.concat([r.poly[0]]).map(([x, y]) => new THREE.Vector3(x, 10, y));
+    const ln = new THREE.Line(new THREE.BufferGeometry().setFromPoints(pts), lineMat(acc)); ln.userData = { ownGeo: true }; gMarks.add(ln);
+  }
+  if (UI.sel && UI.sel.kind === 'wall') WALL_BY[UI.sel.id].rects.forEach(([x, y, w, h]) => box(x - 25, y - 25, w + 50, h + 50, 0, (S.walls[UI.sel.id] || {}).removed ? 40 : H + 25, acc));
+}
+function sync3D() {
+  if (!V3.ready) return;
+  const a = buildStatic(), b = syncItems();
+  buildMarks();
+  if (a || b) renderer.shadowMap.needsUpdate = true;
+  requestRender();
+}
+
+/* 3D pointer: click to select, drag furniture on the floor, double-click to walk */
 function bind3D() {
   const ray = new THREE.Raycaster(), ndc = new THREE.Vector2(), plane = new THREE.Plane(new THREE.Vector3(0, 1, 0), 0);
   const aim = e => { const r = cv.getBoundingClientRect(); ndc.set((e.clientX - r.left) / r.width * 2 - 1, -(e.clientY - r.top) / r.height * 2 + 1); ray.setFromCamera(ndc, camera); };
   const floorPt = e => { aim(e); const p = new THREE.Vector3(); return ray.ray.intersectPlane(plane, p) ? { x: p.x * 1000, y: p.z * 1000 } : null; };
-  const hitInfo = e => { aim(e); const hits = ray.intersectObjects(root.children, true); for (const h of hits) { const u = h.object.userData; if (u && (u.item || u.room || u.wall)) return u; } return null; };
-  let down = null;
+  const hitInfo = e => { aim(e); const hits = ray.intersectObjects([gItems, gStatic], true); for (const h of hits) { const u = h.object.userData; if (u && (u.item || u.room || u.wall)) return u; } return null; };
+  V3.floorAtCenter = () => { const r = cv.getBoundingClientRect(); return floorPt({ clientX: r.left + r.width / 2, clientY: r.top + r.height / 2 }); };
+  V3.floorPt = floorPt;
+  let down = null, hoverQueued = false, lastMove = null;
   cv.addEventListener('pointerdown', e => {
+    if (cv.parentElement.id !== 'view-main') return;
     if (e.pointerType === 'mouse' && e.button !== 0) { down = null; return; }
     const info = hitInfo(e); down = { sx: e.clientX, sy: e.clientY, info, moved: false };
-    if (info && info.item && !V3.eye) {
+    if (info && info.item && UI.cam !== 'walk' && UI.show.furn) {
       const it = S.items.find(i => i.id === info.item), p0 = floorPt(e);
       if (it && p0) { controls.enabled = false; down.drag = { it, p0, start: { x: it.x, y: it.y }, snap: JSON.stringify(S) }; cv.setPointerCapture(e.pointerId); }
     }
   }, true);
   cv.addEventListener('pointermove', e => {
-    if (!down) return;
+    if (!down) { // hover feedback, at most once per frame
+      lastMove = e;
+      if (!hoverQueued) { hoverQueued = true; requestAnimationFrame(() => { hoverQueued = false; if (!lastMove || cv.parentElement.id !== 'view-main') return; const i = hitInfo(lastMove); cv.style.cursor = i && i.item && UI.cam !== 'walk' ? 'grab' : i ? 'pointer' : ''; }); }
+      return;
+    }
     if (!down.moved && Math.hypot(e.clientX - down.sx, e.clientY - down.sy) > 4) down.moved = true;
     if (down.drag && down.moved) {
+      cv.style.cursor = 'grabbing';
       const p = floorPt(e); if (!p) return; const { it, p0, start } = down.drag;
       it.x = start.x + (p.x - p0.x); it.y = start.y + (p.y - p0.y); snapItem(it);
-      const grp = root.children.find(o => o.userData && o.userData.item === it.id && o.isGroup);
-      if (grp) { const f = fp(it); grp.position.x = f.x + f.w / 2; grp.position.z = f.y + f.h / 2; }
+      const ent = ITEMS3D.get(it.id); if (ent) placeItem3D(it, ent.g);
+      if (!UI.sel || UI.sel.id !== it.id) UI.sel = { kind: 'item', id: it.id };
+      BAD = conflicts(); buildMarks(); renderer.shadowMap.needsUpdate = true; requestRender();
     }
   });
   const up = () => {
-    if (!down) return; const dn = down; down = null; controls.enabled = true;
-    if (dn.drag && dn.moved) { pushUndo(dn.drag.snap); persist(); UI.sel = { kind: 'item', id: dn.drag.it.id }; UI.tab = 'sel'; renderAll(); return; }
+    if (!down) return; const dn = down; down = null; controls.enabled = true; cv.style.cursor = '';
+    if (dn.drag && dn.moved) { pushUndo(dn.drag.snap); persist(); UI.sel = { kind: 'item', id: dn.drag.it.id }; renderAll(); return; }
     if (dn.moved) return;
     const i = dn.info;
-    UI.sel = i ? (i.item ? { kind: 'item', id: i.item } : i.wall ? { kind: 'wall', id: i.wall } : { kind: 'room', id: i.room }) : null;
-    UI.tab = 'sel'; renderAll();
+    select(i ? (i.item ? { kind: 'item', id: i.item } : i.wall ? { kind: 'wall', id: i.wall } : { kind: 'room', id: i.room }) : null);
   };
-  cv.addEventListener('pointerup', up); cv.addEventListener('pointercancel', () => { down = null; controls.enabled = true; });
-  cv.addEventListener('dblclick', e => { const p = floorPt(e); if (p && roomAt(p.x, p.y)) eyeAt(p.x / 1000, p.y / 1000); });
+  cv.addEventListener('pointerup', up);
+  cv.addEventListener('pointercancel', () => { down = null; controls.enabled = true; });
+  cv.addEventListener('dblclick', e => { const p = floorPt(e); if (p && roomAt(p.x, p.y)) camWalk(p.x / 1000, p.y / 1000); });
   cv.addEventListener('dragover', e => { e.preventDefault(); });
   cv.addEventListener('drop', e => { e.preventDefault(); const t = e.dataTransfer.getData('text/plain'); const p = floorPt(e); if (CAT[t] && p) addItem(t, p.x, p.y); });
 }
 
+/* ================================================================
+   Views: main + inset swap
+================================================================ */
+function setMain(m) {
+  if (m === '3d' && !V3.ready) m = '2d';
+  UI.main = m; saveUI();
+  const main = $('#view-main'), mini = $('#view-mini');
+  if (m === '3d') { main.appendChild(cv); mini.appendChild(svg); } else { main.appendChild(svg); mini.appendChild(cv); }
+  svg.classList.toggle('is-mini', m === '3d');
+  $('#mini-label').textContent = m === '3d' ? 'Plan' : '3D';
+  $('#mini-swap').setAttribute('aria-label', m === '3d' ? 'Make the plan the main view' : 'Make 3D the main view');
+  if (m === '3d' && UI.tool === 'measure') { UI.tool = null; UI.measure = null; renderRail(); }
+  lastPlanSize = '';
+  requestAnimationFrame(() => { fitView(); size3D(); requestRender(); });
+  renderPlan(); renderTC(); renderHint();
+}
+$('#mini-swap').onclick = e => { e.stopPropagation(); setMain(UI.main === '3d' ? '2d' : '3d'); };
+$('#view-mini').addEventListener('click', () => { if (UI.main === '2d' && V3.ready) setMain('3d'); });
+$('#mini-toggle').onclick = () => { const c = $('#mini').classList.toggle('collapsed'); $('#app').classList.toggle('mini-collapsed', c); $('#mini-toggle').title = c ? 'Show map' : 'Hide map'; if (!c) requestAnimationFrame(() => { fitView(); size3D(); }); };
+
+/* top-centre controls depend on the main view */
+function renderTC() {
+  const tc = $('#tc');
+  if (UI.main === '3d') {
+    tc.innerHTML = `<div class="card seg" role="group" aria-label="Camera">
+        <button data-tc="orbit" aria-pressed="${UI.cam === 'orbit'}" title="Bird's-eye view"><svg class="ic sm"><use href="#i-orbit"/></svg><span>Overview</span></button>
+        <button data-tc="walk" aria-pressed="${UI.cam === 'walk'}" title="Walk through at eye level"><svg class="ic sm"><use href="#i-walk"/></svg><span>Walk</span></button>
+      </div>
+      <div class="card seg"><button data-tc="cut" aria-pressed="${UI.low}" title="Lower the walls to see into every room"><svg class="ic sm"><use href="#i-cut"/></svg><span>Cut-away</span></button></div>`;
+  } else {
+    tc.innerHTML = `<div class="card seg" role="group" aria-label="Plan options">
+        <button data-tc="dims" aria-pressed="${UI.show.dims}" title="Dimensions"><svg class="ic sm"><use href="#i-dims"/></svg><span>Dimensions</span></button>
+        <button data-tc="grid" aria-pressed="${UI.show.grid}" title="500 mm grid"><svg class="ic sm"><use href="#i-grid"/></svg><span>Grid</span></button>
+        <button data-tc="snap" aria-pressed="${UI.show.snap}" title="Snap to 50 mm and walls"><svg class="ic sm"><use href="#i-magnet"/></svg><span>Snap</span></button>
+      </div>`;
+  }
+}
+$('#tc').addEventListener('click', e => {
+  const b = e.target.closest('[data-tc]'); if (!b) return;
+  const k = b.dataset.tc;
+  if (k === 'orbit') camOrbit();
+  else if (k === 'walk') camWalk(11.4, 4.7, new THREE.Vector3(-1, 0, -0.15)); // living room, looking toward dining
+  else if (k === 'cut') { UI.low = !UI.low; sync3D(); renderTC(); }
+  else { UI.show[k] = !UI.show[k]; saveUI(); renderPlan(); renderTC(); }
+});
+
+/* zoom stack */
+$('#z-in').onclick = () => UI.main === '3d' ? dolly3D(0.78) : zoomAt(VB.x + VB.w / 2, VB.y + VB.h / 2, 1 / 1.3);
+$('#z-out').onclick = () => UI.main === '3d' ? dolly3D(1.28) : zoomAt(VB.x + VB.w / 2, VB.y + VB.h / 2, 1.3);
+$('#z-fit').onclick = () => UI.main === '3d' ? camOrbit() : fitView();
+
+/* ================================================================
+   Selection, items
+================================================================ */
+function select(sel) {
+  UI.sel = sel;
+  if (sel && sel.kind === 'room' && UI.tool === 'finishes') UI.finRoom = sel.id;
+  renderWalls(); renderOverlay(); renderSelBar(); renderHint();
+  if (UI.tool === 'finishes' || UI.tool === 'walls') renderDrawer();
+  if (V3.ready) { buildMarks(); requestRender(); }
+}
+function addItem(type, cx, cy) {
+  if (cx == null) {
+    let p = null;
+    if (UI.main === '3d' && V3.ready) { const c = V3.floorAtCenter(); if (c && roomAt(c.x, c.y)) p = c; if (!p) p = { x: controls.target.x * 1000, y: controls.target.z * 1000 }; }
+    else p = { x: VB.x + VB.w / 2, y: VB.y + VB.h / 2 };
+    cx = p.x; cy = p.y;
+  }
+  const t = CAT[type];
+  const it = { id: uid(), type, w: t.w, d: t.d, rot: 0, x: cx - t.w / 2, y: cy - t.d / 2 };
+  mutate(() => { snapItem(it); S.items.push(it); UI.sel = { kind: 'item', id: it.id }; UI.show.furn = true; });
+  toast(`${t.name} added. Drag it into place.`);
+}
+function rotateSel(deg) {
+  const it = selItem(); if (!it) return;
+  mutate(() => { const f = fp(it), cx = f.x + f.w / 2, cy = f.y + f.h / 2; it.rot = ((it.rot + deg) % 360 + 360) % 360; const g = fp(it); it.x = cx - g.w / 2; it.y = cy - g.h / 2; snapItem(it); });
+}
+function deleteSel() { const it = selItem(); if (!it) return; const n = CAT[it.type].name; mutate(() => { S.items = S.items.filter(i => i !== it); UI.sel = null; }); toast(`${n} removed`); }
+function dupSel() { const it = selItem(); if (!it) return; const c = { ...it, id: uid(), x: it.x + 200, y: it.y + 200 }; mutate(() => { snapItem(c); S.items.push(c); UI.sel = { kind: 'item', id: c.id }; }); }
+function nudge(dx, dy) { const it = selItem(); if (!it) return; mutate(() => { it.x += dx; it.y += dy; }); }
+function toggleWall(id) { mutate(() => { const cur = S.walls[id] && S.walls[id].removed; S.walls[id] = { removed: !cur }; }); toast(S.walls[id].removed ? 'Wall marked for removal' : 'Wall restored'); }
+
+/* ---------------- Selection bar ---------------- */
+const thumb = (type, cls = '') => { const t = CAT[type]; return `<svg viewBox="${-60} ${-60} ${t.w + 120} ${t.d + 120}" preserveAspectRatio="xMidYMid meet" aria-hidden="true"><g class="item ${t.rate ? 'built' : ''} ${cls}">${drawItem(type, t.w, t.d)}</g></svg>`; };
+function floorSwatch(r) { const st = S.rooms[r.id]; return patSpec(r, st).c[0]; }
+function renderSelBar() {
+  const bar = $('#selbar'), sel = UI.sel;
+  if (!sel || (sel.kind === 'item' && !selItem())) { bar.hidden = true; return; }
+  bar.hidden = false;
+  const close = `<button class="iconbtn" data-sb="close" title="Deselect (Esc)" aria-label="Deselect"><svg class="ic sm"><use href="#i-close"/></svg></button>`;
+  if (sel.kind === 'item') {
+    const it = selItem(), t = CAT[it.type], bad = BAD.get(it.id), room = roomAt(it.x + fp(it).w / 2, it.y + fp(it).h / 2);
+    bar.innerHTML = `<div class="who"><div class="th">${thumb(it.type)}</div><div><b>${esc(it.label || t.name)}</b><small>${room ? esc(room.name) + ' · ' : ''}${money(itemCost(it))}${t.rate ? ` · ${(it.w / 1000).toFixed(2)} m run` : ''}</small></div></div>
+      ${bad ? `<span class="flag" title="${esc(bad)}"><svg class="ic sm"><use href="#i-alert"/></svg>${esc(bad)}</span>` : ''}
+      <span class="sep"></span>
+      <label class="dims">W<input type="number" id="sb-w" min="100" step="10" value="${Math.round(it.w)}" aria-label="Width in mm"></label>
+      <label class="dims">D<input type="number" id="sb-d" min="100" step="10" value="${Math.round(it.d)}" aria-label="Depth in mm"></label>
+      <span class="sep"></span>
+      <button class="iconbtn" data-sb="rotl" title="Rotate left (Shift+R)" aria-label="Rotate left"><svg class="ic"><use href="#i-rotl"/></svg></button>
+      <button class="iconbtn" data-sb="rotr" title="Rotate right (R)" aria-label="Rotate right"><svg class="ic"><use href="#i-rotr"/></svg></button>
+      <button class="iconbtn" data-sb="dup" title="Duplicate (Ctrl+D)" aria-label="Duplicate"><svg class="ic"><use href="#i-copy"/></svg></button>
+      <button class="iconbtn danger" data-sb="del" title="Delete (Del)" aria-label="Delete"><svg class="ic"><use href="#i-trash"/></svg></button>
+      ${close}`;
+    return;
+  }
+  if (sel.kind === 'room') {
+    const r = ROOM_BY[sel.id], st = S.rooms[r.id], p = PAINTS.find(q => q.id === st.paint);
+    bar.innerHTML = `<div class="who"><div><b>${esc(r.name)}</b><small>${r.area.toFixed(1)} m² · ${money(floorCost(r, st) + paintCost(r, st))}</small></div></div>
+      <span class="sep"></span>
+      <button class="chipbtn" data-sb="fin"><span class="minisw" style="background:${floorSwatch(r)}"></span><span><small>Floor</small>${esc(FLOORS[st.floor].name)}</span></button>
+      <button class="chipbtn" data-sb="fin"><span class="minisw" style="${p.c ? 'background:' + p.c : 'background:repeating-linear-gradient(45deg,var(--surface) 0 3px,var(--line-strong) 3px 4px)'}"></span><span><small>Walls</small>${esc(p.name)}</span></button>
+      <span class="sep"></span>
+      <button class="btn primary sm" data-sb="fin">Change finishes</button>
+      ${close}`;
+    return;
+  }
+  const w = WALL_BY[sel.id], rem = S.walls[w.id] && S.walls[w.id].removed;
+  if (w.kind === 'struct' || w.kind === 'ext') {
+    bar.innerHTML = `<div class="who"><div><b>${esc(w.name)}</b><small>${w.kind === 'struct' ? 'Structural: shaded black on the HDB plan' : 'External wall'}</small></div></div>
+      <span class="flag neutral"><svg class="ic sm"><use href="#i-lock"/></svg>Can’t be removed</span>${close}`;
+    return;
+  }
+  bar.innerHTML = `<div class="who"><div><b>${esc(w.name)}</b><small>${mmf(w.len)} mm long · hacking ${money(wallCost(w))}</small></div></div>
+    ${w.kind === 'wet' ? `<span class="flag" title="Needs HDB approval; waterproofing and tiles must be redone; no hacking in the first 3 years"><svg class="ic sm"><use href="#i-alert"/></svg>Bathroom wall</span>` : ''}
+    <span class="sep"></span>
+    <button class="btn sm ${rem ? 'primary' : 'danger'}" data-sb="wall">${rem ? 'Restore wall' : 'Remove wall'}</button>${close}`;
+}
+$('#selbar').addEventListener('click', e => {
+  const b = e.target.closest('[data-sb]'); if (!b) return;
+  const k = b.dataset.sb;
+  if (k === 'close') return select(null);
+  if (k === 'rotl') return rotateSel(-90);
+  if (k === 'rotr') return rotateSel(90);
+  if (k === 'dup') return dupSel();
+  if (k === 'del') return deleteSel();
+  if (k === 'fin') { UI.finRoom = UI.sel.id; return openTool('finishes'); }
+  if (k === 'wall') return toggleWall(UI.sel.id);
+});
+$('#selbar').addEventListener('change', e => {
+  const it = selItem(); if (!it) return;
+  if (e.target.id === 'sb-w') mutate(() => { it.w = Math.max(100, +e.target.value || it.w); });
+  if (e.target.id === 'sb-d') mutate(() => { it.d = Math.max(100, +e.target.value || it.d); });
+});
+
+/* ---------------- Hint chip ---------------- */
+function renderHint() {
+  const h = $('#hint');
+  let msg = '';
+  if (UI.tool === 'measure') msg = 'Drag across the plan to measure. Press Esc when you’re done.';
+  else if (!UI.hintOff && !UI.sel) msg = UI.main === '3d' ? (UI.cam === 'walk' ? 'Drag to look around · W A S D to walk · click the map to jump' : 'Drag to orbit · right-drag to pan · click anything to edit · double-click a floor to walk in') : 'Drag to pan · scroll to zoom · drag furniture to move it';
+  h.hidden = !msg;
+  if (msg) h.innerHTML = `<span>${msg}</span><button data-hint="x" aria-label="Dismiss"><svg class="ic sm"><use href="#i-close"/></svg></button>`;
+}
+$('#hint').addEventListener('click', e => { if (!e.target.closest('[data-hint]')) return; if (UI.tool === 'measure') { closeTool(); return; } UI.hintOff = true; saveUI(); renderHint(); });
+
+/* ================================================================
+   Tools + drawer
+================================================================ */
+const TOOL_TITLES = { furnish: 'Furnish', finishes: 'Floors & paint', walls: 'Walls', budget: 'Budget' };
+function openTool(t) {
+  if (t === 'measure') {
+    if (UI.tool === 'measure') return closeTool();
+    UI.tool = 'measure'; if (UI.main !== '2d') setMain('2d'); svg.classList.add('measure');
+  } else {
+    if (UI.tool === 'measure') { UI.measure = null; svg.classList.remove('measure'); renderOverlay(); }
+    UI.tool = t;
+  }
+  renderRail(); renderDrawer(); renderHint(); if (V3.ready) sync3D();
+}
+function closeTool() {
+  if (UI.tool === 'measure') { UI.measure = null; svg.classList.remove('measure'); renderOverlay(); }
+  UI.tool = null; renderRail(); renderDrawer(); renderHint(); if (V3.ready) sync3D();
+}
+function renderRail() { document.querySelectorAll('.tool').forEach(b => b.setAttribute('aria-pressed', b.dataset.tool === UI.tool)); }
+$('#rail').addEventListener('click', e => { const b = e.target.closest('[data-tool]'); if (!b) return; if (UI.tool === b.dataset.tool) closeTool(); else openTool(b.dataset.tool); });
+$('#drawer-close').onclick = closeTool;
+
+const body = $('#drawer-body');
+function renderDrawer() {
+  const open = UI.tool && UI.tool !== 'measure';
+  $('#drawer').hidden = !open; $('#app').classList.toggle('drawer-open', !!open);
+  if (!open) return;
+  $('#drawer-title').textContent = TOOL_TITLES[UI.tool];
+  const st = body.scrollTop, same = body.dataset.tool === UI.tool;
+  body.dataset.tool = UI.tool;
+  if (UI.tool === 'furnish') { if (!same) { body.innerHTML = furnishShell(); } renderCatalogue(); }
+  else body.innerHTML = UI.tool === 'finishes' ? finishesHTML() : UI.tool === 'walls' ? wallsHTML() : budgetHTML();
+  body.scrollTop = same ? st : 0;
+}
+
+/* Furnish */
+function furnishShell() {
+  return `<label class="search"><svg class="ic sm"><use href="#i-search"/></svg><input id="cat-q" type="search" placeholder="Search beds, sofas, cabinets…" value="${esc(UI.q)}" aria-label="Search catalogue"></label>
+    <div class="chips" id="cat-chips" role="group" aria-label="Category"></div>
+    <div class="cards" id="cat-list"></div>
+    <p class="hint">Click to place an item in the middle of your view, or drag it into a room. Sizes are width × depth in mm. Built-in carpentry is priced per metre run.</p>`;
+}
+function renderCatalogue() {
+  const chips = $('#cat-chips'), list = $('#cat-list'); if (!chips) return;
+  chips.innerHTML = CATS.map(c => `<button class="chip" data-cat="${esc(c)}" aria-pressed="${UI.cat === c}">${esc(c)}</button>`).join('');
+  const q = UI.q.trim().toLowerCase();
+  const items = Object.entries(CAT).filter(([k, t]) => (UI.cat === 'All' || t.cat === UI.cat || ALSO_IN[k] === UI.cat) && (!q || t.name.toLowerCase().includes(q) || t.cat.toLowerCase().includes(q)));
+  list.innerHTML = items.length ? items.map(([k, t]) => `<button class="icard" draggable="true" data-add="${k}" title="Add ${esc(t.name)}">
+      <span class="thumb">${thumb(k)}</span>${t.rate ? '<span class="tag">Built-in</span>' : ''}<span class="nm">${esc(t.name)}</span>
+      <span class="mt">${mmf(t.w)} × ${mmf(t.d)} · ${t.rate ? money(S.rates[t.rate]) + '/m' : money(t.price)}</span></button>`).join('')
+    : `<p class="hint" style="grid-column:1/-1">Nothing matches “${esc(UI.q)}”. Try “bed”, “cabinet” or “table”.</p>`;
+}
+
+/* Finishes */
+function finishesHTML() {
+  const r = ROOM_BY[UI.finRoom] || ROOM_BY.liv, st = S.rooms[r.id], f = FLOORS[st.floor];
+  const allowed = Object.entries(FLOORS).filter(([k]) => !(r.wet && (k === 'carpet' || k === 'timber' || k === 'spc')));
+  let note = '';
+  if (r.wet) note = `<p class="note bad"><svg class="ic sm"><use href="#i-alert"/></svg><span>Bathroom tiles can’t be hacked in the first 3 years after key collection. Overlaying new tiles is allowed.</span></p>`;
+  else if (r.shelter) note = `<p class="note bad"><svg class="ic sm"><use href="#i-alert"/></svg><span>Don’t hack or drill into the household shelter’s walls, floor or ceiling.</span></p>`;
+  else if (r.id === 'kit') note = `<p class="note"><svg class="ic sm"><use href="#i-info"/></svg><span>Kitchen tiles follow the same 3-year rule as bathrooms. Overlay is fine.</span></p>`;
+  const dry = ROOMS.filter(x => !x.tiled && !x.shelter).map(x => x.id);
+  return `<div class="sec"><p class="eyebrow">Room</p><div class="rows">${ROOMS.map(x => { const s2 = S.rooms[x.id], p = PAINTS.find(q => q.id === s2.paint); return `<button class="rowbtn" data-fr="${x.id}" aria-current="${x.id === r.id}">
+        <span class="dot2" style="background:${floorSwatch(x)}"><i style="background:${p.c || 'var(--surface)'}"></i></span>
+        <span class="t"><b>${esc(x.name)}</b><small>${esc(FLOORS[s2.floor].name)}${s2.paint !== 'keep' ? ' · ' + esc(p.name) : ''}</small></span><span class="v">${x.area.toFixed(1)} m²</span></button>`; }).join('')}</div></div>
+    ${note}
+    <div class="sec"><p class="eyebrow">Flooring · ${esc(r.name)}</p><div class="opts">${allowed.map(([k, v]) => { const c = k === 'asis' ? patSpec(r, { floor: 'asis' }).c[0] : Object.values(v.tones)[0].c[0]; return `<button class="opt" data-floor="${k}" aria-pressed="${st.floor === k}"><span class="sw0" style="background:${c}"></span><span class="t">${esc(v.name)}<small>${k === 'asis' ? 'No cost' : money(S.rates[v.rate]) + '/m² · ' + money(r.area * S.rates[v.rate]) + ' for this room'}</small></span></button>`; }).join('')}</div>
+    ${st.floor !== 'asis' ? `<div class="swatches" role="group" aria-label="Tone">${Object.entries(f.tones).map(([k, t]) => `<button class="sw sq" title="${esc(t.label)}" aria-label="${esc(t.label)}" data-tone="${k}" aria-pressed="${st.tone === k}" style="background:${t.c[0]}"></button>`).join('')}</div>
+    <div class="btnrow"><button class="btn sm" data-apply="dry">Use on all bedrooms and living</button></div>` : ''}</div>
+    <div class="sec"><p class="eyebrow">Wall paint · ${esc(r.name)}${r.tiled ? ' (ceiling only, walls are tiled)' : ''}</p>
+    <div class="swatches" role="group" aria-label="Paint colour">${PAINTS.map(p => `<button class="sw${p.c ? '' : ' none'}" title="${esc(p.name)}" aria-label="${esc(p.name)}" data-paint="${p.id}" aria-pressed="${st.paint === p.id}" ${p.c ? `style="background:${p.c}"` : ''}></button>`).join('')}</div>
+    <p class="hint">${esc(PAINTS.find(p => p.id === st.paint).name)}${st.paint !== 'keep' ? ' · ' + money(paintCost(r, st)) : ''}</p></div>
+    <input type="hidden" id="dry-ids" value="${dry.join(',')}">`;
+}
+
+/* Walls */
+function wallsHTML() {
+  const rem = WALLS.filter(w => w.kind === 'part' || w.kind === 'wet');
+  const removed = rem.filter(w => S.walls[w.id] && S.walls[w.id].removed);
+  return `<p class="hint">Walls you can remove are highlighted on the model. Black walls are structural on the HDB plan and stay locked.</p>
+    <div class="sec"><p class="eyebrow">Removable walls${removed.length ? ` · ${removed.length} marked` : ''}</p><div class="rows">${rem.map(w => { const on = !!(S.walls[w.id] && S.walls[w.id].removed); return `<div class="rowbtn" aria-current="${UI.sel && UI.sel.id === w.id}" data-wsel="${w.id}" style="cursor:pointer">
+      <span class="t"><b>${esc(w.name)}</b><small>${w.kind === 'wet' ? 'Bathroom wall · ' : ''}${mmf(w.len)} mm · ${money(wallCost(w))}</small></span>
+      <button class="switch" role="switch" aria-checked="${on}" aria-label="Remove ${esc(w.name)}" data-wt="${w.id}"></button></div>`; }).join('')}</div></div>
+    <p class="note"><svg class="ic sm"><use href="#i-info"/></svg><span>Hacking non-structural walls needs an HDB renovation permit, which your contractor applies for. Bathroom walls also need fresh waterproofing, and can’t be hacked in the first 3 years.</span></p>`;
+}
+
+/* Budget */
+function budgetHTML() {
+  const b = budget(), over = b.total > S.budget;
+  const bar = b.groups.filter(g => g.total > 0).map(g => `<i style="flex:${g.total.toFixed(0)};background:${g.c}" title="${esc(g.name)}: ${money(g.total)}"></i>`).join('');
+  return `<div class="sec"><div class="total">${money(b.total)} <small>estimate</small></div>
+    <div class="stack" aria-hidden="true">${bar}</div>
+    <div class="btnrow" style="align-items:flex-end;justify-content:space-between"><label class="field" style="flex:1">Your budget (S$)<input class="input" type="number" id="f-budget" step="1000" min="0" value="${S.budget}"></label>
+    <span class="flag ${over ? '' : 'ok'}" style="margin-bottom:7px">${over ? money(b.total - S.budget) + ' over' : money(S.budget - b.total) + ' to spare'}</span></div></div>
+    <div class="glist">${b.groups.map(g => `<details><summary><span class="k" style="background:${g.c}"></span>${esc(g.name)}<span class="amt">${money(g.total)}</span><svg class="ic sm chev"><use href="#i-chev"/></svg></summary><div class="lines">${g.lines.length ? g.lines.map(l => `<div class="line"><span>${esc(l.label)}</span><span class="a">${money(l.amt)}</span><span class="d">${esc(l.detail)}</span></div>`).join('') : '<span class="hint">Nothing yet.</span>'}</div></details>`).join('')}</div>
+    <div class="sec"><p class="eyebrow">Electrical &amp; services</p><div class="kv">${EXTRAS.map(x => `<span>${esc(x.name)}<br><small class="hint">${money(S.rates[x.id])} each</small></span><span class="stepper"><button data-ex="${x.id}" data-dx="-1" aria-label="Fewer ${esc(x.name)}"><svg class="ic sm"><use href="#i-minus"/></svg></button><output>${S.extras[x.id] || 0}</output><button data-ex="${x.id}" data-dx="1" aria-label="More ${esc(x.name)}"><svg class="ic sm"><use href="#i-plus"/></svg></button></span>`).join('')}</div></div>
+    <div class="sec"><div class="kv">
+      <span>Subtotal</span><span class="a">${money(b.sub)}</span>
+      <span style="display:flex;align-items:center;gap:6px">Contingency <input class="input" type="number" id="f-cont" min="0" max="50" step="1" value="${S.contingency}" style="width:58px;height:30px"> %</span><span class="a">${money(b.cont)}</span>
+      <label style="display:flex;align-items:center;gap:6px"><input type="checkbox" id="f-gst" ${S.gst ? 'checked' : ''}> GST 9%</label><span class="a">${money(b.gst)}</span>
+      <span class="grand">Total</span><span class="a grand">${money(b.total)}</span>
+    </div></div>
+    <details class="more"><summary>Edit rates</summary><div class="rates">${RATE_LABELS.map(([h, list]) => `<h4>${esc(h)}</h4>` + list.map(([k, l]) => `<label for="r-${k}">${esc(l)}</label><input class="input" type="number" min="0" step="${k === 'ceiling' ? 10 : 5}" id="r-${k}" data-rate="${k}" value="${S.rates[k]}">`).join('')).join('')}</div>
+      <div class="btnrow" style="margin-top:10px"><button class="btn sm" id="rates-reset">Reset to defaults</button></div></details>
+    <p class="hint">Indicative Singapore prices for planning. Get itemised quotes from HDB-registered contractors before committing.</p>`;
+}
+
+body.addEventListener('click', e => {
+  const b = e.target.closest('button, [data-wsel]'); if (!b) return;
+  const r = UI.finRoom;
+  if (b.dataset.cat) { UI.cat = b.dataset.cat; return renderCatalogue(); }
+  if (b.dataset.add) return addItem(b.dataset.add);
+  if (b.dataset.fr) { UI.finRoom = b.dataset.fr; UI.sel = { kind: 'room', id: b.dataset.fr }; return select(UI.sel); }
+  if (b.dataset.floor) return mutate(() => { const st = S.rooms[r]; st.floor = b.dataset.floor; const tones = Object.keys(FLOORS[st.floor].tones); if (!tones.includes(st.tone)) st.tone = tones[0]; });
+  if (b.dataset.tone) return mutate(() => { S.rooms[r].tone = b.dataset.tone; });
+  if (b.dataset.paint) return mutate(() => { S.rooms[r].paint = b.dataset.paint; });
+  if (b.dataset.apply) { const src = S.rooms[r]; const ids = $('#dry-ids').value.split(','); mutate(() => ids.forEach(id => { S.rooms[id].floor = src.floor; S.rooms[id].tone = src.tone; })); return toast(`${FLOORS[src.floor].name} applied to ${ids.length} rooms`); }
+  if (b.dataset.wt) { e.stopPropagation(); return toggleWall(b.dataset.wt); }
+  if (b.dataset.wsel) return select({ kind: 'wall', id: b.dataset.wsel });
+  if (b.dataset.ex) return mutate(() => { S.extras[b.dataset.ex] = Math.max(0, (S.extras[b.dataset.ex] || 0) + +b.dataset.dx); });
+  if (b.id === 'rates-reset') { mutate(() => { S.rates = { ...DEFAULT_RATES }; }); toast('Rates reset'); }
+});
+body.addEventListener('input', e => { if (e.target.id === 'cat-q') { UI.q = e.target.value; renderCatalogue(); } });
+body.addEventListener('change', e => {
+  const t = e.target;
+  if (t.id === 'f-budget') return mutate(() => { S.budget = Math.max(0, +t.value || 0); });
+  if (t.id === 'f-cont') return mutate(() => { S.contingency = Math.min(50, Math.max(0, +t.value || 0)); });
+  if (t.id === 'f-gst') return mutate(() => { S.gst = t.checked; });
+  if (t.dataset.rate) return mutate(() => { S.rates[t.dataset.rate] = Math.max(0, +t.value || 0); });
+});
+body.addEventListener('dragstart', e => { const b = e.target.closest('[data-add]'); if (b) { e.dataTransfer.setData('text/plain', b.dataset.add); e.dataTransfer.effectAllowed = 'copy'; } });
+
+/* ---------------- Top bar: history + budget pill ---------------- */
+function renderTop() {
+  $('#undo').disabled = !undoStack.length; $('#redo').disabled = !redoStack.length;
+  const b = budget(), over = b.total > S.budget;
+  $('#pill-total').textContent = money(b.total);
+  $('#pill-bar').style.width = (S.budget ? Math.min(100, b.total / S.budget * 100) : 0) + '%';
+  $('#pill').classList.toggle('over', over);
+  $('#pill').title = `${money(b.total)} of your ${money(S.budget)} budget${over ? ' (over)' : ''}`;
+}
+$('#undo').onclick = undo; $('#redo').onclick = redo;
+$('#pill').onclick = () => UI.tool === 'budget' ? closeTool() : openTool('budget');
+
+/* ---------------- Layouts menu ---------------- */
+function readSaves() { try { return JSON.parse(ls.get(KEY_SAVES) || '{}'); } catch (e) { return {}; } }
+function renderMenu() {
+  const m = $('#menu'); if (!UI.menu) { m.hidden = true; return; }
+  const saves = readSaves(), names = Object.keys(saves).sort((a, b) => (saves[b].t || 0) - (saves[a].t || 0));
+  m.hidden = false;
+  m.innerHTML = `<div style="display:flex;justify-content:space-between;align-items:center"><h3>Layouts</h3><button class="iconbtn" data-m="close" aria-label="Close"><svg class="ic sm"><use href="#i-close"/></svg></button></div>
+    <div class="sec"><label class="field">Save this layout as<input class="input" id="save-name" type="text" maxlength="40" placeholder="e.g. Open study with sliding doors"></label><div class="btnrow"><button class="btn primary sm" data-m="save">Save layout</button></div></div>
+    <div class="sec"><p class="eyebrow">Saved on this device</p><div class="saved">${names.length ? names.map(n => `<div class="srow"><span>${esc(n)}</span><small>${new Date(saves[n].t || 0).toLocaleDateString('en-SG')}</small><button class="btn sm" data-load="${esc(n)}">Open</button><button class="btn sm danger${UI.menu.confirm === 'del:' + n ? ' solid' : ''}" data-del="${esc(n)}">${UI.menu.confirm === 'del:' + n ? 'Confirm' : 'Delete'}</button></div>`).join('') : '<p class="hint">Nothing saved yet.</p>'}</div></div>
+    <div class="sec"><p class="eyebrow">Start again</p><div class="btnrow"><button class="btn sm${UI.menu.confirm === 'starter' ? ' danger solid' : ''}" data-m="starter">${UI.menu.confirm === 'starter' ? 'Replace current layout?' : 'Example layout'}</button><button class="btn sm${UI.menu.confirm === 'empty' ? ' danger solid' : ''}" data-m="empty">${UI.menu.confirm === 'empty' ? 'Clear everything?' : 'Empty unit'}</button></div><p class="hint">Both can be undone.</p></div>
+    <div class="sec"><p class="eyebrow">Share or back up</p><div class="btnrow"><button class="btn sm" data-m="copy">Copy layout code</button><label class="btn sm" for="imp-file">Open .json file</label><input type="file" id="imp-file" accept=".json,application/json" hidden></div>
+    <textarea id="imp-text" placeholder="Paste a layout code here" aria-label="Layout code"></textarea><div class="btnrow"><button class="btn sm" data-m="import">Load pasted code</button></div></div>`;
+}
+$('#menu-btn').onclick = () => { UI.menu = UI.menu ? null : {}; renderMenu(); };
+$('#menu').addEventListener('click', e => {
+  const b = e.target.closest('button'); if (!b) return;
+  const a = b.dataset.m;
+  if (a === 'close') { UI.menu = null; return renderMenu(); }
+  if (a === 'save') { const n = ($('#save-name').value || '').trim() || 'Layout ' + new Date().toLocaleString('en-SG', { dateStyle: 'medium', timeStyle: 'short' }); const s = readSaves(); s[n] = { t: Date.now(), s: S }; toast(ls.set(KEY_SAVES, JSON.stringify(s)) ? `Saved “${n}”` : 'This browser blocked saving. Use “Copy layout code” instead.'); return renderMenu(); }
+  if (b.dataset.load) { const s = readSaves()[b.dataset.load]; if (s) { mutate(() => { S = normalize(s.s); UI.sel = null; }); toast(`Opened “${b.dataset.load}”`); UI.menu = null; renderMenu(); } return; }
+  if (b.dataset.del) { const key = 'del:' + b.dataset.del; if (UI.menu.confirm !== key) { UI.menu.confirm = key; return renderMenu(); } const s = readSaves(); delete s[b.dataset.del]; ls.set(KEY_SAVES, JSON.stringify(s)); UI.menu.confirm = null; toast('Deleted'); return renderMenu(); }
+  if (a === 'starter' || a === 'empty') { if (UI.menu.confirm !== a) { UI.menu.confirm = a; return renderMenu(); } UI.menu = null; renderMenu(); mutate(() => { S = newState(a === 'starter'); UI.sel = null; }); return toast(a === 'starter' ? 'Example layout loaded' : 'Unit cleared'); }
+  if (a === 'copy') { const txt = JSON.stringify(S); const fb = () => { const ta = $('#imp-text'); ta.value = txt; ta.focus(); ta.select(); toast('Copy the selected text'); }; try { navigator.clipboard.writeText(txt).then(() => toast('Layout code copied'), fb); } catch (err) { fb(); } return; }
+  if (a === 'import') importText($('#imp-text').value);
+});
+$('#menu').addEventListener('change', e => { if (e.target.id !== 'imp-file' || !e.target.files[0]) return; const fr = new FileReader(); fr.onload = () => importText(String(fr.result)); fr.readAsText(e.target.files[0]); });
+function importText(txt) { try { const o = normalize(JSON.parse(txt)); mutate(() => { S = o; UI.sel = null; }); toast('Layout loaded'); UI.menu = null; renderMenu(); } catch (err) { toast('That isn’t a valid layout code.'); } }
+
+/* ---------------- Keyboard ---------------- */
+document.addEventListener('keydown', e => {
+  if (e.target.closest('input, textarea, select')) return;
+  const k = e.key.toLowerCase(), mod = e.ctrlKey || e.metaKey;
+  if (mod && k === 'z') { e.preventDefault(); e.shiftKey ? redo() : undo(); return; }
+  if (mod && k === 'y') { e.preventDefault(); redo(); return; }
+  if (mod && k === 'd') { e.preventDefault(); dupSel(); return; }
+  if (mod) return;
+  if (UI.main === '3d' && UI.cam === 'walk' && ['w', 'a', 's', 'd', 'arrowup', 'arrowdown', 'arrowleft', 'arrowright'].includes(k)) { e.preventDefault(); keys.add(k); requestRender(); return; }
+  const step = e.shiftKey ? 100 : 10;
+  switch (k) {
+    case 'delete': case 'backspace': if (selItem()) { e.preventDefault(); deleteSel(); } break;
+    case 'r': rotateSel(e.shiftKey ? -90 : 90); break;
+    case 'm': openTool('measure'); break;
+    case 'tab': if (V3.ready) { e.preventDefault(); setMain(UI.main === '3d' ? '2d' : '3d'); } break;
+    case 'escape':
+      if (UI.menu) { UI.menu = null; renderMenu(); }
+      else if (UI.tool === 'measure') closeTool();
+      else if (UI.sel) select(null);
+      else if (UI.tool) closeTool();
+      else if (UI.cam === 'walk') camOrbit();
+      break;
+    case 'arrowleft': if (selItem()) { e.preventDefault(); nudge(-step, 0); } break;
+    case 'arrowright': if (selItem()) { e.preventDefault(); nudge(step, 0); } break;
+    case 'arrowup': if (selItem()) { e.preventDefault(); nudge(0, -step); } break;
+    case 'arrowdown': if (selItem()) { e.preventDefault(); nudge(0, step); } break;
+  }
+});
+document.addEventListener('keyup', e => keys.delete(e.key.toLowerCase()));
+window.addEventListener('blur', () => keys.clear());
+
+/* ---------------- Toast ---------------- */
+let toastT;
+function toast(msg) { const t = $('#toast'); t.textContent = msg; t.hidden = false; clearTimeout(toastT); toastT = setTimeout(() => { t.hidden = true; }, 2200); }
+
+/* ---------------- Render orchestration ---------------- */
+function renderAll() {
+  validateSel();
+  renderPlan(); renderTop(); renderSelBar(); renderHint();
+  if (UI.tool && UI.tool !== 'furnish' && UI.tool !== 'measure') renderDrawer();
+  if (UI.menu) renderMenu();
+  sync3D();
+}
+
 /* ---------------- Boot ---------------- */
-function renderAll() { renderPlan(); renderPanel(); renderToolbar(); renderCatalogue(); if (V3.on) build3D(); }
-renderAll();
+renderPlan(); renderTop(); renderTC(); renderRail(); renderDrawer(); renderHint();
+$('#view-main').appendChild(cv);
+$('#loading').hidden = false;
+init3D().then(() => { $('#loading').hidden = true; setMain(UI.main === '2d' ? '2d' : '3d'); })
+  .catch(() => { $('#loading').hidden = true; V3.failed = true; cv.remove(); setMain('2d'); $('#mini').hidden = true; toast('3D couldn’t load, so you’re in plan view. Check your connection and reload.'); });
 })();
 </script>
 </body><!--shell-->

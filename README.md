@@ -4,35 +4,38 @@ An in-browser renovation planner for the HDB **4-Room Type 2** unit at **Blk 74A
 
 It's a single `index.html` file with no build step. Open it in a browser to use it.
 
-## What it does
+## How it works
 
-- **Floor plan to scale.** Shows rooms, doors, windows and the dimension strings from the HDB drawing.
-- **Walls.**
-  - Structural walls and columns (shaded black on the HDB plan) are locked.
-  - Non-structural partitions can be marked for removal. Doors in a removed wall go with it.
-  - Bathroom walls can also be removed, but the app warns you about HDB approval, the 3-year no-hacking rule and redoing the waterproofing.
-- **Flooring and paint per room.**
-  - Flooring options are SPC vinyl, homogeneous tile, 1200×600 porcelain, engineered timber, microcement and carpet. Each has tone choices.
-  - Paint comes in 10 colours, or you can leave a room unpainted.
-  - Bathrooms only offer floorings that suit wet areas.
-- **Furniture and carpentry catalogue.** About 45 items at real sizes in mm.
-  - Drag, rotate and resize items. They snap to a 50 mm grid and to wall faces.
-  - Clearances to the nearest walls show live while an item is selected.
-  - An item turns red when it overlaps a wall or another piece.
-- **3D view.** The **2D / 3D** toggle builds the flat in 3D from your current layout: walls at ceiling height, windows, doors, your flooring and paint, and every piece of furniture.
-  - Orbit around it, or switch walls to **Cut-away** to see into every room from above.
-  - **Eye level** puts you inside at 1.6 m. Drag to look around and use W A S D to walk. Double-click any floor to jump there.
-  - Click to select, and drag furniture to move it in 3D. Edits made in either view show in both.
-  - The 3D engine (three.js) loads from a CDN the first time you open the view.
-- **Measure tool.** Drag on the plan to measure any distance in mm.
-- **Budget.**
-  - The total is grouped into hacking, flooring, painting, built-in carpentry (priced per metre run), loose furniture, and electrical and services.
-  - It adds a contingency buffer and GST, and tracks the total against your budget.
-  - Every rate can be edited in the **Rates** tab.
-- **Layouts.**
-  - Changes autosave in your browser, and you can save named layouts.
-  - Undo and redo are available.
-  - To share a layout or back it up, copy it as layout code, then load it again by pasting the code or opening a `.json` file.
+The 3D model fills the screen. Everything else floats on top of it, so the model stays the focus:
+
+- **Plan inset (bottom right).** A live floor plan that shows where you're looking. Click a room on it to fly the camera there. Use the expand button, or press **Tab**, to swap the plan and the 3D view.
+- **Tool rail (left).** Furnish, Finishes, Walls, Measure and Budget. Each tool opens one panel, and only that panel.
+- **Selection bar (bottom).** Click anything to get its actions in one place:
+  - **Furniture:** size, rotate, duplicate, delete.
+  - **Rooms:** flooring and paint.
+  - **Walls:** remove or restore, with the cost. Structural walls show as locked.
+- **Camera (top).** *Overview* to orbit the flat, *Walk* to explore at eye level (W A S D to move), and *Cut-away* to lower the walls. Double-click any floor to walk there.
+
+## Features
+
+- **Floor plan to scale** from the HDB plan, with dimension strings.
+- **Walls.** Structural walls (shaded black on the HDB plan) are locked. Partitions can be removed, and bathroom walls come with HDB warnings.
+- **Flooring and paint per room.** Six flooring types with tones, and 10 paint colours. You can apply one flooring across every dry room.
+- **About 45 furniture and carpentry items** at real sizes in mm.
+  - Drag them in 3D or 2D. They snap to a 50 mm grid and to walls.
+  - Clearances to the walls show in the plan.
+  - An item is flagged when it overlaps a wall or another piece.
+- **Measure tool** on the plan.
+- **Budget.** Grouped costs, contingency, GST, comparison against your budget, and editable rates.
+- **Layouts.** Undo and redo, autosave, named layouts, and a layout code for sharing.
+
+## Performance
+
+- The 3D scene is built once and then updated incrementally. Only the furniture that changed is rebuilt.
+- Shared geometry keeps memory low.
+- Shadows recalculate only when the scene changes.
+- Frames are drawn only while something is moving, so the page does no work while idle.
+- The 3D engine (three.js r128) loads from a CDN. If it can't load, the app falls back to the plan view.
 
 ## Keyboard shortcuts
 
@@ -43,6 +46,8 @@ It's a single `index.html` file with no build step. Open it in a browser to use 
 | Ctrl+D | Duplicate |
 | Arrows (Shift) | Nudge by 10 mm (100 mm) |
 | M | Measure tool |
+| Tab | Swap plan and 3D |
+| W A S D | Walk (in Walk mode) |
 | Ctrl+Z / Ctrl+Shift+Z | Undo / redo |
 | Esc | Deselect |
 
