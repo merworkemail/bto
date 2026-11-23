@@ -36,6 +36,9 @@ The 3D model fills the screen. Everything else floats on top of it, so the model
   - See how many afternoon hours of sun each room gets.
   - Day, Sunset and Night are real times. North arrows show on the plan and in 3D.
   - The view outside the windows is drawn from level 25.
+- **Neighbouring blocks.** Blocks 74A (its other wings), 74B, 75A and 75B are modelled from the site plan at their planned heights. The sun study says which windows they put in shadow, and the blocks are visible through your windows when walking.
+- **Window heights.** The W1 three-quarter-height windows (bedrooms and living front) and the standard windows match the HDB plan in 3D, and are labelled on the plan.
+- **Share by link.** **File → Share a link** creates a short link to the exact design, using the system share sheet on phones. Opening it adds the design as a new option.
 - **Character.** Walk as a man (177 cm) or a woman (170 cm). Both heights can be edited, and first person uses that person's eye level.
 - **Versions and history.** Under **File → Versions & history**, save named versions of each design option. The planner also keeps automatic snapshots every few minutes and before restores and resets. Restoring saves the current state first.
 - **Doors.** Tap any door in 2D or 3D to open or close it, or use the all-doors button.
@@ -52,7 +55,7 @@ The 3D model fills the screen. Everything else floats on top of it, so the model
 - **Floor plan to scale** from the HDB plan, with dimension strings.
 - **Walls.** Structural walls (shaded black on the HDB plan) are locked. Partitions can be removed, and bathroom walls come with HDB warnings.
 - **Flooring and paint per room.** Six flooring types with tones, and 10 paint colours. You can apply one flooring across every dry room.
-- **About 45 furniture and carpentry items** at real sizes in mm.
+- **About 60 furniture, appliance and carpentry items**, including storage and bunk beds, a wall-mounted TV, a standing desk, a dishwasher, a tall oven unit, a stacked washer-dryer, a ceiling drying rack, a water heater, an aircon condenser and a piano at real sizes in mm.
   - Drag them in 3D or 2D. They snap to a 50 mm grid and to walls.
   - Clearances to the walls show in the plan.
   - An item is flagged when it overlaps a wall or another piece.

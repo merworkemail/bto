@@ -106,6 +106,7 @@ svg.ic.sm { width: 16px; height: 16px; }
 .roomlist2 button { text-align: left; padding: 9px 10px; border-radius: 9px; font-size: 13.5px; display: flex; justify-content: space-between; }
 .roomlist2 button:hover, .roomlist2 button[aria-selected="true"] { background: var(--surface-2); }
 .roomlist2 button small { color: var(--muted); }
+.pop.sharepop { left: auto; right: var(--gr); top: calc(var(--gt) + 56px); width: min(380px, calc(100vw - 32px)); }
 .pop.sunpop { left: auto; right: var(--gr); top: calc(var(--gt) + 60px); width: min(360px, calc(100vw - 32px)); }
 .sunrow { display: flex; gap: 12px; align-items: flex-end; }
 .sunrow input[type=range] { width: 100%; accent-color: var(--accent); height: 36px; }
@@ -376,7 +377,7 @@ textarea { width: 100%; min-height: 72px; border: 1px solid var(--line-strong); 
 #plan.is-mini .item, #plan.is-mini .room, #plan.is-mini .wall rect { cursor: pointer; }
 #plan.is-mini .wall.k-part:hover rect, #plan.is-mini .wall.k-wet:hover rect { fill: var(--wall); }
 
-@media (max-width: 1360px) { .tc .seg button span { display: none; } .tc .seg button { padding: 0 10px; } }
+@media (max-width: 1560px) { .tc .seg button span { display: none; } .tc .seg button { padding: 0 10px; } }
 /* ---- Tablet ---- */
 @media (max-width: 1100px) {
   :root { --mini-w: 240px; --mini-h: 172px; --drawer-w: 320px; }
@@ -486,6 +487,7 @@ textarea { width: 100%; min-height: 72px; border: 1px solid var(--line-strong); 
 .issue small { display: block; color: var(--muted); font-size: 12px; }
 .allclear { display: flex; gap: 10px; align-items: center; padding: 14px; border-radius: 12px; background: var(--accent-weak); color: var(--ink); font-size: 13px; }
 .door-blocked { fill: var(--danger); fill-opacity: .16; stroke: none; pointer-events: none; }
+.win-t { font: 600 150px var(--mono); fill: var(--muted); text-anchor: middle; pointer-events: none; }
 .walk-gap { stroke: var(--warn); stroke-width: 2px; stroke-dasharray: 5 4; vector-effect: non-scaling-stroke; }
 .walk-gap-t { font: 600 150px var(--mono); fill: var(--warn); text-anchor: middle; paint-order: stroke; stroke: var(--paper); stroke-width: 40px; }
 .door-hit { stroke: transparent; stroke-width: 14px; vector-effect: non-scaling-stroke; fill: none; cursor: pointer; pointer-events: stroke; }
@@ -633,6 +635,7 @@ button.brand:hover { border-color: var(--line-strong); }
   <symbol id="i-doors" viewBox="0 0 24 24"><path d="M4 21h16M6 21V3.5h8V21"/><path d="M14 5.5l5 1.5v14"/><path d="M11.5 12v.5"/></symbol>
   <symbol id="i-clock" viewBox="0 0 24 24"><circle cx="12" cy="12" r="8.5"/><path d="M12 7.5V12l3 2"/></symbol>
   <symbol id="i-star" viewBox="0 0 24 24"><path d="M12 3.8l2.5 5.2 5.6.7-4.1 3.9 1 5.6-5-2.8-5 2.8 1-5.6-4.1-3.9 5.6-.7z"/></symbol>
+  <symbol id="i-share" viewBox="0 0 24 24"><circle cx="18" cy="5.5" r="2.5"/><circle cx="6" cy="12" r="2.5"/><circle cx="18" cy="18.5" r="2.5"/><path d="M8.2 10.8l7.6-4M8.2 13.2l7.6 4"/></symbol>
   <symbol id="i-eye" viewBox="0 0 24 24"><path d="M2.5 12S6 5.5 12 5.5 21.5 12 21.5 12 18 18.5 12 18.5 2.5 12 2.5 12z"/><circle cx="12" cy="12" r="2.8"/></symbol>
 </svg>
 
@@ -655,6 +658,7 @@ button.brand:hover { border-color: var(--line-strong); }
   <svg class="northarrow" id="north" viewBox="-22 -22 44 44" role="img" aria-label="North arrow"><circle r="20" fill="var(--surface)" stroke="var(--line-strong)"/><g id="north-rot"><path d="M0 -15 L5 3 L0 0 L-5 3 Z" fill="var(--danger)"/><path d="M0 15 L5 -3 L0 0 L-5 -3 Z" fill="var(--muted)" opacity=".5"/></g><text id="north-n" text-anchor="middle" font-size="7" font-weight="700" fill="var(--ink)" font-family="Inter, sans-serif">N</text></svg>
   <div class="card pop charpop" id="char-pop" hidden role="dialog" aria-label="Character"></div>
   <div class="card pop sunpop" id="sun-pop" hidden role="dialog" aria-label="Sun study"></div>
+  <div class="card pop sharepop" id="share-pop" hidden role="dialog" aria-label="Share"></div>
 
   <div class="tr">
     <div class="card seg ba" role="group" aria-label="Compare with the flat as handed over">
@@ -780,14 +784,16 @@ const WALLS = [
   { id: 'w_bdiv', kind: 'wet', name: 'Bath 1 / Bath 2', rects: [V(3840,5000,6425,100)], len: 1550 },
 ];
 
+// Window types from the HDB block plan for unit 509: W1 = three-quarter-height window; others standard height.
+const WIN_TYPES = { w1: { label: 'W1', name: 'Three-quarter-height window', sill: 650, head: 2250 }, std: { label: '', name: 'Standard window', sill: 1000, head: 2100 }, high: { label: '', name: 'High window (bathroom)', sill: 1500, head: 2100 } };
 const WINDOWS = [
-  { x1: 450, y1: 0, x2: 3150, y2: 0 },
-  { x1: 3350, y1: 0, x2: 4950, y2: 0 },
-  { x1: 6940, y1: 0, x2: 8780, y2: 0 },
-  { x1: 9500, y1: 1450, x2: 12200, y2: 1450 },
-  { x1: 12650, y1: 3550, x2: 12650, y2: 5025 },
-  { x1: 0, y1: 2200, x2: 0, y2: 4600 },
-  { x1: 2800, y1: 6500, x2: 3600, y2: 6500 },
+  { x1: 450, y1: 0, x2: 3150, y2: 0, t: 'w1' },
+  { x1: 3350, y1: 0, x2: 4950, y2: 0, t: 'w1' },
+  { x1: 6940, y1: 0, x2: 8780, y2: 0, t: 'w1' },
+  { x1: 9500, y1: 1450, x2: 12200, y2: 1450, t: 'w1' },
+  { x1: 12650, y1: 3550, x2: 12650, y2: 5025, t: 'std' },
+  { x1: 0, y1: 2200, x2: 0, y2: 4600, t: 'std' },
+  { x1: 2800, y1: 6500, x2: 3600, y2: 6500, t: 'high' },
 ];
 // hinge, leaf length, closed angle a0, open angle a1 (deg, SVG coords)
 const DOORS = [
@@ -829,7 +835,7 @@ const DEFAULT_RATES = {
   f_asis: 0, f_spc: 45, f_tile6: 85, f_tile12: 115, f_timber: 150, f_micro: 180, f_carpet: 60,
   paint: 7,
   hack: 40, makegood: 250, wet: 1500,
-  c_wardrobe: 1100, c_kbase: 900, c_ktop: 550, c_shoe: 700, c_tv: 650, c_desk: 600, c_shelf: 700, c_vanity: 900, c_window: 650,
+  c_wardrobe: 1100, c_kbase: 900, c_ktop: 550, c_shoe: 700, c_tv: 650, c_desk: 600, c_shelf: 700, c_vanity: 900, c_window: 650, c_tall: 1800,
   x_light: 60, x_power: 85, x_aircon: 6200, x_fan: 350, x_curtain: 450, x_overlay: 3200, x_door: 450, x_clean: 400,
   x_down: 45, x_data: 90, ce_flat: 70, ce_cove: 60,
 };
@@ -838,7 +844,7 @@ const RATE_LABELS = [
   ['Flooring (S$ per m², supply + lay)', [['f_spc', 'SPC vinyl planks'], ['f_tile6', 'Homogeneous tile 600×600'], ['f_tile12', 'Porcelain 1200×600'], ['f_timber', 'Engineered timber'], ['f_micro', 'Microcement'], ['f_carpet', 'Carpet tiles']]],
   ['Painting', [['paint', 'Paint, walls + ceiling (S$/m²)']]],
   ['Hacking', [['hack', 'Hack wall (S$/m² of wall)'], ['makegood', 'Make good per wall (S$)'], ['wet', 'Bathroom wall surcharge (S$)']]],
-  ['Carpentry (S$ per metre run)', [['c_wardrobe', 'Wardrobe, full height'], ['c_kbase', 'Kitchen base cabinet + quartz top'], ['c_ktop', 'Kitchen wall cabinet'], ['c_shoe', 'Shoe cabinet'], ['c_tv', 'TV console / feature'], ['c_desk', 'Study table'], ['c_shelf', 'Bookshelf'], ['c_vanity', 'Bathroom vanity'], ['c_window', 'Window seat / bay storage']]],
+  ['Carpentry (S$ per metre run)', [['c_wardrobe', 'Wardrobe, full height'], ['c_kbase', 'Kitchen base cabinet + quartz top'], ['c_ktop', 'Kitchen wall cabinet'], ['c_shoe', 'Shoe cabinet'], ['c_tv', 'TV console / feature'], ['c_desk', 'Study table'], ['c_shelf', 'Bookshelf'], ['c_vanity', 'Bathroom vanity'], ['c_window', 'Window seat / bay storage'], ['c_tall', 'Tall unit with oven + microwave housing']]],
   ['Ceilings', [['ce_flat', 'False ceiling (S$/m²)'], ['ce_cove', 'Cove / L-box with LED strip (S$/m run)']]],
   ['Services (S$ each)', [['x_light', 'Lighting point'], ['x_down', 'Downlight point'], ['x_power', 'Power point'], ['x_data', 'Data / TV point'], ['x_aircon', 'Aircon system 4, installed'], ['x_fan', 'Ceiling fan, installed'], ['x_curtain', 'Curtains / blinds per window'], ['x_overlay', 'Bathroom tile overlay'], ['x_door', 'Bedroom door replacement'], ['x_clean', 'Post-reno cleaning']]],
 ];
@@ -908,6 +914,20 @@ const CAT = {
   bi_vanity:    { name: 'Vanity cabinet', cat: 'Built-in', w: 800, d: 500, rate: 'c_vanity', icon: 'vanity' },
   bi_seat:      { name: 'Window seat storage', cat: 'Built-in', w: 1800, d: 500, rate: 'c_window', icon: 'cab' },
   // electrical: placed on the plan, counted into the budget (back edge = wall side for wall-mounted points)
+  bed_storage:  { name: 'Storage bed, queen', cat: 'Bedroom', w: 1630, d: 2130, price: 1500, icon: 'bedstore' },
+  bed_bunk:     { name: 'Bunk bed', cat: 'Bedroom', w: 1050, d: 2050, price: 900, icon: 'bunk' },
+  bench:        { name: 'Bench / ottoman', cat: 'Bedroom', w: 1200, d: 420, price: 250, icon: 'bench' },
+  tv_wall:      { name: 'TV, wall-mounted 65"', cat: 'Living & dining', w: 1460, d: 80, price: 1600, icon: 'tvwall', over: true },
+  console:      { name: 'Console table', cat: 'Living & dining', w: 1200, d: 350, price: 300, icon: 'console' },
+  floorlamp:    { name: 'Floor lamp', cat: 'Living & dining', w: 400, d: 400, price: 150, icon: 'floorlamp' },
+  piano:        { name: 'Upright piano', cat: 'Living & dining', w: 1500, d: 600, price: 4500, icon: 'piano' },
+  desk_stand:   { name: 'Standing desk', cat: 'Study', w: 1400, d: 700, price: 650, icon: 'deskstand' },
+  dishwasher:   { name: 'Dishwasher (under counter)', cat: 'Kitchen & yard', w: 600, d: 580, price: 900, icon: 'dishwasher', over: true },
+  bi_tall:      { name: 'Tall unit, oven + microwave', cat: 'Built-in', w: 600, d: 600, rate: 'c_tall', icon: 'tall' },
+  washstack:    { name: 'Washer + dryer, stacked', cat: 'Kitchen & yard', w: 600, d: 650, price: 1700, icon: 'washstack' },
+  dry_rack:     { name: 'Ceiling drying rack', cat: 'Kitchen & yard', w: 1500, d: 500, price: 250, icon: 'dryrack', over: true },
+  ac_cond:      { name: 'Aircon condenser (ledge)', cat: 'Kitchen & yard', w: 850, d: 330, price: 0, icon: 'condenser', note: 'Covered by the aircon system price' },
+  heater:       { name: 'Storage water heater', cat: 'Bath', w: 420, d: 420, price: 350, icon: 'heater', over: true },
   custom:       { name: 'Custom item', cat: 'My items', w: 1000, d: 600, price: 0, icon: 'custom', custom: true },
   e_light:      { name: 'Ceiling light point', cat: 'Electrical', w: 300, d: 300, erate: 'x_light', icon: 'elight', elec: 'ceil' },
   e_down:       { name: 'Downlight', cat: 'Electrical', w: 200, d: 200, erate: 'x_down', icon: 'edown', elec: 'ceil' },
@@ -919,7 +939,7 @@ const CAT = {
   e_ac:         { name: 'Aircon fan coil', cat: 'Electrical', w: 900, d: 250, price: 0, icon: 'eac', elec: 'wall', h: 2050, note: 'Covered by the aircon system price' },
 };
 // also list built vanity under Bath
-const ALSO_IN = { bi_vanity: 'Bath', bi_kbase: 'Kitchen & yard', bi_ktop: 'Kitchen & yard', bi_wardrobe: 'Bedroom', bi_desk: 'Study', bi_shelf: 'Study' };
+const ALSO_IN = { bi_tall: 'Kitchen & yard', bi_vanity: 'Bath', bi_kbase: 'Kitchen & yard', bi_ktop: 'Kitchen & yard', bi_wardrobe: 'Bedroom', bi_desk: 'Study', bi_shelf: 'Study' };
 
 /* ---------------- Top-view drawings (local coords 0..w, 0..d; back edge = top) ---------------- */
 const r_ = (x, y, w, h, c = 'fl', rx = 0) => `<rect x="${x}" y="${y}" width="${Math.max(0, w)}" height="${Math.max(0, h)}" rx="${rx}" class="${c}"/>`;
@@ -1025,6 +1045,22 @@ Object.assign(DRAW, {
   edata(w, d) { return r_(0, 0, w, d, 'el') + p_(`M${w * .3} ${d * .8}L${w / 2} ${d * .2}L${w * .7} ${d * .8}Z`, 'el-l'); },
   eac(w, d) { let s = r_(0, 0, w, d, 'el', 30); for (let i = 1; i < 4; i++) s += l_(w * .08, d * i / 4, w * .92, d * i / 4, 'el-l'); return s; },
 });
+Object.assign(DRAW, {
+  bedstore(w, d) { return DRAW.bed(w, d) + l_(40, d - 60, w - 40, d - 60) + l_(w / 2, d * 0.55, w / 2, d - 60, 'fdash'); },
+  bunk(w, d) { return DRAW.bed(w, d) + r_(20, 20, w - 40, d - 40, 'fdash', 30) + l_(w - 60, d * 0.25, w - 60, d * 0.7, 'fd') + l_(w - 120, d * 0.25, w - 120, d * 0.7, 'fd'); },
+  bench(w, d) { return r_(0, 0, w, d, 'fl', Math.min(w, d) * 0.3) + r_(40, 40, w - 80, d - 80, 'fs', Math.min(w, d) * 0.22); },
+  tvwall(w, d) { return r_(0, 0, w, d, 'fs', 10) + l_(w * 0.1, d, w * 0.9, d, 'fl'); },
+  console(w, d) { return r_(0, 0, w, d, 'fl', 10) + l_(30, d / 2, w - 30, d / 2, 'fdash'); },
+  floorlamp(w, d) { const R = Math.min(w, d) / 2; return c_(w / 2, d / 2, R * 0.9, 'fs') + c_(w / 2, d / 2, R * 0.35, 'fl') + l_(w / 2 - R * 0.6, d / 2, w / 2 + R * 0.6, d / 2, 'fd') + l_(w / 2, d / 2 - R * 0.6, w / 2, d / 2 + R * 0.6, 'fd'); },
+  piano(w, d) { let s = r_(0, 0, w, d, 'fl', 15) + r_(40, d * 0.55, w - 80, d * 0.35, 'fs'); for (let x = 60; x < w - 60; x += 70) s += l_(x, d * 0.55, x, d * 0.9); return s; },
+  deskstand(w, d) { return r_(0, 0, w, d, 'fl', 20) + r_(w * 0.08, d * 0.15, 60, d * 0.7, 'fs') + r_(w * 0.92 - 60, d * 0.15, 60, d * 0.7, 'fs') + r_(w * 0.35, 60, w * 0.3, 45, 'fs', 10); },
+  dishwasher(w, d) { return r_(0, 0, w, d, 'fs', 15) + l_(0, d - 70, w, d - 70) + r_(w * 0.3, d - 50, w * 0.4, 25, 'fd', 8); },
+  tall(w, d) { return r_(0, 0, w, d, 'fl') + r_(60, 60, w - 120, d * 0.4, 'fs', 8) + r_(60, d * 0.55, w - 120, d * 0.3, 'fs', 8); },
+  washstack(w, d) { return DRAW.washer(w, d) + r_(20, 20, w - 40, d - 40, 'fdash', 20); },
+  dryrack(w, d) { let s = r_(0, 0, w, d, 'fdash'); for (let y = d / 5; y < d; y += d / 5) s += l_(30, y, w - 30, y, 'fd'); return s; },
+  condenser(w, d) { const R = Math.min(w * 0.5, d) * 0.38; return r_(0, 0, w, d, 'fl', 20) + c_(w * 0.38, d / 2, R, 'fs') + c_(w * 0.38, d / 2, R * 0.3, 'fd') + l_(w * 0.75, d * 0.2, w * 0.75, d * 0.8) + l_(w * 0.85, d * 0.2, w * 0.85, d * 0.8); },
+  heater(w, d) { const R = Math.min(w, d) / 2 - 10; return c_(w / 2, d / 2, R, 'fs') + c_(w / 2, d / 2, R * 0.45, 'fd'); },
+});
 DRAW.custom = (w, d, it) => { const fs = Math.max(70, Math.min(200, Math.min(w, d) * 0.2)); const name = it && it.label ? it.label : 'Custom'; return r_(0, 0, w, d, 'fl', 30) + r_(50, 50, w - 100, d - 100, 'fd', 20) + `<text x="${w / 2}" y="${d / 2}" class="item-label" style="font-size:${fs}px" dominant-baseline="middle">${esc(name.length > 18 ? name.slice(0, 17) + '…' : name)}</text>`; };
 function drawItem(type, w, d, it) { const t = CAT[type]; return (DRAW[t.icon] || DRAW.cab)(w, d, it); }
 /* colour and material choices */
@@ -1034,7 +1070,7 @@ const SWATCHES = {
   lam: [['Warm white', '#ece6da'], ['Light oak', '#d5bc96'], ['Walnut', '#806048'], ['Sage', '#a9b59d'], ['Greige', '#b9b1a4'], ['Navy', '#3a4a63'], ['Charcoal', '#4a4d50']],
   custom: [['Warm white', '#ece6da'], ['Light oak', '#d5bc96'], ['Walnut', '#806048'], ['Stone grey', '#8b979c'], ['Sand', '#c9b79c'], ['Olive', '#7a7f55'], ['Navy', '#3d4f6b'], ['Charcoal', '#45494d']],
 };
-function swatchSet(it) { const t = CAT[it.type]; if (t.custom) return 'custom'; if (t.elec) return null; if (t.rate) return 'lam'; if (t.icon === 'sofa' || t.icon === 'sofaL') return 'fabric'; if (['bed', 'dining', 'round', 'coffee', 'drawer', 'desk', 'deskL', 'shelf', 'wardrobe', 'cot', 'island', 'stool'].includes(t.icon)) return 'wood'; return null; }
+function swatchSet(it) { const t = CAT[it.type]; if (t.custom) return 'custom'; if (t.elec) return null; if (t.rate) return 'lam'; if (t.icon === 'sofa' || t.icon === 'sofaL') return 'fabric'; if (['bed', 'bedstore', 'bunk', 'bench', 'console', 'deskstand', 'dining', 'round', 'coffee', 'drawer', 'desk', 'deskL', 'shelf', 'wardrobe', 'cot', 'island', 'stool'].includes(t.icon)) return 'wood'; return null; }
 function shade(hex, k) { const n = parseInt(hex.slice(1), 16); let r = n >> 16, g = (n >> 8) & 255, b = n & 255; const t = k < 0 ? 0 : 255, a = Math.abs(k); r = Math.round(r + (t - r) * a); g = Math.round(g + (t - g) * a); b = Math.round(b + (t - b) * a); return '#' + ((1 << 24) | (r << 16) | (g << 8) | b).toString(16).slice(1); }
 
 /* ---------------- Starter layout ---------------- */
@@ -1226,8 +1262,8 @@ function doorBlocks(d, f) { // sample the door's swing (quarter circle) and test
   for (let i = 1; i <= 6; i++) { const r = d.len * i / 6; for (let j = 0; j <= 8; j++) { const a = (d.a0 + delta * j / 8) * rad, x = d.hx + r * Math.cos(a), y = d.hy + r * Math.sin(a); if (x > f.x + 15 && x < f.x + f.w - 15 && y > f.y + 15 && y < f.y + f.h - 15) return true; } }
   return false;
 }
-const WALL_GAP_TYPES = new Set(['bed_king', 'bed_queen', 'bed_ss', 'bed_single', 'sofa3', 'sofa2', 'sofaL', 'armchair', 'dining4', 'dining6', 'diningR', 'island', 'custom']);
-const NO_WALK_CHECK = new Set(['rug', 'plant', 'coffee', 'bedside', 'stool', 'ochair', 'toilet', 'shower', 'bi_vanity', 'sink', 'hob', 'bi_ktop']);
+const WALL_GAP_TYPES = new Set(['bed_king', 'bed_queen', 'bed_ss', 'bed_single', 'bed_storage', 'bed_bunk', 'sofa3', 'sofa2', 'sofaL', 'armchair', 'dining4', 'dining6', 'diningR', 'island', 'custom']);
+const NO_WALK_CHECK = new Set(['floorlamp', 'ac_cond', 'washstack', 'rug', 'plant', 'coffee', 'bedside', 'stool', 'ochair', 'toilet', 'shower', 'bi_vanity', 'sink', 'hob', 'bi_ktop']);
 function walkways() { // gaps between 150 and 600 mm next to furniture are too tight to walk through
   const list = S.items.filter(it => { const t = CAT[it.type]; return !t.elec && !t.under && !t.over && !NO_WALK_CHECK.has(it.type); });
   const walls = activeWallRects().map(r => ({ r, id: null })), out = [], seen = new Set();
@@ -1386,12 +1422,14 @@ function renderWalls() {
     return `<g class="wall k-${w.kind}${rem ? ' removed' : ''}${sel ? ' sel' : ''}" data-wall="${w.id}">${w.rects.map(r => `<rect x="${r[0]}" y="${r[1]}" width="${r[2]}" height="${r[3]}"/>`).join('')}</g>`;
   }).join('');
 }
+function WINDOW_FACE_PLAN(w) { const hz = w.y1 === w.y2, mx = (w.x1 + w.x2) / 2, my = (w.y1 + w.y2) / 2; if (hz) { const outUp = !!roomAt(mx, my + 300); return { x: mx, y: my + (outUp ? -260 : 400) }; } const outLeft = !!roomAt(mx + 300, my); return { x: mx + (outLeft ? -330 : 330), y: my + 60 }; }
 function renderOpenings() {
   let s = '';
   WINDOWS.forEach(w => {
     const hz = w.y1 === w.y2, t = 150;
     if (hz) s += `<rect x="${w.x1}" y="${w.y1 - t / 2}" width="${w.x2 - w.x1}" height="${t}" class="win-glass"/><line x1="${w.x1}" y1="${w.y1}" x2="${w.x2}" y2="${w.y2}" class="win-line"/>`;
     else s += `<rect x="${w.x1 - t / 2}" y="${w.y1}" width="${t}" height="${w.y2 - w.y1}" class="win-glass"/><line x1="${w.x1}" y1="${w.y1}" x2="${w.x2}" y2="${w.y2}" class="win-line"/>`;
+    const T = WIN_TYPES[w.t || 'std']; if (T.label) { const f = WINDOW_FACE_PLAN(w); s += `<text x="${f.x}" y="${f.y}" class="win-t">${T.label}</text>`; }
   });
   const removedDoors = new Set(WALLS.filter(w => w.door && S.walls[w.id] && S.walls[w.id].removed).map(w => w.door));
   DOORS.forEach(d => {
@@ -1845,7 +1883,7 @@ function dolly3D(k) {
 /* ---- Scenery: 360° panorama seen from a high floor, plus time-of-day lighting ---- */
 /* Site: Blk 74A Tanglin Halt Cascadia, unit #25-509. On the HDB site plan the block is turned ~27° anticlockwise,
    so "up" on this floor plan points to bearing 333° (NNW). */
-const SITE = { unit: '#25-509', level: 25, planUp: 333, lat: 1.297, lon: 103.79, drop: 130 };
+const SITE = { unit: '#25-509', level: 25, planUp: 339, lat: 1.297, lon: 103.79, drop: 130, floorH: 2.8 };
 const bearingVec = b => { const t = (b - SITE.planUp) * Math.PI / 180; return { x: Math.sin(t), z: -Math.cos(t) }; }; // plan x / plan y(down)
 const COMPASS = ['N', 'NNE', 'NE', 'ENE', 'E', 'ESE', 'SE', 'SSE', 'S', 'SSW', 'SW', 'WSW', 'W', 'WNW', 'NW', 'NNW'];
 const compass = b => COMPASS[Math.round(((b % 360) + 360) % 360 / 22.5) % 16];
@@ -1865,8 +1903,41 @@ const WINDOW_FACE = WINDOWS.map(w => { const hz = w.y1 === w.y2, mx = (w.x1 + w.
   const a = hz ? roomAt(mx, my + 300) : roomAt(mx + 300, my), b = hz ? roomAt(mx, my - 300) : roomAt(mx - 300, my), r = a || b;
   const bearing = hz ? (a ? SITE.planUp : SITE.planUp + 180) : (a ? SITE.planUp + 270 : SITE.planUp + 90); // window faces away from its room
   return { w, room: r, bearing: ((bearing % 360) + 360) % 360 }; });
-function sunOnWindows(month, hour) { const sp = solarPos(month, hour); if (sp.el < 2) return []; return WINDOW_FACE.filter(f => Math.abs(((sp.az - f.bearing + 540) % 360) - 180) < 78); }
+function sunOnWindows(month, hour) { return sunState(month, hour).lit; }
 const TOD_HOURS = { day: 11, sunset: 18.75, night: 21 };
+/* Neighbouring towers, measured from the HDB site plan (scale bar: 150 m). Each wing: two centreline ends in site-plan pixels
+   (zoomed sheet, 6.615 px per metre, north up), approx. depth 11 m, height from storeys. Origin = centre of unit 509. */
+const SITE_PX = { ox: 740, oy: 440, k: 6.615 };
+const NEIGHBOURS = [
+  ['Blk 74A, units 505/507 wing', 510, 545, 690, 480, 47], ['Blk 74A, units 513/515 wing', 735, 560, 895, 500, 47], ['Blk 74A, units 501/503 wing', 585, 680, 740, 620, 47],
+  ['Blk 74A, unit 511', 820, 400, 880, 375, 47, true],
+  ['Blk 75A', 500, 90, 660, 40, 47], ['Blk 75A', 415, 260, 575, 210, 47], ['Blk 75A', 365, 175, 500, 130, 47], ['Blk 75A', 655, 160, 760, 275, 47],
+  ['Blk 75B', 155, 320, 310, 270, 25], ['Blk 75B', 245, 470, 405, 400, 25], ['Blk 75B', 30, 330, 120, 450, 25], ['Blk 75B', 105, 530, 230, 490, 25],
+  ['Blk 74B', 350, 780, 510, 720, 25], ['Blk 74B', 450, 890, 600, 840, 25], ['Blk 74B', 215, 780, 300, 900, 25], ['Blk 74B', 300, 960, 440, 925, 25],
+].map(([name, x1, y1, x2, y2, storeys, ownWing]) => {
+  const E = x => (x - SITE_PX.ox) / SITE_PX.k, N = y => -(y - SITE_PX.oy) / SITE_PX.k;
+  const e1 = E(x1), n1 = N(y1), e2 = E(x2), n2 = N(y2);
+  return { name, ownWing: !!ownWing, cE: (e1 + e2) / 2, cN: (n1 + n2) / 2, len: Math.hypot(e2 - e1, n2 - n1) + (ownWing ? 0 : 2), dep: 11, brg: Math.atan2(e2 - e1, n2 - n1) * 180 / Math.PI, h: storeys * SITE.floorH + 3 };
+}).filter(b => !b.ownWing);
+const unitBase = () => (SITE.level - 1) * SITE.floorH; // floor level of #25 above ground, m
+function planToEN(xmm, ymm) { // plan mm -> metres east/north of unit centre
+  const dx = (xmm - 6325) / 1000, up = -(ymm - 4525) / 1000, U = SITE.planUp * Math.PI / 180, R = (SITE.planUp + 90) * Math.PI / 180;
+  return { E: dx * Math.sin(R) + up * Math.sin(U), N: dx * Math.cos(R) + up * Math.cos(U) };
+}
+function shadedBy(f, sp) { // which neighbouring block blocks the sun for this window, if any
+  const w = f.w, p = planToEN((w.x1 + w.x2) / 2, (w.y1 + w.y2) / 2), nb = f.bearing * Math.PI / 180;
+  const ox = p.E + Math.sin(nb) * 0.4, oy = p.N + Math.cos(nb) * 0.4, z = unitBase() + (WIN_TYPES[w.t || 'std'].sill + WIN_TYPES[w.t || 'std'].head) / 2000;
+  const a = sp.az * Math.PI / 180, dx = Math.sin(a), dy = Math.cos(a), tanEl = Math.tan(sp.el * Math.PI / 180);
+  for (const b of NEIGHBOURS) {
+    const t = b.brg * Math.PI / 180, ux = Math.sin(t), uy = Math.cos(t), vx = uy, vy = -ux; // long axis u, short axis v
+    const rx = ox - b.cE, ry = oy - b.cN, pu = rx * ux + ry * uy, pv = rx * vx + ry * vy, du = dx * ux + dy * uy, dv = dx * vx + dy * vy;
+    let t0 = 0, t1 = 400; const slab = (p0, d, hl) => { if (Math.abs(d) < 1e-9) return Math.abs(p0) <= hl; let a1 = (-hl - p0) / d, a2 = (hl - p0) / d; if (a1 > a2) [a1, a2] = [a2, a1]; t0 = Math.max(t0, a1); t1 = Math.min(t1, a2); return t0 <= t1; };
+    if (!slab(pu, du, b.len / 2) || !slab(pv, dv, b.dep / 2)) continue;
+    if (z + t0 * tanEl < b.h) return b;
+  }
+  return null;
+}
+function sunState(month, hour) { const sp = solarPos(month, hour); if (sp.el < 2) return { sp, lit: [], shaded: [] }; const facing = WINDOW_FACE.filter(f => Math.abs(((sp.az - f.bearing + 540) % 360) - 180) < 78); const lit = [], shaded = []; facing.forEach(f => { const b = shadedBy(f, sp); (b ? shaded : lit).push(b ? { ...f, by: b } : f); }); return { sp, lit, shaded }; }
 const TOD = {
   day:    { sun: 0xfff2e0, sunI: 1.15, sunPos: [2.5, 17, 13], hemiSky: 0xffffff, hemiGround: 0x9aa09a, hemiI: 0.62, fillI: 0.28, lampI: 0, exp: 1.05 },
   sunset: { sun: 0xffa463, sunI: 1.25, sunPos: [-13, 5.5, 9], hemiSky: 0xffd2b0, hemiGround: 0x6d5f66, hemiI: 0.48, fillI: 0.12, lampI: 0.35, exp: 1.0 },
@@ -1955,6 +2026,27 @@ function panoTex(tod) {
   if (!panoCache[tod]) { const t = new THREE.CanvasTexture(paintPano(tod)); t.encoding = THREE.sRGBEncoding; t.anisotropy = 4; panoCache[tod] = t; }
   return panoCache[tod];
 }
+let nbGroup = null;
+function buildNeighbours() {
+  nbGroup = new THREE.Group(); nbGroup.visible = false; scene.add(nbGroup);
+  const mkTex = (night) => { const c = document.createElement('canvas'); c.width = 64; c.height = 64; const g = c.getContext('2d'); g.fillStyle = night ? '#000' : '#ece5d8'; g.fillRect(0, 0, 64, 64);
+    if (!night) { g.fillStyle = 'rgba(0,0,0,.08)'; g.fillRect(0, 50, 64, 6); g.fillStyle = '#8796a2'; g.fillRect(8, 16, 18, 22); g.fillRect(38, 16, 18, 22); }
+    else { const r = rng(9); [[8, 16], [38, 16]].forEach(([x, y]) => { g.fillStyle = r() < 0.5 ? '#ffd58a' : '#000'; g.fillRect(x, y, 18, 22); }); }
+    const t = new THREE.CanvasTexture(c); t.wrapS = t.wrapT = THREE.RepeatWrapping; t.encoding = THREE.sRGBEncoding; return t; };
+  const base = mkTex(false), glow = mkTex(true), y0 = -unitBase();
+  NEIGHBOURS.forEach(b => {
+    const m = new THREE.MeshStandardMaterial({ map: base.clone(), emissiveMap: glow.clone(), emissive: new THREE.Color('#ffd58a'), emissiveIntensity: 0, roughness: 0.9 });
+    [m.map, m.emissiveMap].forEach(t => { t.needsUpdate = true; t.repeat.set(Math.round(b.len / 3.2), Math.round(b.h / SITE.floorH)); });
+    const mesh = new THREE.Mesh(new THREE.BoxGeometry(b.len, b.h, b.dep), m);
+    const P = planEN(b.cE, b.cN), v = bearingVec(b.brg);
+    mesh.position.set(P.x, y0 + b.h / 2, P.z); mesh.rotation.y = -Math.atan2(v.z, v.x); nbGroup.add(mesh);
+  });
+}
+function planEN(E, N) { // metres east/north of unit centre -> scene position (metres)
+  const U = SITE.planUp * Math.PI / 180, R = (SITE.planUp + 90) * Math.PI / 180;
+  const dx = E * Math.sin(R) + N * Math.cos(R), up = E * Math.sin(U) + N * Math.cos(U);
+  return { x: 6.325 + dx, z: 4.525 - up };
+}
 function setScenery() {
   if (!V3.ready) return;
   if (!dome) {
@@ -1963,6 +2055,7 @@ function setScenery() {
   }
   const walk = UI.cam === 'walk';
   dome.visible = walk; if (groundMesh) groundMesh.visible = !walk;
+  if (!nbGroup) buildNeighbours(); nbGroup.visible = walk;
   if (gCeil) gCeil.visible = walk && !UI.low;
   gMarks.visible = !(walk && UI.pov === 'first'); // planning markers stay out of the first-person view
   if (avatar) { avatar.visible = walk && UI.pov === 'third'; avatarOpacity(0.62); }
@@ -1977,7 +2070,8 @@ function applyTOD(render = true) {
   const mix = (a, b, k) => new THREE.Color(a).lerp(new THREE.Color(b), Math.max(0, Math.min(1, k)));
   if (el > 0) {
     const k = Math.min(1, el / 30);
-    sunL.color.copy(mix(0xff9a55, 0xfff2e0, (el - 3) / 22)); sunL.intensity = 0.55 + 0.75 * k;
+    const ss = sunState(UI.month, UI.hour), blocked = ss.shaded.length && !ss.lit.length;
+    sunL.color.copy(mix(0xff9a55, 0xfff2e0, (el - 3) / 22)); sunL.intensity = (0.55 + 0.75 * k) * (blocked ? 0.3 : 1);
     const v = bearingVec(sp.az), r = Math.cos(el * Math.PI / 180) * 28, h = Math.max(1.2, Math.sin(el * Math.PI / 180) * 28);
     sunL.position.set(6.3 + v.x * r, h, 4.5 + v.z * r);
     hemiL.color.copy(mix(0xffd2b0, 0xffffff, k)); hemiL.groundColor.copy(mix(0x6d5f66, 0x9aa09a, k)); hemiL.intensity = 0.42 + 0.22 * k;
@@ -1992,6 +2086,7 @@ function applyTOD(render = true) {
   renderer.toneMappingExposure = phase === 'night' ? 1.12 : 1.04;
   scene.background = new THREE.Color(phase === 'night' ? '#161c29' : phase === 'sunset' ? '#e7d9cf' : cssVar('--stage'));
   if (dome) { dome.material.map = panoTex(phase); dome.material.needsUpdate = true; }
+  if (nbGroup) nbGroup.children.forEach(m => { m.material.emissiveIntensity = phase === 'night' ? 0.9 : phase === 'sunset' ? 0.25 : 0; });
   UI.tod = Object.keys(TOD_HOURS).find(k => TOD_HOURS[k] === UI.hour) || 'custom';
   renderer.shadowMap.needsUpdate = true;
   if (render) requestRender();
@@ -2106,14 +2201,15 @@ function buildStatic() {
     w.rects.forEach(rc => {
       const [x, y, rw, rh] = rc, horiz = rw >= rh, a = horiz ? x : y, b = horiz ? x + rw : y + rh;
       const wins = WINDOWS.filter(wi => horiz ? (wi.y1 === wi.y2 && wi.y1 >= y && wi.y1 <= y + rh && wi.x2 > x && wi.x1 < x + rw) : (wi.x1 === wi.x2 && wi.x1 >= x && wi.x1 <= x + rw && wi.y2 > y && wi.y1 < y + rh))
-        .map(wi => horiz ? [Math.max(a, wi.x1), Math.min(b, wi.x2)] : [Math.max(a, wi.y1), Math.min(b, wi.y2)]).sort((p, q) => p[0] - q[0]);
+        .map(wi => (horiz ? [Math.max(a, wi.x1), Math.min(b, wi.x2)] : [Math.max(a, wi.y1), Math.min(b, wi.y2)]).concat([WIN_TYPES[wi.t || 'std'].sill, WIN_TYPES[wi.t || 'std'].head])).sort((p, q) => p[0] - q[0]);
       const seg = (s0, s1, z0, z1, m) => horiz ? pbox(gStatic, s0, y, s1 - s0, rh, z0, z1, m || wallMats(s0, y, s1 - s0, rh, w.kind, wallsMode), { wall: w.id }) : pbox(gStatic, x, s0, rw, s1 - s0, z0, z1, m || wallMats(x, s0, rw, s1 - s0, w.kind, wallsMode), { wall: w.id });
       let cur = a;
-      wins.forEach(([s0, s1]) => {
+      wins.forEach(([s0, s1, sill, head]) => {
         seg(cur, s0, 0, H);
-        seg(s0, s1, 0, Math.min(900, H));
-        if (H > 2100) seg(s0, s1, 2100, H);
-        if (H > 900) { const gm = GLASS(); horiz ? pbox(gStatic, s0, y + rh / 2 - 8, s1 - s0, 16, 900, Math.min(2100, H), gm) : pbox(gStatic, x + rw / 2 - 8, s0, 16, s1 - s0, 900, Math.min(2100, H), gm); }
+        seg(s0, s1, 0, Math.min(sill, H));
+        if (H > head) seg(s0, s1, head, H);
+        if (H > sill) { const gm = GLASS(); horiz ? pbox(gStatic, s0, y + rh / 2 - 8, s1 - s0, 16, sill, Math.min(head, H), gm) : pbox(gStatic, x + rw / 2 - 8, s0, 16, s1 - s0, sill, Math.min(head, H), gm);
+          const fr = mat('#d9dcd8', { rough: 0.5 }); horiz ? pbox(gStatic, s0, y + rh / 2 - 30, s1 - s0, 60, sill - 25, sill, fr) : pbox(gStatic, x + rw / 2 - 30, s0, 60, s1 - s0, sill - 25, sill, fr); } // sill
         cur = s1;
       });
       seg(cur, b, 0, H);
@@ -2259,6 +2355,22 @@ function buildItem(it) {
     }
     case 'epower': case 'edata': case 'eswitch': { const h0 = t.h || 300; B(w * 0.1, h0, 0, w * 0.9, h0 + 90, 14, P.white, { rough: 0.4 }); break; }
     case 'eac': { B(0, 2050, 0, w, 2340, d, P.white, { rough: 0.4 }); B(w * 0.06, 2060, d - 6, w * 0.94, 2110, d, P.steel); break; }
+    case 'bedstore': { B(0, 0, 0, w, 400, d, P.wood); B(0, 0, 0, w, 1100, 90, P.woodDark); B(30, 400, 95, w - 30, 600, d - 20, P.white); const two = w > 1300, pw = two ? (w - 180) / 2 : w - 140; for (let i = 0; i < (two ? 2 : 1); i++) { const px = two ? 60 + i * (pw + 60) : 70; B(px, 600, 120, px + pw, 710, 410, P.white); } B(25, 600, d * 0.38, w - 25, 630, d - 15, P.blanket); for (let i = 1; i < 4; i++) B(i * w / 4 - 60, 150, d, i * w / 4 + 60, 175, d + 15, P.metal); break; }
+    case 'bunk': { const post = (x, z) => B(x, 0, z, x + 60, 1650, z + 60, P.wood); post(0, 0); post(w - 60, 0); post(0, d - 60); post(w - 60, d - 60);
+      [300, 1250].forEach(y0 => { B(0, y0, 0, w, y0 + 60, d, P.wood); B(40, y0 + 60, 40, w - 40, y0 + 230, d - 40, P.white); B(60, y0 + 230, 70, w - 60, y0 + 330, 380, P.white); });
+      B(0, 1310, 0, 30, 1600, d, P.wood); B(w - 30, 1310, 0, w, 1600, d * 0.6, P.wood); for (let y = 350; y < 1300; y += 230) B(w - 30, y, d * 0.65, w, y + 30, d * 0.95, P.wood); break; }
+    case 'bench': { B(0, 0, 0, w, 380, d, P.wood); B(20, 380, 20, w - 20, 450, d - 20, C3.cushion); break; }
+    case 'tvwall': { B(0, 1000, 0, w, 1000 + w * 0.5625, 40, C3.black, { rough: 0.3 }); break; }
+    case 'console': { B(0, 760, 0, w, 790, d, P.woodLight); B(30, 0, 30, 70, 760, d - 30, P.woodDark); B(w - 70, 0, 30, w - 30, 760, d - 30, P.woodDark); B(30, 120, 30, w - 30, 140, d - 30, P.woodDark); break; }
+    case 'floorlamp': { Cy(w / 2, d / 2, Math.min(w, d) * 0.3, 0, 25, C3.metal); Cy(w / 2, d / 2, 12, 25, 1450, C3.metal); const sh = new THREE.Mesh(UNIT_CYL, glowMat); sh.scale.set(Math.min(w, d) * 0.42, 320, Math.min(w, d) * 0.42); sh.position.set(0, 1560, 0); sh.castShadow = true; g.add(sh); break; }
+    case 'piano': { B(0, 0, 0, w, 1250, d * 0.45, C3.black, { rough: 0.25 }); B(0, 650, 0, w, 760, d * 0.9, C3.black, { rough: 0.25 }); B(40, 760, d * 0.5, w - 40, 780, d * 0.88, C3.white, { rough: 0.3 }); B(60, 0, d * 0.5, 120, 650, d * 0.9, C3.black); B(w - 120, 0, d * 0.5, w - 60, 650, d * 0.9, C3.black); break; }
+    case 'deskstand': { B(0, 1020, 0, w, 1050, d, P.woodLight); B(w * 0.08, 0, d * 0.15, w * 0.08 + 60, 1020, d * 0.85, C3.metal); B(w * 0.92 - 60, 0, d * 0.15, w * 0.92, 1020, d * 0.85, C3.metal); B(w * 0.35, 1060, 80, w * 0.65, 1450, 110, C3.black); break; }
+    case 'dishwasher': { B(0, 100, 0, w, 860, d, C3.steel, { metal: 0.3, rough: 0.4 }); B(w * 0.3, 780, d, w * 0.7, 800, d + 20, C3.metal); break; }
+    case 'tall': { B(0, 0, 0, w, 2300, d, P.lam); B(40, 900, d, w - 40, 1500, d + 8, C3.black, { rough: 0.3 }); B(40, 1560, d, w - 40, 1900, d + 8, C3.black, { rough: 0.3 }); break; }
+    case 'washstack': { B(0, 0, 0, w, 850, d, C3.white); B(0, 860, 0, w, 1710, d, C3.white); [430, 1290].forEach(y => { const dr = new THREE.Mesh(UNIT_CYL, mat(C3.metal)); dr.scale.set(w * 0.3, 20, w * 0.3); dr.rotation.x = Math.PI / 2; dr.position.set(0, y, d / 2 + 5); g.add(dr); }); break; }
+    case 'dryrack': { const H = S.rates.ceiling; for (let i = 1; i < 5; i++) B(20, H - 450, i * d / 5 - 10, w - 20, H - 430, i * d / 5 + 10, C3.steel); B(w * 0.1, H - 430, d / 2 - 10, w * 0.1 + 20, H, d / 2 + 10, C3.steel); B(w * 0.9 - 20, H - 430, d / 2 - 10, w * 0.9, H, d / 2 + 10, C3.steel); break; }
+    case 'condenser': { B(0, 0, 0, w, 650, d, C3.white, { rough: 0.5 }); const f = new THREE.Mesh(UNIT_CYL, mat(C3.metal)); f.scale.set(Math.min(w * 0.5, 650) * 0.38, 10, Math.min(w * 0.5, 650) * 0.38); f.rotation.x = Math.PI / 2; f.position.set(-w * 0.12, 325, d / 2 + 4); g.add(f); break; }
+    case 'heater': { const H = S.rates.ceiling; Cy(w / 2, d / 2, Math.min(w, d) * 0.45, H - 900, H - 250, C3.white, 1, { rough: 0.4 }); break; }
     case 'custom': { const H = Math.max(10, +it.h || 750), c = it.col || '#c9b79c'; B(0, 0, 0, w, H - 30, d, c); B(15, H - 30, 15, w - 15, H, d - 15, shade(c, 0.15)); break; }
     default: B(0, 0, 0, w, 800, d, body);
   }
@@ -2866,6 +2978,7 @@ function renderMenu() {
   const m = $('#menu'); if (!UI.menu) { m.hidden = true; return; }
   m.hidden = false;
   m.innerHTML = `<div style="display:flex;justify-content:space-between;align-items:center"><h3>File</h3><button class="iconbtn" data-m="close" aria-label="Close"><svg class="ic sm"><use href="#i-close"/></svg></button></div>
+    <div class="sec"><p class="eyebrow">Share</p><div class="btnrow"><button class="btn primary sm" data-m="share"><svg class="ic sm"><use href="#i-share"/></svg>Share a link to this design</button></div><p class="hint">Send it on WhatsApp or email; it opens your exact design.</p></div>
     <div class="sec"><p class="eyebrow">Versions</p><div class="btnrow"><button class="btn sm" data-m="history"><svg class="ic sm"><use href="#i-clock"/></svg>Versions &amp; history</button></div><p class="hint">Save named versions and go back to earlier states.</p></div>
     <div class="sec"><p class="eyebrow">Export for contractors</p><div class="btnrow"><button class="btn primary sm" data-m="export"><svg class="ic sm"><use href="#i-print"/></svg>Open export pack</button></div><p class="hint">Plan, 3D views, schedules and budget on printable A4 pages.</p></div>
     <p class="hint">Your work saves automatically. Switch or add design options from the card at the top left.</p>
@@ -2879,6 +2992,7 @@ $('#menu').addEventListener('click', e => {
   const a = b.dataset.m;
   if (a === 'close') { UI.menu = null; return renderMenu(); }
   if (a === 'export') { UI.menu = null; renderMenu(); openExport(); return; }
+  if (a === 'share') { UI.menu = null; renderMenu(); openShare(); return; }
   if (a === 'history') { UI.menu = null; renderMenu(); openTool('history'); return; }
   if (a === 'save') { const n = ($('#save-name').value || '').trim() || 'Layout ' + new Date().toLocaleString('en-SG', { dateStyle: 'medium', timeStyle: 'short' }); const s = readSaves(); s[n] = { t: Date.now(), s: S }; toast(ls.set(KEY_SAVES, JSON.stringify(s)) ? `Saved “${n}”` : 'This browser blocked saving. Use “Copy layout code” instead.'); return renderMenu(); }
   if (b.dataset.load) { const s = readSaves()[b.dataset.load]; if (s) { mutate(() => { S = normalize(s.s); UI.sel = null; }); toast(`Opened “${b.dataset.load}”`); UI.menu = null; renderMenu(); } return; }
@@ -2907,7 +3021,8 @@ document.addEventListener('keydown', e => {
     case 'b': setBefore(!UI.before); break;
     case 'tab': if (V3.ready) { e.preventDefault(); setMain(UI.main === '3d' ? '2d' : '3d'); } break;
     case 'escape':
-      if (UI.charOpen) { UI.charOpen = false; renderCharPop(); renderTC(); }
+      if (!$('#share-pop').hidden) { $('#share-pop').hidden = true; }
+      else if (UI.charOpen) { UI.charOpen = false; renderCharPop(); renderTC(); }
       else if (!$('#export').hidden) { $('#export').hidden = true; $('#export').innerHTML = ''; }
       else if (dsUI.open) { dsUI.open = false; renderDesigns(); }
       else if (UI.menu) { UI.menu = null; renderMenu(); }
@@ -2962,13 +3077,64 @@ $('#char-pop').addEventListener('click', e => {
 $('#char-pop').addEventListener('keydown', e => { const o = e.target.closest('[data-char]'); if (o && (e.key === 'Enter' || e.key === ' ') && e.target === o) { e.preventDefault(); o.click(); } });
 $('#char-pop').addEventListener('change', e => { const k = e.target.dataset.charh; if (!k) return; const v = Math.round(+e.target.value); if (!(v >= 100 && v <= 220)) { toast('Enter a height between 100 and 220 cm.'); renderCharPop(); return; } setChar({ [k]: v, kind: k }); });
 
+/* ---------------- Share by link ---------------- */
+const PAGES_URL = 'https://merworkemail.github.io/bto/';
+const b64u = bytes => { let s = ''; bytes.forEach(b => { s += String.fromCharCode(b); }); return btoa(s).replace(/\+/g, '-').replace(/\//g, '_').replace(/=+$/, ''); };
+const unb64u = str => { const s = atob(str.replace(/-/g, '+').replace(/_/g, '/')); return Uint8Array.from(s, c => c.charCodeAt(0)); };
+function compactState(st) { // drop ids and defaults to keep links short
+  const o = JSON.parse(JSON.stringify(st)); o.items = o.items.map(({ id, ...r }) => { ['x', 'y', 'w', 'd'].forEach(k => { r[k] = Math.round(r[k]); }); return r; });
+  const rates = {}; Object.keys(o.rates || {}).forEach(k => { if (o.rates[k] !== DEFAULT_RATES[k]) rates[k] = o.rates[k]; }); o.rates = rates; return o;
+}
+async function packDesign() {
+  const json = JSON.stringify({ n: DS.list[DS.active].name, s: compactState(S) }), raw = new TextEncoder().encode(json);
+  if (window.CompressionStream) { try { const z = new Uint8Array(await new Response(new Blob([raw]).stream().pipeThrough(new CompressionStream('deflate-raw'))).arrayBuffer()); return 'z' + b64u(z); } catch (e) {} }
+  return 'j' + b64u(raw);
+}
+async function unpackDesign(code) {
+  const kind = code[0], data = unb64u(code.slice(1));
+  const raw = kind === 'z' ? new Uint8Array(await new Response(new Blob([data]).stream().pipeThrough(new DecompressionStream('deflate-raw'))).arrayBuffer()) : data;
+  const o = JSON.parse(new TextDecoder().decode(raw)); return { name: String(o.n || 'Shared design').slice(0, 40), s: normalize(o.s) };
+}
+function shareBase() { return location.protocol.startsWith('http') && location.hostname.endsWith('github.io') ? location.origin + location.pathname : PAGES_URL; }
+async function openShare() {
+  setBefore(false); persist();
+  const el = $('#share-pop'); el.hidden = false; el.innerHTML = '<p class="hint">Making a link…</p>';
+  let url; try { url = shareBase() + '#d=' + await packDesign(); } catch (e) { el.innerHTML = '<p class="hint">Couldn’t make a link in this browser. Use File → Copy layout code instead.</p>'; return; }
+  const canShare = !!(navigator.share && location.protocol.startsWith('http'));
+  el.innerHTML = `<div style="display:flex;justify-content:space-between;align-items:center"><h3>Share ${esc(DS.list[DS.active].name)}</h3><button class="iconbtn" data-shareclose="1" aria-label="Close"><svg class="ic sm"><use href="#i-close"/></svg></button></div>
+    <p class="hint">Anyone with this link sees your exact design: layout, finishes, walls, electrical and budget. It opens as a new design option on their device, so nothing of theirs is replaced.</p>
+    <input class="input" id="share-url" readonly value="${esc(url)}" aria-label="Share link" style="font-family:var(--mono);font-size:12px">
+    <div class="btnrow">${canShare ? '<button class="btn primary sm" data-sharego="1">Share…</button>' : ''}<button class="btn sm${canShare ? '' : ' primary'}" data-sharecopy="1">Copy link</button></div>
+    <p class="hint">${(url.length / 1000).toFixed(1)}k characters. Later changes aren’t sent automatically; share again after big changes.</p>`;
+  el._url = url;
+}
+$('#share-pop').addEventListener('click', e => {
+  const el = $('#share-pop');
+  if (e.target.closest('[data-shareclose]')) { el.hidden = true; return; }
+  if (e.target.closest('[data-sharecopy]')) { const fb = () => { const i = $('#share-url'); i.focus(); i.select(); toast('Press copy to copy the selected link'); }; try { navigator.clipboard.writeText(el._url).then(() => toast('Link copied'), fb); } catch (err) { fb(); } return; }
+  if (e.target.closest('[data-sharego]')) { navigator.share({ title: `${DS.list[DS.active].name} · Blk 74A ${SITE.unit}`, text: 'Have a look at this renovation plan', url: el._url }).catch(() => {}); }
+});
+async function checkSharedLink() {
+  const m = location.hash.match(/^#d=([zj][A-Za-z0-9_-]+)$/); if (!m) return;
+  let d; try { d = await unpackDesign(m[1]); } catch (e) { toast('This share link is incomplete or damaged. Ask for it to be sent again.'); return; }
+  const tot = withState(d.s, () => budget().total), el = $('#share-pop');
+  el.hidden = false;
+  el.innerHTML = `<h3>Open shared design?</h3><p class="hint"><b style="color:var(--ink)">${esc(d.name)}</b> · ${money(tot)} · ${d.s.items.filter(x => !CAT[x.type].elec).length} items · ${Object.values(d.s.walls).filter(w => w.removed).length} walls removed</p>
+    <p class="hint">It’s added as a new design option. Your own designs stay as they are.</p>
+    <div class="btnrow"><button class="btn primary sm" data-shareadd="1">Add as new option</button><button class="btn sm" data-sharenot="1">Not now</button></div>`;
+  const clear = () => { try { history.replaceState(null, '', location.pathname + location.search); } catch (e) {} el.hidden = true; };
+  el.querySelector('[data-shareadd]').onclick = () => { clear(); addDesign(d.s, d.name + ' (shared)'); toast(`Opened ${d.name} as a new option`); };
+  el.querySelector('[data-sharenot]').onclick = clear;
+}
+
 /* ---------------- Sun study ---------------- */
 function lightPhaseName() { const el = solarPos(UI.month, UI.hour).el; return el > 12 ? 'day' : el > -6 ? 'sunset' : 'night'; }
 function fmtHour(h) { const H = Math.floor(h), M = Math.round((h - H) * 60); const ap = H >= 12 ? 'pm' : 'am', h12 = ((H + 11) % 12) + 1; return `${h12}${M ? ':' + String(M).padStart(2, '0') : ''}${ap}`; }
 function setHour(h) { UI.hour = Math.round(h * 4) / 4; saveUI(); applyTOD(); renderTC(); renderSunPop(); }
 function renderSunPop() {
   const el = $('#sun-pop'); el.hidden = !(UI.sunOpen && UI.main === '3d'); if (el.hidden) return;
-  const sp = solarPos(UI.month, UI.hour), lit = sunOnWindows(UI.month, UI.hour);
+  const st = sunState(UI.month, UI.hour), sp = st.sp, lit = st.lit;
+  const shadeNote = st.shaded.length ? ` <span style="display:block;margin-top:4px">In shadow: ${[...new Set(st.shaded.map(f => `${f.room ? f.room.name : 'window'} (behind ${f.by.name})`))].map(esc).join('; ')}.</span>` : '';
   const rooms = [...new Set(lit.map(f => f.room && f.room.name).filter(Boolean))];
   const hot = {}; for (let h = 14; h < 18.5; h += 0.5) new Set(sunOnWindows(UI.month, h).map(f => f.room && f.room.name).filter(Boolean)).forEach(n => { hot[n] = (hot[n] || 0) + 0.5; }); // each half-hour counted once per room
   const hotList = Object.entries(hot).sort((a, b) => b[1] - a[1]);
@@ -2977,10 +3143,10 @@ function renderSunPop() {
     <div class="sunrow"><label class="field" style="flex:1">Month<select class="input" id="sun-month">${MONTHS.map((m, i) => `<option value="${i}"${i === UI.month ? ' selected' : ''}>${m}</option>`).join('')}</select></label>
       <div class="field" style="flex:2"><span>Time · <b style="color:var(--ink)" id="sun-hlabel">${fmtHour(UI.hour)}</b></span><input type="range" id="sun-hour" min="7" max="22" step="0.25" value="${UI.hour}" aria-label="Time of day"></div></div>
     <div class="btnrow"><button class="btn sm" data-sunh="9">Morning</button><button class="btn sm" data-sunh="13">Noon</button><button class="btn sm" data-sunh="16">Afternoon</button><button class="btn sm" data-sunh="18.75">Sunset</button><button class="btn sm" data-sunh="21">Night</button></div>
-    <p class="sunnow">${sp.el > 0 ? `Sun in the <b>${compass(sp.az)}</b>, ${Math.round(sp.el)}° above the horizon.` : '<b>The sun has set.</b>'} ${sp.el > 2 ? (rooms.length ? `Direct sun now: <b>${rooms.map(esc).join(', ')}</b>.` : 'No direct sun through your windows right now.') : ''}</p>
+    <p class="sunnow">${sp.el > 0 ? `Sun in the <b>${compass(sp.az)}</b>, ${Math.round(sp.el)}° above the horizon.` : '<b>The sun has set.</b>'} ${sp.el > 2 ? (rooms.length ? `Direct sun now: <b>${rooms.map(esc).join(', ')}</b>.` : 'No direct sun through your windows right now.') : ''}${shadeNote}</p>
     <div class="sec"><p class="eyebrow">Afternoon sun, 2–6:30pm in ${MONTHS[UI.month]}</p>${hotList.length ? hotList.map(([n, h]) => `<div class="hotrow"><span>${esc(n)}</span><span class="bar"><i style="width:${Math.min(100, h / 4.5 * 100)}%"></i></span><small>${h} h</small></div>`).join('') : '<p class="hint">No direct afternoon sun this month.</p>'}</div>
     <details class="more"><summary>Which way each window faces</summary><p class="hint" style="margin-top:6px">${faces.map(esc).join(' · ')}</p></details>
-    <p class="hint">From Blk 74A’s orientation on the HDB site plan (bedrooms face about ${SITE.planUp}°, ${compass(SITE.planUp)}) and the sun’s path over Singapore. Neighbouring blocks may shade some windows; that isn’t modelled.</p>`;
+    <p class="hint">From Blk 74A’s orientation on the HDB site plan (bedrooms face about ${SITE.planUp}°, ${compass(SITE.planUp)}), the sun’s path over Singapore, and shadows from Blocks 74A, 74B, 75A and 75B at their planned heights. Blocks positions are read off the brochure, so treat it as a close guide. Future developments on the reserved sites aren’t included.</p>`;
 }
 $('#sun-pop').addEventListener('click', e => {
   if (e.target.closest('[data-sunclose]')) { UI.sunOpen = false; renderSunPop(); renderTC(); return; }
@@ -3005,7 +3171,7 @@ $('#bchip-back').onclick = () => setBefore(false);
 const letter = i => String.fromCharCode(65 + (i % 26));
 function nextName() { for (let i = 0; i < 26; i++) { const n = 'Option ' + letter(i); if (!DS.list.some(d => d.name === n)) return n; } return 'Option ' + (DS.list.length + 1); }
 function withState(st, fn) { const keep = S; S = st; try { return fn(); } finally { S = keep; } }
-function addDesign(state, name) { setBefore(false); persist(); DS.list.push({ id: uid(), name: name ? `${name} (${nextName()})` : nextName(), s: state }); switchDesign(DS.list.length - 1, true); }
+function addDesign(state, name) { setBefore(false); persist(); const nm = name ? (DS.list.some(d => d.name === name) ? `${name} (${nextName()})` : name) : nextName(); DS.list.push({ id: uid(), name: nm.slice(0, 40), s: state }); switchDesign(DS.list.length - 1, true); }
 function switchDesign(i, quiet) {
   setBefore(false);
   if (i === DS.active && !quiet) return;
@@ -3196,6 +3362,7 @@ addVersion('When you opened the planner', true); lastAuto = Date.now();
 $('#view-main').appendChild(cv);
 $('#view-main').appendChild(labelLayer); labelLayer.hidden = true;
 $('#loading').hidden = false;
+checkSharedLink();
 init3D().then(() => { $('#loading').hidden = true; setMain(UI.main === '2d' ? '2d' : '3d'); })
   .catch(() => { $('#loading').hidden = true; V3.failed = true; cv.remove(); setMain('2d'); $('#mini').hidden = true; toast('3D couldn’t load, so you’re in plan view. Check your connection and reload.'); });
 })();
