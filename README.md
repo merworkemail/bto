@@ -15,6 +15,8 @@ The 3D model fills the screen. Everything else floats on top of it, so the model
   - **Rooms:** flooring and paint.
   - **Walls:** remove or restore, with the cost. Structural walls show as locked.
 - **Camera (top).** *Overview* to orbit the flat, *Walk* to explore at eye level (W A S D to move), and *Cut-away* to lower the walls. Double-click any floor to walk there.
+- **Room labels.** Every room and the entrance are tagged on the model. Click a tag to select that room, or click the entrance tag to walk in through the front door. In Walk mode, a chip shows which room you're in.
+- **View and time of day.** A 360° view of surrounding HDB blocks, trees and sky shows through the windows. Switch between **Day**, **Sunset** (low sun, long light through the windows) and **Night** (city lights, with warm lamps inside the flat).
 
 ## Features
 

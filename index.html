@@ -89,6 +89,16 @@ svg.ic.sm { width: 16px; height: 16px; }
 .view-main { position: absolute; inset: 0; background: var(--stage); }
 .view-main > svg, .view-main > canvas { position: absolute; inset: 0; width: 100%; height: 100%; display: block; touch-action: none; outline: none; }
 .view-main > svg { background: var(--paper); }
+.labels3d { position: absolute; inset: 0; pointer-events: none; overflow: hidden; z-index: 1; }
+.rl { position: absolute; left: 0; top: 0; display: flex; align-items: baseline; gap: 6px; padding: 5px 11px; border-radius: 999px; background: var(--surface); color: var(--ink); font-size: 12.5px; font-weight: 600; white-space: nowrap; box-shadow: var(--shadow-sm); border: 1px solid var(--line); pointer-events: auto; cursor: pointer; will-change: transform; }
+.rl small { font-weight: 400; color: var(--muted); font-size: 11.5px; font-variant-numeric: tabular-nums; }
+.rl:hover { border-color: var(--accent); }
+.rl.sel { background: var(--ink); color: var(--surface); border-color: var(--ink); }
+.rl.sel small { color: inherit; opacity: .7; }
+.rl.entrance { background: var(--accent); color: var(--on-accent); border-color: var(--accent); align-items: center; }
+.rl.entrance svg { width: 14px; height: 14px; }
+.where { position: absolute; top: calc(var(--gt) + 60px); left: 50%; transform: translateX(-50%); padding: 6px 14px; font-size: 13px; display: flex; gap: 6px; align-items: center; }
+.where small { color: var(--muted); }
 .loading { position: absolute; inset: 0; display: grid; place-items: center; color: var(--muted); font-size: 13px; pointer-events: none; }
 .loading span { background: var(--surface); padding: 8px 14px; border-radius: 999px; box-shadow: var(--shadow-sm); }
 
@@ -345,7 +355,8 @@ textarea { width: 100%; min-height: 72px; border: 1px solid var(--line-strong); 
   .brand { padding: 6px 10px 6px 6px; }
   .brand .mark { width: 30px; height: 30px; }
   .brand b { font-size: 13px; }
-  .tc { top: calc(var(--gt) + 56px); left: var(--gl); transform: none; }
+  .tc { top: calc(var(--gt) + 56px); left: var(--gl); transform: none; flex-wrap: wrap; max-width: calc(100vw - var(--mini-w) - 48px); }
+  .where { top: calc(var(--gt) + 200px); }
   .tc .seg button span { display: none; }
   .tc .seg button { padding: 0 10px; }
   .pill { min-width: 0; padding: 6px 10px; }
@@ -400,6 +411,11 @@ textarea { width: 100%; min-height: 72px; border: 1px solid var(--line-strong); 
   <symbol id="i-info" viewBox="0 0 24 24"><circle cx="12" cy="12" r="8.5"/><path d="M12 11v5.5M12 7.8v.3"/></symbol>
   <symbol id="i-chev" viewBox="0 0 24 24"><path d="M9.5 6l6 6-6 6"/></symbol>
   <symbol id="i-folder" viewBox="0 0 24 24"><path d="M3.5 7.5a2 2 0 012-2h4l2 2h7a2 2 0 012 2V17a2 2 0 01-2 2h-13a2 2 0 01-2-2z"/></symbol>
+  <symbol id="i-sun" viewBox="0 0 24 24"><circle cx="12" cy="12" r="4"/><path d="M12 2.5v2M12 19.5v2M2.5 12h2M19.5 12h2M5.3 5.3l1.4 1.4M17.3 17.3l1.4 1.4M5.3 18.7l1.4-1.4M17.3 6.7l1.4-1.4"/></symbol>
+  <symbol id="i-sunset" viewBox="0 0 24 24"><path d="M3 17.5h18M6.5 17.5a5.5 5.5 0 0111 0"/><path d="M12 4v4M4.6 9.6l1.5 1.5M19.4 9.6l-1.5 1.5"/><path d="M8 21h8"/></symbol>
+  <symbol id="i-moon" viewBox="0 0 24 24"><path d="M19.5 14.5A7.5 7.5 0 019.5 4.5a7.5 7.5 0 1010 10z"/></symbol>
+  <symbol id="i-door" viewBox="0 0 24 24"><path d="M4 21h16"/><path d="M6.5 21V3.5h11V21"/><path d="M14.5 12.5v.5"/></symbol>
+  <symbol id="i-tag" viewBox="0 0 24 24"><path d="M3.5 12.2V4.5a1 1 0 011-1h7.7l8.3 8.3a1 1 0 010 1.4l-7.3 7.3a1 1 0 01-1.4 0z"/><circle cx="8" cy="8" r="1.3"/></symbol>
   <symbol id="i-eye" viewBox="0 0 24 24"><path d="M2.5 12S6 5.5 12 5.5 21.5 12 21.5 12 18 18.5 12 18.5 2.5 12 2.5 12z"/><circle cx="12" cy="12" r="2.8"/></symbol>
 </svg>
 
@@ -413,6 +429,7 @@ textarea { width: 100%; min-height: 72px; border: 1px solid var(--line-strong); 
   </header>
 
   <div class="tc" id="tc"></div>
+  <div class="card where" id="where" hidden></div>
 
   <div class="tr">
     <div class="card iconbar">
@@ -865,9 +882,9 @@ function persist() { ls.set(KEY_CUR, JSON.stringify(S)); }
 if (hot && hot.snapshot) { try { hot.snapshot(() => ({ state: S })); } catch (e) {} }
 
 /* UI state */
-const UI = { sel: null, tool: null, main: '3d', cat: 'All', q: '', show: { dims: true, grid: false, furn: true, snap: true }, measure: null, cam: 'orbit', low: false, menu: null, hintOff: false, finRoom: 'liv' };
-try { const u = JSON.parse(ls.get(KEY_UI) || '{}'); if (u.show) Object.assign(UI.show, u.show); if (u.hintOff) UI.hintOff = true; if (u.main === '2d') UI.main = '2d'; } catch (e) {}
-function saveUI() { ls.set(KEY_UI, JSON.stringify({ show: UI.show, hintOff: UI.hintOff, main: UI.main })); }
+const UI = { sel: null, tool: null, main: '3d', cat: 'All', q: '', show: { dims: true, grid: false, furn: true, snap: true, labels: true }, measure: null, cam: 'orbit', low: false, menu: null, hintOff: false, finRoom: 'liv', tod: 'day' };
+try { const u = JSON.parse(ls.get(KEY_UI) || '{}'); if (u.show) Object.assign(UI.show, u.show); if (u.hintOff) UI.hintOff = true; if (u.main === '2d') UI.main = '2d'; if (['day', 'sunset', 'night'].includes(u.tod)) UI.tod = u.tod; } catch (e) {}
+function saveUI() { ls.set(KEY_UI, JSON.stringify({ show: UI.show, hintOff: UI.hintOff, main: UI.main, tod: UI.tod })); }
 function validateSel() {
   if (!UI.sel) return;
   if (UI.sel.kind === 'item' && !S.items.find(i => i.id === UI.sel.id)) UI.sel = null;
@@ -1222,7 +1239,8 @@ svg.addEventListener('drop', e => { e.preventDefault(); const t = e.dataTransfer
    3D engine — built once, updated incrementally, rendered on demand
 ================================================================ */
 const V3 = { ready: false, failed: false };
-let renderer, scene, camera, controls, gStatic, gItems, gMarks, root;
+let renderer, scene, camera, controls, gStatic, gItems, gMarks, root, hemiL, sunL, fillL, dome, groundMesh;
+const lamps = [];
 let UNIT_BOX, UNIT_CYL, UNIT_SPH, EDGE_BOX;
 const cv = document.createElement('canvas'); cv.id = 'c3d'; cv.tabIndex = 0; cv.setAttribute('aria-label', '3D view of the flat');
 const C3 = { wood: '#a9825a', woodLight: '#cfb28c', woodDark: '#5e4836', fabric: '#8b979c', fabricWarm: '#b58f6a', cushion: '#a7b1b5', white: '#f3f2ee', lam: '#e8e1d5', lamDark: '#7d7568', quartz: '#efede8', metal: '#45494c', steel: '#b8bdc0', black: '#232628', green: '#5d8a55', pot: '#b9805c', rug: '#cdbfa5', blanket: '#6f8fa0', ceramic: '#fbfbfa', glass: '#bcd7e0', door: '#d9c7a8', mainDoor: '#6d5a48', hsDoor: '#8a8f93', outside: '#dad7d0', tile: '#e2e6e2', slab: '#cfcec8' };
@@ -1242,14 +1260,16 @@ async function init3D() {
   controls = new THREE.OrbitControls(camera, cv);
   controls.enableDamping = true; controls.dampingFactor = 0.1; controls.screenSpacePanning = false;
   controls.addEventListener('change', requestRender);
-  scene.add(new THREE.HemisphereLight(0xffffff, 0x9aa09a, 0.62));
-  const sun = new THREE.DirectionalLight(0xfff2e0, 1.15);
+  hemiL = new THREE.HemisphereLight(0xffffff, 0x9aa09a, 0.62); scene.add(hemiL);
+  const sun = sunL = new THREE.DirectionalLight(0xfff2e0, 1.15);
   sun.position.set(2.5, 17, 13); sun.target.position.set(6.3, 0, 4.5);
   sun.castShadow = true; sun.shadow.mapSize.set(2048, 2048);
-  Object.assign(sun.shadow.camera, { left: -9.5, right: 9.5, top: 8.5, bottom: -8.5, near: 2, far: 45 });
+  Object.assign(sun.shadow.camera, { left: -10, right: 10, top: 10, bottom: -10, near: 2, far: 80 });
   sun.shadow.bias = -0.0004; sun.shadow.normalBias = 0.025; sun.shadow.radius = 3;
   const fill = new THREE.DirectionalLight(0xdde7ff, 0.28); fill.position.set(16, 9, -6);
-  scene.add(sun, sun.target, fill);
+  scene.add(sun, sun.target, fill); fillL = fill;
+  // warm ceiling lamps, always present (intensity 0 by day) so switching time never recompiles shaders
+  [[1.6, 2.6], [4.6, 1.9], [7.7, 1.9], [10.9, 3.2], [7.6, 5.0], [7.6, 7.6], [10, 6.6]].forEach(([x, z]) => { const l = new THREE.PointLight(0xffd29a, 0, 7.5, 2); l.position.set(x, 2.35, z); scene.add(l); lamps.push(l); });
   root = new THREE.Group(); root.scale.setScalar(0.001); scene.add(root);
   gStatic = new THREE.Group(); gItems = new THREE.Group(); gMarks = new THREE.Group(); root.add(gStatic, gItems, gMarks);
   UNIT_BOX = new THREE.BoxGeometry(1, 1, 1); UNIT_CYL = new THREE.CylinderGeometry(1, 1, 1, 28); UNIT_SPH = new THREE.SphereGeometry(1, 20, 14); EDGE_BOX = new THREE.EdgesGeometry(UNIT_BOX);
@@ -1257,7 +1277,7 @@ async function init3D() {
   bind3D();
   V3.ready = true;
   size3D(); camOrbit(false);
-  sync3D();
+  sync3D(); setScenery(); applyTOD();
 }
 function size3D() { if (!renderer) return; const r = cv.getBoundingClientRect(); if (!r.width || !r.height) return; renderer.setSize(r.width, r.height, false); camera.aspect = r.width / r.height; camera.updateProjectionMatrix(); requestRender(); }
 
@@ -1273,6 +1293,7 @@ function renderFrame(t) {
   if (keys.size && UI.cam === 'walk' && !tw.on) { walkStep(dt); busy = true; }
   if (controls.update()) busy = true;
   renderer.render(scene, camera);
+  updateLabels();
   if (UI.main === '3d') renderCamThrottled();
   if (busy) requestRender(); else lastT = 0;
 }
@@ -1294,7 +1315,7 @@ function stepTween(t) {
   return true;
 }
 function camOrbit(animate = true) {
-  UI.cam = 'orbit';
+  UI.cam = 'orbit'; setScenery();
   const tgt = new THREE.Vector3(6.3, 0, 4.4), off = new THREE.Vector3(3.9, 13.8, 12.4);
   const asp = camera.aspect || 1.6; if (asp < 1.25) off.multiplyScalar(Math.min(2.1, 1.25 / asp)); // portrait screens: step back so the whole flat fits
   const pos = tgt.clone().add(off);
@@ -1303,7 +1324,7 @@ function camOrbit(animate = true) {
   renderTC(); renderHint();
 }
 function camWalk(x, z, dir) {
-  UI.cam = 'walk';
+  UI.cam = 'walk'; setScenery();
   if (!dir) { dir = new THREE.Vector3(); camera.getWorldDirection(dir); }
   dir = new THREE.Vector3(dir.x, 0, dir.z); if (dir.lengthSq() < 1e-6) dir.set(0, 0, -1); dir.normalize();
   const pos = new THREE.Vector3(x, 1.6, z), tgt = pos.clone().add(dir.multiplyScalar(0.05));
@@ -1333,6 +1354,150 @@ function dolly3D(k) {
   const off = camera.position.clone().sub(controls.target).multiplyScalar(k);
   const L = Math.min(controls.maxDistance, Math.max(controls.minDistance, off.length()));
   off.setLength(L); tweenTo(controls.target.clone().add(off), controls.target.clone(), camera.fov, 260, () => setControls({ minDistance: 3, maxDistance: 40 }));
+}
+
+/* ---- Scenery: 360° panorama seen from a high floor, plus time-of-day lighting ---- */
+const TOD = {
+  day:    { sun: 0xfff2e0, sunI: 1.15, sunPos: [2.5, 17, 13], hemiSky: 0xffffff, hemiGround: 0x9aa09a, hemiI: 0.62, fillI: 0.28, lampI: 0, exp: 1.05 },
+  sunset: { sun: 0xffa463, sunI: 1.25, sunPos: [-13, 5.5, 9], hemiSky: 0xffd2b0, hemiGround: 0x6d5f66, hemiI: 0.48, fillI: 0.12, lampI: 0.35, exp: 1.0 },
+  night:  { sun: 0x8fa6ff, sunI: 0.12, sunPos: [16, 14, -4], hemiSky: 0x2b3a5c, hemiGround: 0x111418, hemiI: 0.28, fillI: 0.03, lampI: 1.25, exp: 1.12 },
+};
+const panoCache = {};
+function rng(seed) { let s = seed >>> 0; return () => { s = (s * 1664525 + 1013904223) >>> 0; return s / 4294967296; }; }
+function paintPano(tod) {
+  const W = 4096, H = 2048, hy = H / 2, c = document.createElement('canvas'); c.width = W; c.height = H;
+  const g = c.getContext('2d'), R = rng(74);
+  const night = tod === 'night', dusk = tod === 'sunset';
+  // sky
+  const sky = g.createLinearGradient(0, 0, 0, hy + 40);
+  if (night) { sky.addColorStop(0, '#050914'); sky.addColorStop(0.6, '#101a33'); sky.addColorStop(1, '#2a3554'); }
+  else if (dusk) { sky.addColorStop(0, '#26355f'); sky.addColorStop(0.45, '#8e5a86'); sky.addColorStop(0.8, '#f0866a'); sky.addColorStop(1, '#ffc27a'); }
+  else { sky.addColorStop(0, '#4f8fd0'); sky.addColorStop(0.6, '#9cc6e8'); sky.addColorStop(1, '#e6f0f3'); }
+  g.fillStyle = sky; g.fillRect(0, 0, W, hy + 40);
+  const glow = (x, y, r, col) => { const gr = g.createRadialGradient(x, y, 0, x, y, r); gr.addColorStop(0, col); gr.addColorStop(1, 'rgba(255,255,255,0)'); g.fillStyle = gr; g.fillRect(x - r, y - r, r * 2, r * 2); };
+  if (night) {
+    for (let i = 0; i < 900; i++) { g.fillStyle = `rgba(255,255,255,${0.25 + R() * 0.7})`; const sz = R() < 0.08 ? 2.4 : 1.3; g.fillRect(R() * W, R() * (hy - 120), sz, sz); }
+    glow(820, 420, 160, 'rgba(210,225,255,.35)'); g.fillStyle = '#eef2ff'; g.beginPath(); g.arc(820, 420, 34, 0, 7); g.fill();
+  } else if (dusk) { glow(3000, hy - 30, 520, 'rgba(255,190,110,.85)'); g.fillStyle = '#ffe2a8'; g.beginPath(); g.arc(3000, hy - 30, 70, 0, 7); g.fill(); }
+  else { glow(1250, 380, 360, 'rgba(255,255,240,.8)'); g.fillStyle = '#fffdf2'; g.beginPath(); g.arc(1250, 380, 46, 0, 7); g.fill(); }
+  // clouds
+  for (let i = 0; i < 34; i++) {
+    const x = R() * W, y = 260 + R() * (hy - 420), w = 140 + R() * 360;
+    g.fillStyle = night ? 'rgba(60,75,110,.25)' : dusk ? `rgba(255,${150 + R() * 60 | 0},${140 + R() * 40 | 0},.45)` : 'rgba(255,255,255,.75)';
+    for (let k = 0; k < 6; k++) { g.beginPath(); g.ellipse(x + (k - 3) * w * 0.16 + R() * 30, y + R() * 18, w * (0.18 + R() * 0.12), 26 + R() * 22, 0, 0, 7); g.fill(); }
+  }
+  const wrap = (x, w, fn) => { fn(x); if (x + w > W) fn(x - W); };
+  // far skyline: hazy towers
+  let x = 0;
+  while (x < W) {
+    const w = 40 + R() * 110, top = hy - 40 - R() * (R() < 0.15 ? 300 : 150);
+    g.fillStyle = night ? '#1b2440' : dusk ? '#7e6481' : '#b7c7d3';
+    g.fillRect(x, top, w, hy + 200 - top);
+    if (night) for (let yy = top + 8; yy < hy + 180; yy += 10) for (let xx = x + 4; xx < x + w - 4; xx += 9) if (R() < 0.12) { g.fillStyle = 'rgba(255,214,140,.7)'; g.fillRect(xx, yy, 3, 3); }
+    x += w + R() * 30;
+  }
+  // mid-distance HDB slab blocks
+  const facades = night ? ['#262d3d', '#2b3242', '#232a38'] : dusk ? ['#e4b99b', '#d9a98f', '#e8c3a2', '#cfa38f'] : ['#efe7da', '#e6d8c2', '#dfe6e7', '#f1e3cf', '#e2e9de', '#ebdcd2'];
+  const bands = night ? ['#3a3346', '#2f3d3a'] : ['#c46a4c', '#5d8fa8', '#7aa36b', '#c9a24a', '#8b6fa8'];
+  for (let i = 0; i < 30; i++) {
+    const w = 150 + R() * 260, bx = (i / 30) * W + R() * 80, top = hy - 70 - R() * 230, bottom = hy + 330;
+    const face = facades[(R() * facades.length) | 0], band = bands[(R() * bands.length) | 0], litP = 0.3 + R() * 0.3;
+    wrap(bx, w, X => {
+      g.fillStyle = face; g.fillRect(X, top, w, bottom - top);
+      g.fillStyle = 'rgba(0,0,0,.08)'; g.fillRect(X + w * 0.62, top, w * 0.38, bottom - top); // shaded side
+      g.fillStyle = band; g.fillRect(X, top, w, 14); g.fillRect(X + w * 0.45, top, 16, bottom - top);
+      for (let yy = top + 26; yy < bottom; yy += 17) {
+        g.fillStyle = night ? 'rgba(0,0,0,.25)' : 'rgba(0,0,0,.07)'; g.fillRect(X, yy + 11, w, 3); // corridor ledges
+        for (let xx = X + 8; xx < X + w - 10; xx += 19) {
+          if (xx > X + w * 0.45 - 8 && xx < X + w * 0.45 + 18) continue;
+          if (night) g.fillStyle = R() < litP ? (R() < 0.8 ? '#ffd98c' : '#cfe4ff') : '#1a1f2a';
+          else g.fillStyle = dusk ? 'rgba(90,60,70,.45)' : 'rgba(80,100,115,.45)';
+          g.fillRect(xx, yy, 10, 8);
+        }
+      }
+    });
+  }
+  // tree canopy and park below
+  const ground = g.createLinearGradient(0, hy + 200, 0, H);
+  if (night) { ground.addColorStop(0, '#0f1a15'); ground.addColorStop(1, '#070b09'); }
+  else if (dusk) { ground.addColorStop(0, '#4f5b3c'); ground.addColorStop(1, '#2f3524'); }
+  else { ground.addColorStop(0, '#6f9a5a'); ground.addColorStop(1, '#4f7440'); }
+  g.fillStyle = ground; g.fillRect(0, hy + 280, W, H - hy - 280);
+  g.fillStyle = night ? '#1d2126' : dusk ? '#6e6262' : '#9a9d9a'; g.fillRect(0, hy + 470, W, 60); // road
+  for (let i = 0; i < 70; i++) { // street lamps / road markings
+    const lx = i * W / 70;
+    if (night) glow(lx, hy + 466, 26, 'rgba(255,190,110,.8)'); else { g.fillStyle = 'rgba(255,255,255,.7)'; g.fillRect(lx, hy + 498, 22, 4); }
+  }
+  for (let i = 0; i < 520; i++) {
+    const tx = R() * W, ty = hy + 230 + R() * 140 + (R() < 0.3 ? 220 : 0), r = 26 + R() * 46;
+    const greens = night ? ['#0c1611', '#122019', '#0e1a14'] : dusk ? ['#4a5a35', '#3e4c30', '#56643c'] : ['#4f8a45', '#5f9a4f', '#3f7a3c', '#6aa456'];
+    g.fillStyle = greens[(R() * greens.length) | 0]; g.beginPath(); g.arc(tx, ty, r, 0, 7); g.fill();
+  }
+  // atmospheric haze at the horizon
+  const hz = g.createLinearGradient(0, hy - 260, 0, hy + 260);
+  const hc = night ? '30,40,70' : dusk ? '255,170,120' : '225,236,242';
+  hz.addColorStop(0, `rgba(${hc},0)`); hz.addColorStop(0.5, `rgba(${hc},${night ? 0.15 : 0.28})`); hz.addColorStop(1, `rgba(${hc},0)`);
+  g.fillStyle = hz; g.fillRect(0, hy - 260, W, 520);
+  return c;
+}
+function panoTex(tod) {
+  if (!panoCache[tod]) { const t = new THREE.CanvasTexture(paintPano(tod)); t.encoding = THREE.sRGBEncoding; t.anisotropy = 4; panoCache[tod] = t; }
+  return panoCache[tod];
+}
+function setScenery() {
+  if (!V3.ready) return;
+  if (!dome) {
+    dome = new THREE.Mesh(new THREE.SphereGeometry(90, 64, 32), new THREE.MeshBasicMaterial({ map: panoTex(UI.tod), side: THREE.BackSide, depthWrite: false, toneMapped: false }));
+    dome.position.set(6.3, 1.6, 4.5); dome.renderOrder = -1; scene.add(dome);
+  }
+  const walk = UI.cam === 'walk';
+  dome.visible = walk; if (groundMesh) groundMesh.visible = !walk;
+  renderer.shadowMap.needsUpdate = true; requestRender();
+}
+function applyTOD(render = true) {
+  if (!V3.ready) return;
+  const P = TOD[UI.tod];
+  sunL.color.setHex(P.sun); sunL.intensity = P.sunI;
+  const d = new THREE.Vector3(...P.sunPos).normalize().multiplyScalar(28);
+  sunL.position.set(6.3 + d.x, d.y, 4.5 + d.z);
+  hemiL.color.setHex(P.hemiSky); hemiL.groundColor.setHex(P.hemiGround); hemiL.intensity = P.hemiI;
+  fillL.intensity = P.fillI; lamps.forEach(l => { l.intensity = P.lampI; });
+  renderer.toneMappingExposure = P.exp;
+  scene.background = new THREE.Color(UI.tod === 'night' ? '#161c29' : UI.tod === 'sunset' ? '#e7d9cf' : cssVar('--stage'));
+  if (dome) { dome.material.map = panoTex(UI.tod); dome.material.needsUpdate = true; }
+  renderer.shadowMap.needsUpdate = true;
+  if (render) requestRender();
+}
+
+/* ---- Room labels in 3D: HTML tags projected from floor positions ---- */
+const labelLayer = document.createElement('div'); labelLayer.className = 'labels3d'; labelLayer.setAttribute('aria-hidden', 'false');
+const LABEL_AT = { mb: [1.5, 3.3], br2: [4.65, 2.75], br3: [7.4, 2.75], liv: [10.9, 3.0], kit: [7.6, 7.3], yard: [5.5, 7.9], b1: [2.6, 5.75], b2: [4.85, 5.75], hs: [11.75, 6.5] };
+const LABELS = ROOMS.map(r => ({ id: r.id, x: LABEL_AT[r.id][0], z: LABEL_AT[r.id][1], html: `${esc(r.name)}<small>${r.area.toFixed(1)} m²</small>` }))
+  .concat([{ id: 'entrance', x: 9.7, z: 8.35, html: '<svg class="ic"><use href="#i-door"/></svg>Entrance', cls: 'entrance' }]);
+LABELS.forEach(L => { const el = document.createElement('button'); el.className = 'rl' + (L.cls ? ' ' + L.cls : ''); el.innerHTML = L.html; el.dataset.room = L.id; L.el = el; labelLayer.appendChild(el); });
+labelLayer.addEventListener('click', e => { const b = e.target.closest('[data-room]'); if (!b) return; if (b.dataset.room === 'entrance') { camWalk(9.7, 7.3, new THREE.Vector3(0, 0, -1)); return; } select({ kind: 'room', id: b.dataset.room }); });
+const _v = { x: 0 };
+function updateLabels() {
+  if (!V3.ready) return;
+  const show = UI.main === '3d' && UI.show.labels && UI.cam !== 'walk' && !tw.on;
+  labelLayer.hidden = !show;
+  const where = $('#where');
+  if (UI.main === '3d' && UI.cam === 'walk') {
+    const r = roomAt(camera.position.x * 1000, camera.position.z * 1000);
+    const txt = r ? r.name : 'Entrance';
+    if (where.dataset.t !== txt) { where.dataset.t = txt; where.innerHTML = `<small>You’re in</small><b>${esc(txt)}</b>`; }
+    where.hidden = false;
+  } else where.hidden = true;
+  if (!show) return;
+  const W = cv.clientWidth, H = cv.clientHeight, v = new THREE.Vector3();
+  LABELS.forEach(L => {
+    v.set(L.x, 0.05, L.z).project(camera);
+    const off = v.z > 1 || v.x < -1.2 || v.x > 1.2 || v.y < -1.2 || v.y > 1.2;
+    L.el.style.display = off ? 'none' : '';
+    if (off) return;
+    L.el.style.transform = `translate3d(${((v.x + 1) / 2 * W).toFixed(1)}px, ${((1 - v.y) / 2 * H).toFixed(1)}px, 0) translate(-50%, -50%)`;
+    L.el.classList.toggle('sel', !!(UI.sel && UI.sel.kind === 'room' && UI.sel.id === L.id));
+  });
 }
 
 /* materials, textures */
@@ -1394,9 +1559,8 @@ function buildStatic() {
   if (key === staticKey) return false;
   staticKey = key;
   disposeOwn(gStatic);
-  scene.background = new THREE.Color(cssVar('--stage'));
   const H = UI.low ? 1100 : S.rates.ceiling;
-  const ground = pbox(gStatic, -6000, -6000, 25000, 21000, -400, -380, mat(cssVar('--ground'), { rough: 1 })); ground.castShadow = false;
+  const ground = groundMesh = pbox(gStatic, -6000, -6000, 25000, 21000, -400, -380, mat(cssVar('--ground'), { rough: 1 })); ground.castShadow = false; ground.visible = UI.cam !== 'walk';
   ROOMS.forEach(r => {
     const shape = new THREE.Shape(r.poly.map(([x, y]) => new THREE.Vector2(x, -y)));
     const slab = new THREE.ExtrudeGeometry(shape, { depth: 360, bevelEnabled: false }); slab.rotateX(-Math.PI / 2); slab.translate(0, -381, 0);
@@ -1576,6 +1740,7 @@ function buildMarks() {
 function sync3D() {
   if (!V3.ready) return;
   const a = buildStatic(), b = syncItems();
+  if (a) applyTOD(false);
   buildMarks();
   if (a || b) renderer.shadowMap.needsUpdate = true;
   requestRender();
@@ -1637,6 +1802,7 @@ function setMain(m) {
   UI.main = m; saveUI();
   const main = $('#view-main'), mini = $('#view-mini');
   if (m === '3d') { main.appendChild(cv); mini.appendChild(svg); } else { main.appendChild(svg); mini.appendChild(cv); }
+  main.appendChild(labelLayer); if (V3.ready) updateLabels();
   svg.classList.toggle('is-mini', m === '3d');
   $('#mini-label').textContent = m === '3d' ? 'Plan' : '3D';
   $('#mini-swap').setAttribute('aria-label', m === '3d' ? 'Make the plan the main view' : 'Make 3D the main view');
@@ -1657,7 +1823,12 @@ function renderTC() {
         <button data-tc="orbit" aria-pressed="${UI.cam === 'orbit'}" title="Bird's-eye view"><svg class="ic sm"><use href="#i-orbit"/></svg><span>Overview</span></button>
         <button data-tc="walk" aria-pressed="${UI.cam === 'walk'}" title="Walk through at eye level"><svg class="ic sm"><use href="#i-walk"/></svg><span>Walk</span></button>
       </div>
-      <div class="card seg"><button data-tc="cut" aria-pressed="${UI.low}" title="Lower the walls to see into every room"><svg class="ic sm"><use href="#i-cut"/></svg><span>Cut-away</span></button></div>`;
+      <div class="card seg"><button data-tc="cut" aria-pressed="${UI.low}" title="Lower the walls to see into every room"><svg class="ic sm"><use href="#i-cut"/></svg><span>Cut-away</span></button><button data-tc="labels" aria-pressed="${UI.show.labels}" title="Room names"><svg class="ic sm"><use href="#i-tag"/></svg><span>Labels</span></button></div>
+      <div class="card seg" role="group" aria-label="Time of day">
+        <button data-tod="day" aria-pressed="${UI.tod === 'day'}" title="Day" aria-label="Day"><svg class="ic sm"><use href="#i-sun"/></svg></button>
+        <button data-tod="sunset" aria-pressed="${UI.tod === 'sunset'}" title="Sunset" aria-label="Sunset"><svg class="ic sm"><use href="#i-sunset"/></svg></button>
+        <button data-tod="night" aria-pressed="${UI.tod === 'night'}" title="Night" aria-label="Night"><svg class="ic sm"><use href="#i-moon"/></svg></button>
+      </div>`;
   } else {
     tc.innerHTML = `<div class="card seg" role="group" aria-label="Plan options">
         <button data-tc="dims" aria-pressed="${UI.show.dims}" title="Dimensions"><svg class="ic sm"><use href="#i-dims"/></svg><span>Dimensions</span></button>
@@ -1667,11 +1838,14 @@ function renderTC() {
   }
 }
 $('#tc').addEventListener('click', e => {
+  const tb = e.target.closest('[data-tod]');
+  if (tb) { UI.tod = tb.dataset.tod; saveUI(); applyTOD(); renderTC(); if (UI.cam !== 'walk') toast(UI.tod === 'night' ? 'Night. Walk in to see the city lights through the windows.' : UI.tod === 'sunset' ? 'Sunset. Walk in to see the view.' : 'Daytime'); return; }
   const b = e.target.closest('[data-tc]'); if (!b) return;
   const k = b.dataset.tc;
   if (k === 'orbit') camOrbit();
   else if (k === 'walk') camWalk(11.4, 4.7, new THREE.Vector3(-1, 0, -0.15)); // living room, looking toward dining
   else if (k === 'cut') { UI.low = !UI.low; sync3D(); renderTC(); }
+  else if (k === 'labels') { UI.show.labels = !UI.show.labels; saveUI(); renderTC(); requestRender(); }
   else { UI.show[k] = !UI.show[k]; saveUI(); renderPlan(); renderTC(); }
 });
 
@@ -2003,6 +2177,7 @@ function renderAll() {
 /* ---------------- Boot ---------------- */
 renderPlan(); renderTop(); renderTC(); renderRail(); renderDrawer(); renderHint();
 $('#view-main').appendChild(cv);
+$('#view-main').appendChild(labelLayer); labelLayer.hidden = true;
 $('#loading').hidden = false;
 init3D().then(() => { $('#loading').hidden = true; setMain(UI.main === '2d' ? '2d' : '3d'); })
   .catch(() => { $('#loading').hidden = true; V3.failed = true; cv.remove(); setMain('2d'); $('#mini').hidden = true; toast('3D couldn’t load, so you’re in plan view. Check your connection and reload.'); });
