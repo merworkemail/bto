@@ -9,22 +9,22 @@ It's a single `index.html` file with no build step. Open it in a browser to use 
 The 3D model fills the screen. Everything else floats on top of it, so the model stays the focus:
 
 - **Plan inset (bottom right).** A live floor plan that shows where you're looking. Click a room on it to fly the camera there. Use the expand button, or press **Tab**, to swap the plan and the 3D view.
-- **Tool rail (left).** Furnish, Finishes, Walls, Measure and Budget. Each tool opens one panel, and only that panel.
+- **Tool rail (left).** Furnish, Finishes, Walls, Measure, Checks and Timeline. Each tool opens one panel, and only that panel.
 - **Selection bar (bottom).** Click anything to get its actions in one place:
   - **Furniture:** size, rotate, duplicate, delete.
   - **Rooms:** flooring and paint.
-  - **Walls:** remove or restore, with the cost. Structural walls show as locked.
+  - **Walls:** remove or restore. Structural walls show as locked.
 - **Camera (top).** *Overview* to orbit the flat, *Walk* to explore at eye level (W A S D to move), and *Cut-away* to lower the walls. Double-click any floor to walk there.
 - **Room labels.** Every room and the entrance are tagged on the model. Click a tag to select that room, or click the entrance tag to walk in through the front door. In Walk mode, a chip shows which room you're in.
 - **View and time of day.** A 360° view of surrounding HDB blocks, trees and sky shows through the windows. Switch between **Day**, **Sunset** (low sun, long light through the windows) and **Night** (city lights, with warm lamps inside the flat).
 
 ## Features
 
-- **Design options.** Click the card at the top left to keep several complete versions of the flat (Option A, B, C…). Each has its own layout, finishes and budget. You can duplicate, rename or delete them, and **Compare** them side by side, cost group by cost group.
+- **Design options.** Click the card at the top left to keep several complete versions of the flat (Option A, B, C…). Each has its own layout and finishes. You can duplicate, rename or delete them, and **Compare** them side by side.
 - **Before / After.** One switch (or the **B** key) flips between the flat as handed over and your design. The Before view is read-only.
-- **Electrical layout.** Place ceiling lights, downlights, pendants, fans, power points, data points, switches and aircon units. They show as standard symbols on the plan, are counted in the budget, and appear in 3D.
-- **Ceilings.** Choose no false ceiling, a flat false ceiling, or cove lighting (an L-box with an LED strip) per room, with costs. Ceilings, lights and fans show in Walk mode, and cove lighting glows at sunset and at night.
-- **Export pack.** **File → Open export pack** builds printable A4 pages: the floor plan with dimensions and electrical symbols, 3D views, a room schedule, electrical and carpentry schedules, and the budget. Print or save it as PDF, or download the plan and 3D views as images.
+- **Electrical layout.** Place ceiling lights, downlights, pendants, fans, power points, data points, switches and aircon units. They show as standard symbols on the plan and appear in 3D.
+- **Ceilings.** Choose no false ceiling, a flat false ceiling, or cove lighting (an L-box with an LED strip) per room. Ceilings, lights and fans show in Walk mode, and cove lighting glows at sunset and at night.
+- **Export pack.** **File → Open export pack** builds printable A4 pages: the floor plan with dimensions and electrical symbols, 3D views, a room schedule, electrical and carpentry schedules, and the renovation schedule. Print or save it as PDF, or download the plan and 3D views as images.
 - **Walk mode built for comfort.**
   - A third-person, over-the-shoulder camera follows a see-through figure. First person is one tap away.
   - Movement eases in and out, and you stop at walls, closed doors and furniture.
@@ -40,12 +40,20 @@ The 3D model fills the screen. Everything else floats on top of it, so the model
 - **Window heights.** The W1 three-quarter-height windows (bedrooms and living front) and the standard windows match the HDB plan in 3D, and are labelled on the plan.
 - **Share by link.** **File → Share a link** creates a short link to the exact design, using the system share sheet on phones. Opening it adds the design as a new option.
 - **Character.** Walk as a man (177 cm) or a woman (170 cm). Both heights can be edited, and first person uses that person's eye level.
+- **Bare house.** The flat as handed over, with no furniture and nothing changed, is always available. Use File → Reset to bare house, the pinned row in Versions & history, or a new "Bare house" design option. All of these can be undone.
+- **Mouse controls.** Left-click selects things and walks. Right-drag orbits or looks around, middle-drag pans, and the wheel zooms. Option/Alt + drag also orbits on trackpads.
+- **Walking.**
+  - Space jumps, and Q / E turn.
+  - Zooming out lifts the follow camera over the walls.
+  - In Walk mode, furniture only moves after you press **Move**, which prevents accidental drags.
+  - Doors swing open and shut smoothly.
+  - The common corridor and lift lobby outside the front door can be walked, and you can't step off the edge.
 - **Versions and history.** Under **File → Versions & history**, save named versions of each design option. The planner also keeps automatic snapshots every few minutes and before restores and resets. Restoring saves the current state first.
 - **Doors.** Tap any door in 2D or 3D to open or close it, or use the all-doors button.
 - **Layout checks.** The **Checks** tool flags furniture that stops a door from opening (the blocked swing shows red on the plan), overlapping items, and walkways under 600 mm. A badge shows the count.
 - **Custom items.** Add any product by name and W × D × H, with price and colour. It's saved under **My items** for reuse.
 - **Colours and materials.** Choose fabric for sofas, wood for loose furniture, and laminate for carpentry (with "use on all carpentry"). Colours show in 3D and tint the plan.
-- **Renovation timeline.** A schedule built from your design, a move-in estimate, a typical payment schedule and HDB working-hour rules. The schedule is also included in the export pack.
+- **Renovation timeline.** A schedule built from your design, with a move-in estimate and HDB working-hour rules. The schedule is also included in the export pack.
 - **Touch screens.**
   - An on-screen joystick lets you walk in Walk mode.
   - Double-tap a floor to walk there.
@@ -60,7 +68,6 @@ The 3D model fills the screen. Everything else floats on top of it, so the model
   - Clearances to the walls show in the plan.
   - An item is flagged when it overlaps a wall or another piece.
 - **Measure tool** on the plan.
-- **Budget.** Grouped costs, contingency, GST, comparison against your budget, and editable rates.
 - **Layouts.** Undo and redo, autosave, named layouts, and a layout code for sharing.
 
 ## Performance
@@ -82,12 +89,13 @@ The 3D model fills the screen. Everything else floats on top of it, so the model
 | M | Measure tool |
 | Tab | Swap plan and 3D |
 | B | Before / After |
+| Space | Jump (Walk mode) |
+| Q / E | Turn (Walk mode) |
 | W A S D | Walk (in Walk mode) |
 | Ctrl+Z / Ctrl+Shift+Z | Undo / redo |
 | Esc | Deselect |
 
 ## Notes
 
-- Prices are indicative figures for planning in Singapore. Get itemised quotes from HDB-registered renovation contractors before committing.
 - HDB rules always win over this app. Structural elements, the household shelter's walls, and wet-area tiles in the first 3 years can't be hacked.
 - Geometry is read off the HDB sales plan, so wall thicknesses and positions are approximate, typically within about 100 mm.

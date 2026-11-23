@@ -539,6 +539,9 @@ button.brand:hover { border-color: var(--line-strong); }
 .bchip .btn { height: 30px; color: var(--ink); background: var(--surface); border-color: var(--surface); }
 /* joystick for walking on touch screens */
 .joy { position: absolute; left: calc(var(--gl) + var(--rail-w) + 16px); bottom: var(--gb); width: 124px; height: 124px; border-radius: 50%; background: color-mix(in srgb, var(--surface) 72%, transparent); border: 1px solid var(--line-strong); box-shadow: var(--shadow-sm); touch-action: none; z-index: 4; }
+.jumpbtn { position: absolute; right: var(--gr); bottom: calc(var(--gb) + 24px); width: 72px; height: 72px; border-radius: 50%; font-weight: 600; font-size: 13px; z-index: 4; box-shadow: var(--shadow); }
+.jumpbtn:active { transform: scale(.94); }
+.app.walking .zoom { display: flex !important; }
 .joy i { position: absolute; left: 50%; top: 50%; width: 52px; height: 52px; margin: -26px 0 0 -26px; border-radius: 50%; background: var(--ink); opacity: .85; }
 /* export pack */
 #export { position: fixed; inset: 0; z-index: 60; overflow: auto; background: #dfe3df; color: #17201c; color-scheme: light;
@@ -572,7 +575,7 @@ button.brand:hover { border-color: var(--line-strong); }
 .page .legend { display: flex; flex-wrap: wrap; gap: 14px; font-size: 11.5px; color: #5f6a64; }
 .page .legend i { display: inline-block; width: 14px; height: 8px; margin-right: 5px; vertical-align: middle; border-radius: 2px; }
 .page .fine { font-size: 11px; color: #5f6a64; margin-top: auto; }
-@media (max-width: 760px) { .page { padding: 20px; } .page .shots, .page .cols { grid-template-columns: 1fr; } .joy { left: var(--gl); bottom: calc(var(--gb) + 132px); } }
+@media (max-width: 760px) { .jumpbtn { bottom: calc(var(--gb) + 140px); } .app.walking .zoom { bottom: calc(var(--gb) + 224px); right: var(--gr); top: auto; } .page { padding: 20px; } .page .shots, .page .cols { grid-template-columns: 1fr; } .joy { left: var(--gl); bottom: calc(var(--gb) + 132px); } }
 @media print {
   @page { size: A4 landscape; margin: 8mm; }
   html, body { height: auto; overflow: visible !important; background: #fff; }
@@ -636,6 +639,7 @@ button.brand:hover { border-color: var(--line-strong); }
   <symbol id="i-clock" viewBox="0 0 24 24"><circle cx="12" cy="12" r="8.5"/><path d="M12 7.5V12l3 2"/></symbol>
   <symbol id="i-star" viewBox="0 0 24 24"><path d="M12 3.8l2.5 5.2 5.6.7-4.1 3.9 1 5.6-5-2.8-5 2.8 1-5.6-4.1-3.9 5.6-.7z"/></symbol>
   <symbol id="i-share" viewBox="0 0 24 24"><circle cx="18" cy="5.5" r="2.5"/><circle cx="6" cy="12" r="2.5"/><circle cx="18" cy="18.5" r="2.5"/><path d="M8.2 10.8l7.6-4M8.2 13.2l7.6 4"/></symbol>
+  <symbol id="i-move" viewBox="0 0 24 24"><path d="M12 3v18M3 12h18M12 3l-3 3M12 3l3 3M12 21l-3-3M12 21l3-3M3 12l3-3M3 12l3 3M21 12l-3-3M21 12l-3 3"/></symbol>
   <symbol id="i-eye" viewBox="0 0 24 24"><path d="M2.5 12S6 5.5 12 5.5 21.5 12 21.5 12 18 18.5 12 18.5 2.5 12 2.5 12z"/><circle cx="12" cy="12" r="2.8"/></symbol>
 </svg>
 
@@ -650,6 +654,7 @@ button.brand:hover { border-color: var(--line-strong); }
   <div class="card pop" id="designs" hidden role="dialog" aria-label="Design options"></div>
   <div class="card bchip" id="bchip" hidden><span class="bt-long">As handed over · read-only</span><span class="bt-short">Before · read-only</span><button class="btn sm" id="bchip-back">Back to After</button></div>
   <div class="joy" id="joy" hidden aria-label="Walk joystick"><i id="joy-knob"></i></div>
+  <button class="card jumpbtn" id="jump-btn" hidden aria-label="Jump">Jump</button>
 
   <div class="tc" id="tc"></div>
   <button class="card where" id="where" hidden aria-haspopup="listbox" title="Go to another room"></button>
@@ -669,10 +674,6 @@ button.brand:hover { border-color: var(--line-strong); }
       <button class="iconbtn" id="undo" title="Undo (Ctrl+Z)" aria-label="Undo"><svg class="ic"><use href="#i-undo"/></svg></button>
       <button class="iconbtn" id="redo" title="Redo (Ctrl+Shift+Z)" aria-label="Redo"><svg class="ic"><use href="#i-redo"/></svg></button>
     </div>
-    <button class="card pill" id="pill" title="Open budget">
-      <span class="row1"><span class="lab">Estimate</span><b id="pill-total">S$0</b></span>
-      <span class="meter"><i id="pill-bar" style="width:0"></i></span>
-    </button>
     <button class="card iconbtn" id="menu-btn" title="File: export, share, reset" aria-label="File"><svg class="ic"><use href="#i-folder"/></svg></button>
   </div>
 
@@ -684,7 +685,6 @@ button.brand:hover { border-color: var(--line-strong); }
     <hr>
     <button class="tool" data-tool="checks" aria-pressed="false"><span class="tico"><svg class="ic"><use href="#i-check"/></svg><b class="tbadge" id="checks-badge" hidden></b></span>Checks</button>
     <button class="tool" data-tool="timeline" aria-pressed="false"><svg class="ic"><use href="#i-cal"/></svg>Timeline</button>
-    <button class="tool" data-tool="budget" aria-pressed="false"><svg class="ic"><use href="#i-wallet"/></svg>Budget</button>
   </nav>
 
   <section class="card drawer" id="drawer" hidden aria-labelledby="drawer-title">
@@ -749,6 +749,9 @@ const ROOMS = [
   { id: 'hs', name: 'Household Shelter', poly: [[10855,5150],[12650,5150],[12650,7850],[10855,7850]], lx: 11750, ly: 6450, shelter: true },
 ];
 const LEDGE = { x: 1500, y: 6575, w: 2750, h: 850 };
+// Outside the front door: entrance alcove, then the block's common corridor leading west to the lift lobby
+const ALCOVE = { x: 9180, y: 7850, w: 3470, h: 1200 };
+const CORRIDOR = { x: 4700, y: 9050, w: 9800, h: 1850 };
 
 // kind: struct (black on HDB plan) | ext (external/fixed) | part (removable partition) | wet (bathroom wall, removable with conditions)
 const WALLS = [
@@ -939,6 +942,7 @@ const CAT = {
   e_ac:         { name: 'Aircon fan coil', cat: 'Electrical', w: 900, d: 250, price: 0, icon: 'eac', elec: 'wall', h: 2050, note: 'Covered by the aircon system price' },
 };
 // also list built vanity under Bath
+const CAT_ELEC_NOTE = { ceil: 'On the ceiling', wall: 'On the wall' };
 const ALSO_IN = { bi_tall: 'Kitchen & yard', bi_vanity: 'Bath', bi_kbase: 'Kitchen & yard', bi_ktop: 'Kitchen & yard', bi_wardrobe: 'Bedroom', bi_desk: 'Study', bi_shelf: 'Study' };
 
 /* ---------------- Top-view drawings (local coords 0..w, 0..d; back edge = top) ---------------- */
@@ -1120,6 +1124,7 @@ function defaultRooms(starter) {
   }
   return o;
 }
+function bareHouse() { const b = newState(false); b.doors = {}; return b; } // the flat as handed over
 function nextMonday() { const d = new Date(); d.setDate(d.getDate() + ((8 - d.getDay()) % 7 || 7)); return d.toISOString().slice(0, 10); }
 function newState(starter = true) {
   return {
@@ -1239,8 +1244,8 @@ if (hot && hot.snapshot) { try { hot.snapshot(() => ({ state: S })); } catch (e)
 /* UI state */
 const coarse = window.matchMedia && window.matchMedia('(pointer: coarse)').matches;
 const UI = { sel: null, tool: null, main: '3d', cat: 'All', q: '', show: { dims: true, grid: false, furn: true, snap: true, labels: true, elec: true }, measure: null, cam: 'orbit', low: false, menu: null, hintOff: false, finRoom: 'liv', tod: 'day', hour: 11, month: new Date().getMonth(), pov: 'third', char: { kind: 'm', m: 177, f: 170 } };
-try { const u = JSON.parse(ls.get(KEY_UI) || '{}'); if (u.show) Object.assign(UI.show, u.show); if (u.hintOff) UI.hintOff = true; if (u.main === '2d') UI.main = '2d'; if (['day', 'sunset', 'night'].includes(u.tod)) { UI.tod = u.tod; UI.hour = { day: 11, sunset: 18.75, night: 21 }[u.tod]; } if (u.hour >= 6 && u.hour <= 23) UI.hour = +u.hour; if (u.month >= 0 && u.month <= 11) UI.month = +u.month; if (u.pov === 'first') UI.pov = 'first'; if (u.char && (u.char.kind === 'm' || u.char.kind === 'f')) UI.char = { kind: u.char.kind, m: Math.min(220, Math.max(100, +u.char.m || 177)), f: Math.min(220, Math.max(100, +u.char.f || 170)) }; } catch (e) {}
-function saveUI() { ls.set(KEY_UI, JSON.stringify({ show: UI.show, hintOff: UI.hintOff, main: UI.main, tod: UI.tod, hour: UI.hour, month: UI.month, pov: UI.pov, char: UI.char })); }
+try { const u = JSON.parse(ls.get(KEY_UI) || '{}'); if (u.show) Object.assign(UI.show, u.show); if (u.hintOff) UI.hintOff = true; if (u.main === '2d') UI.main = '2d'; if (['day', 'sunset', 'night'].includes(u.tod)) { UI.tod = u.tod; UI.hour = { day: 11, sunset: 18.75, night: 21 }[u.tod]; } if (u.hour >= 6 && u.hour <= 23) UI.hour = +u.hour; if (u.month >= 0 && u.month <= 11) UI.month = +u.month; if (u.pov === 'first') UI.pov = 'first'; if (u.ghost) UI.ghost = true; if (u.char && (u.char.kind === 'm' || u.char.kind === 'f')) UI.char = { kind: u.char.kind, m: Math.min(220, Math.max(100, +u.char.m || 177)), f: Math.min(220, Math.max(100, +u.char.f || 170)) }; } catch (e) {}
+function saveUI() { ls.set(KEY_UI, JSON.stringify({ show: UI.show, hintOff: UI.hintOff, main: UI.main, tod: UI.tod, hour: UI.hour, month: UI.month, pov: UI.pov, char: UI.char, ghost: !!UI.ghost })); }
 function validateSel() {
   if (!UI.sel) return;
   if (UI.sel.kind === 'item' && !S.items.find(i => i.id === UI.sel.id)) UI.sel = null;
@@ -1348,25 +1353,6 @@ function paintCost(room, st) {
 const CEILS = { none: { name: 'No false ceiling' }, flat: { name: 'Flat false ceiling' }, cove: { name: 'Cove lighting (L-box + LED)' } };
 function ceilCost(room, st) { const c = st.ceil || 'none'; return c === 'flat' ? room.area * S.rates.ce_flat : c === 'cove' ? room.perim * S.rates.ce_cove : 0; }
 function floorCost(room, st) { return room.area * (S.rates[FLOORS[st.floor].rate] || 0); }
-function budget() {
-  const g = Object.fromEntries(GROUPS.map(x => [x.id, { ...x, total: 0, lines: [] }]));
-  const add = (gid, label, detail, amt) => { if (amt > 0) { g[gid].total += amt; g[gid].lines.push({ label, detail, amt }); } };
-  WALLS.forEach(w => { if (S.walls[w.id] && S.walls[w.id].removed) add('hack', 'Remove wall: ' + w.name, `${(w.len / 1000).toFixed(2)} m × ${(S.rates.ceiling / 1000).toFixed(2)} m${w.kind === 'wet' ? ' + bath surcharge' : ''}`, wallCost(w)); });
-  ROOMS.forEach(r => { const st = S.rooms[r.id]; if (st.floor !== 'asis') add('floor', `${r.name} · ${FLOORS[st.floor].name}`, `${r.area.toFixed(1)} m² × ${money(S.rates[FLOORS[st.floor].rate])}`, floorCost(r, st)); });
-  ROOMS.forEach(r => { const st = S.rooms[r.id]; const c = paintCost(r, st); if (c) add('paint', `${r.name} · ${PAINTS.find(p => p.id === st.paint).name}`, r.tiled ? 'ceiling only (tiled walls)' : `walls ${(r.perim * S.rates.ceiling / 1000).toFixed(0)} m² + ceiling ${r.area.toFixed(0)} m²`, c); });
-  ROOMS.forEach(r => { const st = S.rooms[r.id]; const c = ceilCost(r, st); if (c) add('ceil', `${r.name} · ${CEILS[st.ceil].name}`, st.ceil === 'flat' ? `${r.area.toFixed(1)} m² × ${money(S.rates.ce_flat)}` : `${r.perim.toFixed(1)} m run × ${money(S.rates.ce_cove)}`, c); });
-  const elec = {};
-  S.items.forEach(it => { const t = CAT[it.type]; if (t.elec) { (elec[it.type] = elec[it.type] || []).push(it); } });
-  Object.entries(elec).forEach(([type, list]) => { const t = CAT[type]; const each = t.erate ? S.rates[t.erate] : 0; add('svc', `${t.name} × ${list.length}`, t.erate ? `${list.length} × ${money(each)}, placed on plan` : t.note, each * list.length); });
-  S.items.forEach(it => { const t = CAT[it.type]; if (t.elec) return; const room = roomAt(it.x + fp(it).w / 2, it.y + fp(it).h / 2); const where = room ? room.name : 'Unplaced';
-    if (t.rate) add('carp', `${it.label || t.name} · ${where}`, `${(it.w / 1000).toFixed(2)} m run × ${money(S.rates[t.rate])}/m`, itemCost(it));
-    else add('furn', `${it.label || t.name} · ${where}`, `${mmf(it.w)} × ${mmf(it.d)} mm`, itemCost(it)); });
-  EXTRAS.forEach(x => { const q = S.extras[x.id] || 0; add('svc', x.name, `${q} × ${money(S.rates[x.id])}`, q * S.rates[x.id]); });
-  const sub = GROUPS.reduce((s, x) => s + g[x.id].total, 0);
-  const cont = sub * (S.contingency || 0) / 100;
-  const gst = S.gst ? (sub + cont) * 0.09 : 0;
-  return { groups: GROUPS.map(x => g[x.id]), sub, cont, gst, total: sub + cont + gst };
-}
 
 /* ---------------- SVG rendering ---------------- */
 const svg = $('#plan');
@@ -1613,7 +1599,7 @@ svg.addEventListener('pointermove', e => {
     const p = toMM(e, act.inv); VB.x = act.vb0.x - (p.x - act.p0.x); VB.y = act.vb0.y - (p.y - act.p0.y); applyVB(); renderOverlay(); return;
   }
   if (act.kind === 'drag') {
-    if (!act.moved && Math.hypot(e.clientX - act.sx, e.clientY - act.sy) < 4) return;
+    if (!act.moved && Math.hypot(e.clientX - act.sx, e.clientY - act.sy) < 7) return;
     act.moved = true;
     const it = S.items.find(i => i.id === act.id); const p = toMM(e);
     it.x = act.start.x + (p.x - act.p0.x); it.y = act.start.y + (p.y - act.p0.y); snapItem(it);
@@ -1672,8 +1658,11 @@ async function init3D() {
   scene = new THREE.Scene();
   camera = new THREE.PerspectiveCamera(40, 1, 0.03, 200);
   controls = new THREE.OrbitControls(camera, cv);
-  controls.enableDamping = true; controls.dampingFactor = 0.1; controls.screenSpacePanning = false;
+  controls.enableDamping = true; controls.dampingFactor = 0.075; controls.screenSpacePanning = false;
   controls.addEventListener('change', requestRender);
+  // mouse: left selects/walks, right orbits/looks, middle pans, wheel zooms (Option/Alt + left also orbits for trackpads)
+  controls.mouseButtons = { LEFT: -1, MIDDLE: THREE.MOUSE.PAN, RIGHT: THREE.MOUSE.ROTATE };
+  cv.addEventListener('pointerdown', e => { if (e.pointerType === 'mouse') controls.mouseButtons.LEFT = e.button === 0 && e.altKey ? THREE.MOUSE.ROTATE : -1; }, true);
   hemiL = new THREE.HemisphereLight(0xffffff, 0x9aa09a, 0.62); scene.add(hemiL);
   const sun = sunL = new THREE.DirectionalLight(0xfff2e0, 1.15);
   sun.position.set(2.5, 17, 13); sun.target.position.set(6.3, 0, 4.5);
@@ -1708,6 +1697,7 @@ function renderFrame(t) {
   const dt = Math.min(0.05, lastT ? (t - lastT) / 1000 : 0.016); lastT = t;
   let busy = false;
   if (tw.on) { busy = stepTween(t) || busy; }
+  if (doorAnims.length) busy = stepDoors(t) || busy;
   if (UI.cam === 'walk' && !tw.on && walkUpdate(dt)) busy = true;
   if (controls.update()) busy = true;
   if (UI.cam === 'walk' && UI.pov === 'third' && !tw.on) fitThirdCam();
@@ -1737,12 +1727,12 @@ function stepTween(t) {
   return true;
 }
 function camOrbit(animate = true) {
-  UI.charOpen = false; if (typeof renderCharPop === 'function') renderCharPop();
+  UI.moveId = null; UI.charOpen = false; if (typeof renderCharPop === 'function') renderCharPop();
   UI.cam = 'orbit'; setScenery(); renderJoy();
   const { pos, tgt, fov } = overviewPose();
-  const fin = () => setControls({ minDistance: 3, maxDistance: 40, enablePan: true, enableZoom: true, rotateSpeed: 0.9, maxPolarAngle: Math.PI * 0.47, minPolarAngle: 0.05 });
+  const fin = () => setControls({ dampingFactor: 0.075, minDistance: 3, maxDistance: 40, enablePan: true, enableZoom: true, rotateSpeed: 0.8, maxPolarAngle: Math.PI * 0.47, minPolarAngle: 0.05 });
   if (animate) tweenTo(pos, tgt, fov, 700, fin); else { camera.position.copy(pos); controls.target.copy(tgt); camera.fov = fov; camera.updateProjectionMatrix(); fin(); controls.update(); }
-  renderTC(); renderHint();
+  renderTC(); renderHint(); if (typeof renderSelBar === 'function') renderSelBar();
 }
 // Frame the whole flat for this screen: portrait screens view it from the east so its long side runs down the screen.
 function overviewPose(aspect) {
@@ -1756,7 +1746,7 @@ function overviewPose(aspect) {
   return { pos: tgt.clone().add(dir.multiplyScalar(dist)), tgt, fov };
 }
 /* ---- Walk mode: third-person avatar (default) or first person; eased, collision-aware movement ---- */
-const AV = { x: 11.4, z: 4.7, yaw: -Math.PI / 2, vx: 0, vz: 0, dest: null, dist: 2.3, t: 0 };
+const AV = { x: 11.4, z: 4.7, y: 0, vy: 0, yaw: -Math.PI / 2, vx: 0, vz: 0, dest: null, dist: 2.3, t: 0, blockedT: 0, lastTip: 0 };
 let avatar, legL, legR, destRing, avMats = [], wallMeshes = [], OBST = [];
 const V3v = (x, y, z) => new THREE.Vector3(x, y, z);
 const charH = () => (UI.char.kind === 'f' ? UI.char.f : UI.char.m) / 100; // metres
@@ -1793,35 +1783,46 @@ function setChar(c) {
   renderTC(); renderCharPop();
 }
 function avatarOpacity(o) { avMats.forEach(m => { m.opacity = o; m.depthWrite = false; }); }
-function placeAvatar(sp = 0) { if (!avatar) return; avatar.position.set(AV.x, 0, AV.z); avatar.rotation.y = AV.yaw; const sw = Math.sin(AV.t) * Math.min(0.45, sp * 0.38); legL.rotation.x = sw; legR.rotation.x = -sw; }
+function placeAvatar(sp = 0) { if (!avatar) return; avatar.position.set(AV.x, AV.y, AV.z); avatar.rotation.y = AV.yaw; const sw = Math.sin(AV.t) * Math.min(0.45, sp * 0.38); legL.rotation.x = sw; legR.rotation.x = -sw; }
+const inRect = (r, x, y) => x >= r.x && x <= r.x + r.w && y >= r.y && y <= r.y + r.h;
+function walkable(xm, zm) { const x = xm * 1000, y = zm * 1000; return !!roomAt(x, y) || inRect({ x: ALCOVE.x - 40, y: ALCOVE.y - 120, w: ALCOVE.w + 80, h: ALCOVE.h + 140 }, x, y) || inRect({ x: CORRIDOR.x + 200, y: CORRIDOR.y - 20, w: CORRIDOR.w - 400, h: CORRIDOR.h - 260 }, x, y); }
 function obstacleRects() {
   const out = activeWallRects();
   activeDoors().forEach(d => { if (S.doors[d.id] !== 'closed') return; const r = Math.PI / 180, ex = d.hx + d.len * Math.cos(d.a0 * r), ey = d.hy + d.len * Math.sin(d.a0 * r); out.push({ x: Math.min(d.hx, ex) - 30, y: Math.min(d.hy, ey) - 30, w: Math.abs(ex - d.hx) + 60, h: Math.abs(ey - d.hy) + 60 }); });
-  S.items.forEach(it => { const t = CAT[it.type]; if (t.elec || t.under || t.over || it.type === 'bi_ktop') return; const f = fp(it); out.push({ x: f.x, y: f.y, w: f.w, h: f.h }); });
+  out.forEach(r => { r.top = 99; });
+  const C = CORRIDOR, A = ALCOVE; [{ x: C.x - 150, y: C.y, w: 150, h: C.h }, { x: C.x + C.w, y: C.y, w: 150, h: C.h }, { x: A.x + A.w, y: A.y, w: 150, h: A.h }].forEach(r => out.push({ ...r, top: 99 }));
+  activeDoors().forEach(() => {}); // doors already added with walls' height below
+  S.items.forEach(it => { const t = CAT[it.type]; if (t.elec || t.under || t.over || it.type === 'bi_ktop') return; const f = fp(it), e = ITEMS3D.get(it.id); out.push({ x: f.x, y: f.y, w: f.w, h: f.h, top: e ? e.g.userData.h / 1000 : 0.8, item: true }); });
   return out;
 }
-function collide(x, z) { const px = x * 1000, pz = z * 1000, R = 190; return OBST.some(r => px > r.x - R && px < r.x + r.w + R && pz > r.y - R && pz < r.y + r.h + R); }
+function collide(x, z, foot = AV.y) { const px = x * 1000, pz = z * 1000, R = 190; return OBST.some(r => (!r.item || !UI.ghost) && r.top > foot + 0.06 && px > r.x - R && px < r.x + r.w + R && pz > r.y - R && pz < r.y + r.h + R); }
+function groundAt(x, z) { // standing height: the floor, or the top of low furniture underfoot (bed, bench, coffee table)
+  if (UI.ghost) return 0; const px = x * 1000, pz = z * 1000; let g = 0;
+  OBST.forEach(r => { if (r.item && r.top <= 0.75 && px > r.x + 60 && px < r.x + r.w - 60 && pz > r.y + 60 && pz < r.y + r.h - 60) g = Math.max(g, r.top); });
+  return g;
+}
+function jump() { if (UI.cam !== 'walk' || AV.vy !== 0 || AV.y > groundAt(AV.x, AV.z) + 0.01) return; AV.vy = 3.2; requestRender(); }
 function walkPose(dir) {
   if (UI.pov === 'first') { const pos = V3v(AV.x, eyeH(), AV.z); return { pos, tgt: pos.clone().addScaledVector(dir, 0.05), fov: 66 }; }
   const right = V3v(-dir.z, 0, dir.x), tgt = V3v(AV.x, pivotH(), AV.z).addScaledVector(right, 0.38); return { pos: tgt.clone().addScaledVector(dir, -AV.dist * 0.95).add(V3v(0, AV.dist * 0.22, 0)), tgt, fov: 62 };
 }
 function walkControls() {
   return UI.pov === 'first'
-    ? { minDistance: 0.05, maxDistance: 0.05, enablePan: false, enableZoom: false, rotateSpeed: -0.26, maxPolarAngle: Math.PI * 0.78, minPolarAngle: Math.PI * 0.24 }
-    : { minDistance: 0.3, maxDistance: 10, enablePan: false, enableZoom: false, rotateSpeed: 0.45, maxPolarAngle: Math.PI * 0.54, minPolarAngle: Math.PI * 0.4 };
+    ? { dampingFactor: 0.06, minDistance: 0.05, maxDistance: 0.05, enablePan: false, enableZoom: false, rotateSpeed: -0.24, maxPolarAngle: Math.PI * 0.78, minPolarAngle: Math.PI * 0.24 }
+    : { dampingFactor: 0.06, minDistance: 0.3, maxDistance: 12, enablePan: false, enableZoom: false, rotateSpeed: 0.42, maxPolarAngle: Math.PI * 0.6, minPolarAngle: Math.PI * 0.1 };
 }
 function fadeJump(fn) { const f = $('#fade'); f.classList.add('on'); setTimeout(() => { fn(); requestRender(); setTimeout(() => f.classList.remove('on'), 40); }, 170); }
 function camWalk(x, z, dir, how) {
   const entering = UI.cam !== 'walk';
   if (!dir) { if (!entering) dir = V3v(Math.sin(AV.yaw), 0, Math.cos(AV.yaw)); else { dir = new THREE.Vector3(); camera.getWorldDirection(dir); } }
   dir = V3v(dir.x, 0, dir.z); if (dir.lengthSq() < 1e-6) dir.set(0, 0, -1); dir.normalize();
-  UI.cam = 'walk'; AV.x = x; AV.z = z; AV.vx = AV.vz = 0; AV.dest = null; if (destRing) destRing.visible = false; AV.yaw = Math.atan2(dir.x, dir.z); placeAvatar();
+  UI.cam = 'walk'; AV.x = x; AV.z = z; AV.vx = AV.vz = 0; AV.y = 0; AV.vy = 0; AV.lastY = 0; AV.dest = null; if (destRing) destRing.visible = false; AV.yaw = Math.atan2(dir.x, dir.z); placeAvatar();
   setScenery(); renderJoy();
   const pose = walkPose(dir), fin = () => setControls(walkControls());
   const jump = () => { camera.position.copy(pose.pos); controls.target.copy(pose.tgt); camera.fov = pose.fov; camera.updateProjectionMatrix(); fin(); controls.update(); };
   if (how === 'fade' || (!entering && how !== 'tween')) { setControls({ minDistance: 0.01, maxDistance: 200 }); fadeJump(jump); }
   else tweenTo(pose.pos, pose.tgt, pose.fov, 800, fin);
-  renderTC(); renderHint(); updateLabels();
+  renderTC(); renderHint(); updateLabels(); renderSelBar();
 }
 function setPov(p) {
   UI.pov = p; saveUI();
@@ -1837,26 +1838,37 @@ function focus3D(x, z) {
 function walkUpdate(dt) {
   const fwd = new THREE.Vector3(); camera.getWorldDirection(fwd); fwd.y = 0; if (fwd.lengthSq() < 1e-6) fwd.set(0, 0, -1); fwd.normalize();
   const right = V3v(-fwd.z, 0, fwd.x), k = n => keys.has(n);
+  const turn = (k('e') ? 1 : 0) - (k('q') ? 1 : 0);
+  if (turn) { const off = camera.position.clone().sub(controls.target); off.applyAxisAngle(V3v(0, 1, 0), -turn * dt * (UI.pov === 'first' ? -1.4 : 1.4)); camera.position.copy(controls.target).add(off); }
   const f = (k('w') || k('arrowup') ? 1 : 0) - (k('s') || k('arrowdown') ? 1 : 0) - (JOY.on ? JOY.y : 0);
   const r = (k('d') || k('arrowright') ? 1 : 0) - (k('a') || k('arrowleft') ? 1 : 0) + (JOY.on ? JOY.x : 0);
   let ix = fwd.x * f + right.x * r, iz = fwd.z * f + right.z * r;
   if (Math.abs(f) + Math.abs(r) > 0.05) { AV.dest = null; destRing.visible = false; }
   if (AV.dest) { const dx = AV.dest.x - AV.x, dz = AV.dest.z - AV.z, L = Math.hypot(dx, dz); if (L < 0.1) { AV.dest = null; destRing.visible = false; } else { const sl = Math.min(1, L / 0.7); ix = dx / L * sl; iz = dz / L * sl; } }
   const il = Math.hypot(ix, iz); if (il > 1) { ix /= il; iz /= il; }
-  const speed = 1.3, a = 1 - Math.exp(-dt * 6); // calm walking pace with eased start and stop
+  const speed = 1.25, a = 1 - Math.exp(-dt * 4.5); // calm walking pace with a soft start and stop
   AV.vx += (ix * speed - AV.vx) * a; AV.vz += (iz * speed - AV.vz) * a;
   const sp = Math.hypot(AV.vx, AV.vz);
-  if (sp < 0.004 && il < 0.01 && !AV.dest) { AV.vx = AV.vz = 0; placeAvatar(0); return false; }
+  const grounded = AV.vy === 0 && Math.abs(AV.y - groundAt(AV.x, AV.z)) < 0.005;
+  if (sp < 0.004 && il < 0.01 && !AV.dest && grounded && !turn) { AV.vx = AV.vz = 0; placeAvatar(0); return false; }
   let nx = AV.x + AV.vx * dt, nz = AV.z + AV.vz * dt; const was = collide(AV.x, AV.z);
-  if (!was && collide(nx, AV.z)) { nx = AV.x; AV.vx *= 0.2; }
-  if (!was && collide(nx, nz)) { nz = AV.z; AV.vz *= 0.2; }
+  let blocked = false; const onFloor = walkable(AV.x, AV.z);
+  if ((!was && collide(nx, AV.z)) || (onFloor && !walkable(nx, AV.z))) { nx = AV.x; AV.vx *= 0.2; blocked = true; }
+  if ((!was && collide(nx, nz)) || (onFloor && !walkable(nx, nz))) { nz = AV.z; AV.vz *= 0.2; blocked = true; }
+  // vertical: gravity, jumping, landing on low furniture
+  const gnd = groundAt(nx, nz);
+  if (AV.vy !== 0 || AV.y > gnd + 0.001) { AV.vy -= 9.8 * dt; AV.y += AV.vy * dt; if (AV.y <= gnd) { AV.y = gnd; AV.vy = 0; } }
+  else if (AV.y < gnd) AV.y = gnd;
+  const dyy = AV.y - (AV.lastY || 0); AV.lastY = AV.y;
+  camera.position.y += dyy; controls.target.y += dyy;
+  if (blocked && il > 0.3 && grounded) { AV.blockedT += dt; if (AV.blockedT > 0.6 && performance.now() - AV.lastTip > 9000) { AV.lastTip = performance.now(); toast(coarse ? 'Something’s in the way. Tap Jump to hop over it, or tap the floor elsewhere.' : 'Something’s in the way. Press Space to jump over it, or click the floor elsewhere.'); } } else AV.blockedT = 0;
   if (AV.dest && Math.hypot(nx - AV.x, nz - AV.z) < 1e-4 && sp > 0.3) { AV.dest = null; destRing.visible = false; }
   const dx = nx - AV.x, dz = nz - AV.z; AV.x = nx; AV.z = nz;
   camera.position.x += dx; camera.position.z += dz; controls.target.x += dx; controls.target.z += dz;
-  if (sp > 0.05) { const want = Math.atan2(AV.vx, AV.vz); let d = want - AV.yaw; d = Math.atan2(Math.sin(d), Math.cos(d)); AV.yaw += d * Math.min(1, dt * 8); }
+  if (sp > 0.05) { const want = Math.atan2(AV.vx, AV.vz); let d = want - AV.yaw; d = Math.atan2(Math.sin(d), Math.cos(d)); AV.yaw += d * Math.min(1, dt * 6); }
   AV.t += dt * sp * 5.5; placeAvatar(sp);
   if (UI.pov === 'first' && sp > 0.02) { // first person: gently turn toward travel direction only when walking to a tapped spot
-    if (AV.dest) { const look = V3v(Math.sin(AV.yaw), 0, Math.cos(AV.yaw)); const tg = V3v(AV.x, eyeH(), AV.z).addScaledVector(look, 0.05); controls.target.lerp(tg, Math.min(1, dt * 4)); camera.position.set(AV.x, eyeH(), AV.z); }
+    if (AV.dest) { const look = V3v(Math.sin(AV.yaw), 0, Math.cos(AV.yaw)); const tg = V3v(AV.x, eyeH() + AV.y, AV.z).addScaledVector(look, 0.05); controls.target.lerp(tg, Math.min(1, dt * 4)); camera.position.set(AV.x, eyeH() + AV.y, AV.z); }
   }
   return true;
 }
@@ -1867,14 +1879,19 @@ function fitThirdCam() { // over-the-shoulder: keep the pivot beside the head, t
     const want = V3v(AV.x, pivotH(), AV.z).addScaledVector(V3v(-look.z, 0, look.x), 0.38), shift = want.sub(controls.target);
     controls.target.add(shift); camera.position.add(shift); }
   const tgt = controls.target, dir = camera.position.clone().sub(tgt); if (dir.lengthSq() < 1e-8) return; dir.normalize();
-  let d = AV.dist; camRay.r.set(tgt, dir); camRay.r.far = d;
-  const hit = camRay.r.intersectObjects(wallMeshes, false)[0]; if (hit) d = Math.max(0.45, hit.distance - 0.2);
+  // zooming out tilts the camera down and lifts it over the walls, so small rooms never box you in
+  const zt = Math.max(0, Math.min(1, (AV.dist - 2.2) / 4.3)), polar = (0.46 - 0.24 * zt) * Math.PI, az = Math.atan2(dir.x, dir.z);
+  dir.set(Math.sin(polar) * Math.sin(az), Math.cos(polar), Math.sin(polar) * Math.cos(az));
+  let d = AV.dist; const top = S.rates.ceiling / 1000 - 0.15;
+  if (zt < 0.3) { camRay.r.set(tgt, dir); camRay.r.far = d; const hit = camRay.r.intersectObjects(wallMeshes, false)[0]; if (hit) d = Math.max(0.45, hit.distance - 0.2); }
   camera.position.copy(tgt).addScaledVector(dir, d);
-  const top = S.rates.ceiling / 1000 - 0.15; if (camera.position.y > top) camera.position.y = top;
-  avatarOpacity(Math.min(0.62, d < 1 ? Math.max(0.12, (d - 0.45) / 0.55) : 0.62)); // see-through so the figure never blocks the view
+  const above = camera.position.y > top + 0.05;
+  if (!above && camera.position.y > top) camera.position.y = top;
+  if (gCeil && gCeil.visible === above && !UI.low) { gCeil.visible = !above; ITEMS3D.forEach((e, id) => { const it = S.items.find(i => i.id === id); if (it && CAT[it.type].elec === 'ceil') e.g.visible = !above; }); }
+  avatarOpacity(d < 1 ? Math.max(0.12, (d - 0.45) / 0.55) * 0.62 : 0.62 + 0.3 * zt); // see-through up close, solid when zoomed out
 }
 function dolly3D(k) {
-  if (UI.cam === 'walk') { if (UI.pov === 'third') { AV.dist = Math.min(4.5, Math.max(1.2, AV.dist * k)); requestRender(); } return; }
+  if (UI.cam === 'walk') { if (UI.pov === 'third') { AV.dist = Math.min(6.5, Math.max(1.2, AV.dist * k)); requestRender(); } else { camera.fov = Math.min(85, Math.max(42, camera.fov * (k > 1 ? 1.08 : 0.93))); camera.updateProjectionMatrix(); requestRender(); } return; }
   const off = camera.position.clone().sub(controls.target).multiplyScalar(k);
   const L = Math.min(controls.maxDistance, Math.max(controls.minDistance, off.length()));
   off.setLength(L); tweenTo(controls.target.clone().add(off), controls.target.clone(), camera.fov, 260, () => setControls({ minDistance: 3, maxDistance: 40 }));
@@ -2057,7 +2074,7 @@ function setScenery() {
   dome.visible = walk; if (groundMesh) groundMesh.visible = !walk;
   if (!nbGroup) buildNeighbours(); nbGroup.visible = walk;
   if (gCeil) gCeil.visible = walk && !UI.low;
-  gMarks.visible = !(walk && UI.pov === 'first'); // planning markers stay out of the first-person view
+  gMarks.visible = true; // only the selected item is marked while walking
   if (avatar) { avatar.visible = walk && UI.pov === 'third'; avatarOpacity(0.62); }
   if (destRing && !walk) destRing.visible = false;
   ITEMS3D.forEach((e, id) => { const it = S.items.find(i => i.id === id); if (it && CAT[it.type].elec === 'ceil') e.g.visible = walk && !UI.low; });
@@ -2107,7 +2124,7 @@ function updateLabels() {
   const where = $('#where');
   if (UI.main === '3d' && UI.cam === 'walk') {
     const r = roomAt(AV.x * 1000, AV.z * 1000);
-    const txt = r ? r.name : 'Entrance';
+    const txt = r ? r.name : (AV.z * 1000 > CORRIDOR.y ? 'Common corridor' : 'Entrance');
     if (where.dataset.t !== txt) { where.dataset.t = txt; where.innerHTML = `<small>You’re in</small><b>${esc(txt)}</b><svg class="ic sm" style="transform:rotate(90deg)"><use href="#i-chev"/></svg>`; }
     where.hidden = false;
   } else where.hidden = true;
@@ -2158,7 +2175,7 @@ function pbox(parent, x, y, w, h, z0, z1, m, tag) {
   const mesh = new THREE.Mesh(UNIT_BOX, m);
   mesh.scale.set(w, z1 - z0, h); mesh.position.set(x + w / 2, (z0 + z1) / 2, y + h / 2);
   mesh.castShadow = Array.isArray(m) || !m.transparent; mesh.receiveShadow = true;
-  if (tag) { mesh.userData = tag; if (tag.wall && wallMeshes) wallMeshes.push(mesh); }
+  if (tag) { mesh.userData = tag; if ((tag.wall || tag.cwall) && wallMeshes) wallMeshes.push(mesh); }
   parent.add(mesh); return mesh;
 }
 function faceMat(px, py) {
@@ -2178,7 +2195,7 @@ function disposeOwn(g) { g.traverse(o => { if (o.userData && o.userData.ownGeo &
 let staticKey = '';
 function buildStatic() {
   const wallsMode = UI.tool === 'walls';
-  const key = JSON.stringify([S.rooms, S.walls, S.doors, S.rates.ceiling, UI.low, wallsMode, cssVar('--stage'), cssVar('--accent')]);
+  const key = JSON.stringify([S.rooms, S.walls, S.rates.ceiling, UI.low, wallsMode, cssVar('--stage'), cssVar('--accent')]);
   if (key === staticKey) return false;
   staticKey = key;
   disposeOwn(gStatic); wallMeshes = [];
@@ -2215,7 +2232,7 @@ function buildStatic() {
       seg(cur, b, 0, H);
     });
   });
-  buildCeilings();
+  buildCeilings(); buildCorridor(H);
   const removedDoors = new Set(WALLS.filter(w => w.door && S.walls[w.id] && S.walls[w.id].removed).map(w => w.door));
   DOORS.forEach(d => {
     if (removedDoors.has(d.id)) return;
@@ -2223,9 +2240,52 @@ function buildStatic() {
     const t = d.main ? 150 : 100, x0 = Math.min(d.hx, ex), y0 = Math.min(d.hy, ey), horiz = Math.abs(ey - d.hy) < 1;
     if (H > 2100) horiz ? pbox(gStatic, x0, d.hy - t / 2, Math.abs(ex - d.hx), t, 2100, H, wallMats(x0, d.hy - t / 2, Math.abs(ex - d.hx), t, 'part')) : pbox(gStatic, d.hx - t / 2, y0, t, Math.abs(ey - d.hy), 2100, H, wallMats(d.hx - t / 2, y0, t, Math.abs(ey - d.hy), 'part'));
     const lh = Math.min(2080, H), leaf = new THREE.Mesh(UNIT_BOX, mat(d.main ? C3.mainDoor : d.id === 'd_hs' ? C3.hsDoor : C3.door));
-    const a1 = (S.doors[d.id] === 'closed' ? d.a0 : d.a1) * rad; leaf.scale.set(d.len, lh, 40); leaf.position.set(d.hx + Math.cos(a1) * d.len / 2, lh / 2, d.hy + Math.sin(a1) * d.len / 2); leaf.rotation.y = -a1;
+    leaf.scale.set(d.len, lh, 40); const L = DOORLEAF[d.id] = { mesh: leaf, d, lh, ang: S.doors[d.id] === 'closed' ? d.a0 : d.a1 }; setLeaf(L, L.ang);
     leaf.castShadow = true; leaf.receiveShadow = true; leaf.userData = { door: d.id }; gStatic.add(leaf); wallMeshes.push(leaf);
   });
+  return true;
+}
+
+/* common corridor and lift lobby outside the front door */
+function buildCorridor(H) {
+  const tile = mat('#d3d5cf', { rough: 0.6 }), slab = mat('#c6c8c2'), wall = mat('#e7e3da'), cap = mat('#8d9590', { rough: 0.4 }), steel = mat('#aeb5b8', { metal: 0.4, rough: 0.35 }), dark = mat('#5e6467');
+  const A = ALCOVE, C = CORRIDOR;
+  [A, C].forEach(r => { const f = pbox(gStatic, r.x, r.y, r.w, r.h, -360, -1, slab, { corridor: true }); const t = pbox(gStatic, r.x, r.y, r.w, r.h, -1, 2, tile, { corridor: true }); if (t) t.castShadow = false; });
+  // parapet and handrail along the open side of the corridor
+  pbox(gStatic, C.x, C.y + C.h - 150, C.w, 150, 0, 1000, wall, { corridor: true, cwall: true }); pbox(gStatic, C.x, C.y + C.h - 170, C.w, 190, 1000, 1050, cap);
+  // end walls; the west end is the lift lobby with two lift doors
+  pbox(gStatic, C.x - 150, C.y, 150, C.h, 0, H, wall, { corridor: true, cwall: true }); pbox(gStatic, C.x + C.w, C.y, 150, C.h, 0, H, wall, { corridor: true, cwall: true });
+  [C.y + 250, C.y + 1050].forEach(y => { pbox(gStatic, C.x, y, 30, 900, 0, 2100, steel); pbox(gStatic, C.x, y + 445, 34, 10, 0, 2100, dark); });
+  pbox(gStatic, C.x, C.y + 1230 - 40, 40, 60, 1050, 1150, dark); // lift call button
+  // outer edge of the alcove beside the shelter, and the wall of the next unit along the corridor
+  pbox(gStatic, A.x + A.w, A.y, 150, A.h, 0, H, wall, { corridor: true, cwall: true });
+  pbox(gStatic, C.x, C.y - 150, ALCOVE.x - C.x - 250, 150, 0, H, wall, { corridor: true, cwall: true });
+  pbox(gStatic, A.x + A.w, C.y - 150, C.x + C.w - (A.x + A.w), 150, 0, H, wall, { corridor: true, cwall: true });
+  // the corridor ceiling (level 26's floor) only shows while walking
+  const cl = pbox(gCeil, A.x, A.y, A.w, A.h + C.h + 300, H, H + 150, mat('#e9e6df')); if (cl) cl.castShadow = false;
+  const cl2 = pbox(gCeil, C.x, C.y, C.w, C.h, H, H + 150, mat('#e9e6df')); if (cl2) cl2.castShadow = false;
+}
+
+/* doors swing smoothly instead of snapping */
+const DOORLEAF = {}, doorAnims = [];
+function setLeaf(L, angDeg) { const r = angDeg * Math.PI / 180, d = L.d; L.ang = angDeg; L.mesh.position.set(d.hx + Math.cos(r) * d.len / 2, L.lh / 2, d.hy + Math.sin(r) * d.len / 2); L.mesh.rotation.y = -r; }
+function syncDoors() {
+  Object.values(DOORLEAF).forEach(L => {
+    if (!L.mesh.parent) return;
+    const target = S.doors[L.d.id] === 'closed' ? L.d.a0 : L.d.a1;
+    if (Math.abs(((target - L.ang + 540) % 360) - 180) < 0.1 || doorAnims.some(a => a.L === L && a.to === target)) return;
+    for (let i = doorAnims.length - 1; i >= 0; i--) if (doorAnims[i].L === L) doorAnims.splice(i, 1);
+    const delta = ((target - L.ang + 540) % 360) - 180;
+    doorAnims.push({ L, from: L.ang, delta, to: target, t0: performance.now(), ms: 520 });
+  });
+  if (doorAnims.length) requestRender();
+}
+function stepDoors(t) {
+  for (let i = doorAnims.length - 1; i >= 0; i--) {
+    const a = doorAnims[i], k = Math.min(1, (t - a.t0) / a.ms), e = 1 - Math.pow(1 - k, 3); // ease out, like a door slowing to a stop
+    setLeaf(a.L, a.from + a.delta * e); if (k >= 1) doorAnims.splice(i, 1);
+  }
+  renderer.shadowMap.needsUpdate = true;
   return true;
 }
 
@@ -2408,6 +2468,7 @@ function buildMarks() {
   if (UI.show.furn) S.items.forEach(it => {
     const sel = UI.sel && UI.sel.kind === 'item' && UI.sel.id === it.id, bad = BAD.has(it.id);
     if (!sel && (!bad || UI.cam === 'walk')) return;
+    if (UI.moveId === it.id) { const f = fp(it); pad(f.x - 140, f.y - 140, f.w + 280, f.h + 280, acc, 0.18); }
     const e = ITEMS3D.get(it.id); const h = e ? e.g.userData.h : 800; const f = fp(it);
     pad(f.x - 60, f.y - 60, f.w + 120, f.h + 120, sel ? acc : dan, 0.3);
     box(f.x - 20, f.y - 20, f.w + 40, f.h + 40, 0, h + 20, sel ? acc : dan);
@@ -2426,6 +2487,7 @@ function sync3D() {
   if (!V3.ready) return;
   const a = buildStatic(), b = syncItems();
   if (a) applyTOD(false);
+  syncDoors();
   OBST = obstacleRects();
   buildMarks();
   if (a || b) renderer.shadowMap.needsUpdate = true;
@@ -2437,15 +2499,15 @@ function bind3D() {
   const ray = new THREE.Raycaster(), ndc = new THREE.Vector2(), plane = new THREE.Plane(new THREE.Vector3(0, 1, 0), 0);
   const aim = e => { const r = cv.getBoundingClientRect(); ndc.set((e.clientX - r.left) / r.width * 2 - 1, -(e.clientY - r.top) / r.height * 2 + 1); ray.setFromCamera(ndc, camera); };
   const floorPt = e => { aim(e); const p = new THREE.Vector3(); return ray.ray.intersectPlane(plane, p) ? { x: p.x * 1000, y: p.z * 1000 } : null; };
-  const hitInfo = e => { aim(e); const hits = ray.intersectObjects([gItems, gStatic], true); for (const h of hits) { const u = h.object.userData; if (u && (u.item || u.room || u.wall || u.door)) return u; } return null; };
+  const hitInfo = e => { aim(e); const hits = ray.intersectObjects([gItems, gStatic], true); for (const h of hits) { const u = h.object.userData; if (u && (u.item || u.room || u.wall || u.door || u.corridor)) return u; } return null; };
   V3.floorAtCenter = () => { const r = cv.getBoundingClientRect(); return floorPt({ clientX: r.left + r.width / 2, clientY: r.top + r.height / 2 }); };
   V3.floorPt = floorPt;
   let down = null, hoverQueued = false, lastMove = null;
   cv.addEventListener('pointerdown', e => {
     if (cv.parentElement.id !== 'view-main') return;
-    if (e.pointerType === 'mouse' && e.button !== 0) { down = null; return; }
+    if (e.pointerType === 'mouse' && (e.button !== 0 || e.altKey)) { down = null; return; }
     const info = hitInfo(e); down = { sx: e.clientX, sy: e.clientY, info, moved: false };
-    if (info && info.item && !(UI.cam === 'walk' && UI.pov === 'first') && UI.show.furn && !UI.before) {
+    if (info && info.item && (UI.cam !== 'walk' || UI.moveId === info.item) && UI.show.furn && !UI.before) {
       const it = S.items.find(i => i.id === info.item), p0 = floorPt(e);
       if (it && p0) { controls.enabled = false; down.drag = { it, p0, start: { x: it.x, y: it.y }, snap: JSON.stringify(S) }; cv.setPointerCapture(e.pointerId); }
     }
@@ -2456,7 +2518,7 @@ function bind3D() {
       if (!hoverQueued) { hoverQueued = true; requestAnimationFrame(() => { hoverQueued = false; if (!lastMove || cv.parentElement.id !== 'view-main') return; const i = hitInfo(lastMove); cv.style.cursor = i && i.item && UI.cam !== 'walk' ? 'grab' : i ? 'pointer' : ''; }); }
       return;
     }
-    if (!down.moved && Math.hypot(e.clientX - down.sx, e.clientY - down.sy) > 4) down.moved = true;
+    if (!down.moved && Math.hypot(e.clientX - down.sx, e.clientY - down.sy) > 7) down.moved = true;
     if (down.drag && down.moved) {
       cv.style.cursor = 'grabbing';
       const p = floorPt(e); if (!p) return; const { it, p0, start } = down.drag;
@@ -2486,12 +2548,12 @@ function bind3D() {
     }
     const i = dn.info;
     if (i && i.door) return toggleDoor(i.door);
-    if (UI.cam === 'walk' && (!i || i.room)) { const p = floorPt(e); if (p && roomAt(p.x, p.y)) walkTo(p.x / 1000, p.y / 1000); if (UI.sel) select(null); return; }
+    if (UI.cam === 'walk' && (!i || i.room || i.corridor)) { const p = floorPt(e); if (p && walkable(p.x / 1000, p.y / 1000)) walkTo(p.x / 1000, p.y / 1000); if (UI.sel) select(null); return; }
     select(i ? (i.item ? { kind: 'item', id: i.item } : i.wall ? { kind: 'wall', id: i.wall } : { kind: 'room', id: i.room }) : null);
   };
   cv.addEventListener('pointerup', up);
   cv.addEventListener('pointercancel', () => { down = null; controls.enabled = true; });
-  cv.addEventListener('wheel', e => { if (UI.cam !== 'walk') return; e.preventDefault(); if (UI.pov === 'third') dolly3D(e.deltaY > 0 ? 1.1 : 0.91); }, { passive: false });
+  cv.addEventListener('wheel', e => { if (UI.cam !== 'walk') return; e.preventDefault(); dolly3D(e.deltaY > 0 ? 1.1 : 0.91); }, { passive: false });
   cv.addEventListener('dblclick', e => { if (UI.cam === 'walk') return; const p = floorPt(e); if (p && roomAt(p.x, p.y)) camWalk(p.x / 1000, p.y / 1000, null, 'tween'); });
   cv.addEventListener('dragover', e => { e.preventDefault(); });
   cv.addEventListener('drop', e => { e.preventDefault(); const t = e.dataTransfer.getData('text/plain'); const p = floorPt(e); if (CAT[t] && p) addItem(t, p.x, p.y); });
@@ -2559,7 +2621,7 @@ $('#tc').addEventListener('click', e => {
   else if (k === 'walk') { if (UI.cam !== 'walk') camWalk(11.4, 4.7, V3v(-1, 0, -0.15), 'tween'); } // living room, looking toward dining
   else if (k === 'pov') setPov(UI.pov === 'first' ? 'third' : 'first');
   else if (k === 'char') { UI.charOpen = !UI.charOpen; renderCharPop(); renderTC(); }
-  else if (k === 'doors') { const close = !activeDoors().every(d => S.doors[d.id] === 'closed'); mutate(() => { activeDoors().forEach(d => { S.doors[d.id] = close ? 'closed' : 'open'; }); }); renderTC(); toast(close ? 'All doors closed' : 'All doors open'); }
+  else if (k === 'doors') { const close = !activeDoors().every(d => S.doors[d.id] === 'closed'); mutate(() => { activeDoors().forEach(d => { S.doors[d.id] = close ? 'closed' : 'open'; }); }); renderTC(); }
   else if (k === 'cut') { UI.low = !UI.low; sync3D(); setScenery(); renderTC(); }
   else if (k === 'labels') { UI.show.labels = !UI.show.labels; saveUI(); renderTC(); requestRender(); }
   else { UI.show[k] = !UI.show[k]; saveUI(); renderPlan(); renderTC(); }
@@ -2575,7 +2637,7 @@ $('#z-fit').onclick = () => UI.main === '3d' ? camOrbit() : fitView();
    Selection, items
 ================================================================ */
 function select(sel) {
-  if (!sel || !UI.sel || sel.id !== UI.sel.id) UI.sbExpand = false;
+  if (!sel || !UI.sel || sel.id !== UI.sel.id) { UI.sbExpand = false; UI.moveId = null; }
   UI.sel = sel;
   if (sel && sel.kind === 'room' && UI.tool === 'finishes') UI.finRoom = sel.id;
   renderWalls(); renderOverlay(); renderSelBar(); renderHint();
@@ -2622,11 +2684,12 @@ function renderSelBar() {
   bar.classList.toggle('expanded', !!UI.sbExpand && sel.kind === 'item');
   if (sel.kind === 'item') {
     const it = selItem(), t = CAT[it.type], bad = BAD.get(it.id), room = roomAt(it.x + fp(it).w / 2, it.y + fp(it).h / 2);
-    bar.innerHTML = `<div class="who"><div class="th">${thumb(it.type)}</div><div><b>${esc(it.label || t.name)}</b><small>${room ? esc(room.name) + ' · ' : ''}${money(itemCost(it))}${t.rate ? ` · ${(it.w / 1000).toFixed(2)} m run` : ''}</small></div></div>
+    bar.innerHTML = `<div class="who"><div class="th">${thumb(it.type)}</div><div><b>${esc(it.label || t.name)}</b><small>${room ? esc(room.name) : ''}${t.rate ? ` · ${(it.w / 1000).toFixed(2)} m run` : ''}</small></div></div>
       ${bad ? `<span class="flag" title="${esc(bad)}" aria-label="${esc(bad)}"><svg class="ic sm"><use href="#i-alert"/></svg><span class="ft">${esc(bad)}</span></span>` : ''}
       <span class="sep"></span>
       <span class="dims"><label>W <input type="number" inputmode="numeric" id="sb-w2" min="100" step="10" value="${Math.round(it.w)}" aria-label="Width in mm"></label><label>D <input type="number" inputmode="numeric" id="sb-d2" min="100" step="10" value="${Math.round(it.d)}" aria-label="Depth in mm"></label><small>mm</small></span>
       <span class="sep"></span>
+      ${UI.cam === 'walk' && UI.main === '3d' ? `<button class="btn sm${UI.moveId === it.id ? ' primary' : ''}" data-sb="move" style="margin:0 4px">${UI.moveId === it.id ? 'Done' : '<svg class="ic sm"><use href="#i-move"/></svg>Move'}</button>` : ''}
       <button class="iconbtn" data-sb="edit" title="Size, colour and details" aria-label="Edit size and colour" aria-expanded="${!!UI.sbExpand}" aria-pressed="${!!UI.sbExpand}">${it.col ? `<span class="colchip" style="background:${it.col}"></span>` : '<svg class="ic"><use href="#i-sliders"/></svg>'}</button>
       <button class="iconbtn desk-only" data-sb="rotl" title="Rotate left (Shift+R)" aria-label="Rotate left"><svg class="ic"><use href="#i-rotl"/></svg></button>
       <button class="iconbtn" data-sb="rotr" title="Rotate right (R)" aria-label="Rotate right"><svg class="ic"><use href="#i-rotr"/></svg></button>
@@ -2637,7 +2700,7 @@ function renderSelBar() {
   }
   if (sel.kind === 'room') {
     const r = ROOM_BY[sel.id], st = S.rooms[r.id], p = PAINTS.find(q => q.id === st.paint);
-    bar.innerHTML = `<div class="who"><div><b>${esc(r.name)}</b><small>${r.area.toFixed(1)} m² · ${money(floorCost(r, st) + paintCost(r, st))}</small></div></div>
+    bar.innerHTML = `<div class="who"><div><b>${esc(r.name)}</b><small>${r.area.toFixed(1)} m²</small></div></div>
       <span class="sep"></span>
       <button class="chipbtn desk-only" data-sb="fin"><span class="minisw" style="background:${floorSwatch(r)}"></span><span><small>Floor</small>${esc(FLOORS[st.floor].name)}</span></button>
       <button class="chipbtn desk-only" data-sb="fin"><span class="minisw" style="${p.c ? 'background:' + p.c : 'background:repeating-linear-gradient(45deg,var(--surface) 0 3px,var(--line-strong) 3px 4px)'}"></span><span><small>Walls</small>${esc(p.name)}</span></button>
@@ -2652,7 +2715,7 @@ function renderSelBar() {
       <span class="flag neutral"><svg class="ic sm"><use href="#i-lock"/></svg>Can’t be removed</span>${close}`;
     return;
   }
-  bar.innerHTML = `<div class="who"><div><b>${esc(w.name)}</b><small>${mmf(w.len)} mm long · hacking ${money(wallCost(w))}</small></div></div>
+  bar.innerHTML = `<div class="who"><div><b>${esc(w.name)}</b><small>${mmf(w.len)} mm long</small></div></div>
     ${w.kind === 'wet' ? `<span class="flag" title="Needs HDB approval; waterproofing and tiles must be redone; no hacking in the first 3 years"><svg class="ic sm"><use href="#i-alert"/></svg>Bathroom wall</span>` : ''}
     <span class="sep"></span>
     <button class="btn sm ${rem ? 'primary' : 'danger'}" data-sb="wall">${rem ? 'Restore wall' : 'Remove wall'}</button>${close}`;
@@ -2661,6 +2724,7 @@ $('#selbar').addEventListener('click', e => {
   const b = e.target.closest('[data-sb]'); if (!b) return;
   const k = b.dataset.sb;
   if (k === 'close') return select(null);
+  if (k === 'move') { const id = UI.sel && UI.sel.id; UI.moveId = UI.moveId === id ? null : id; renderSelBar(); renderHint(); if (V3.ready) { buildMarks(); requestRender(); } return; }
   if (k === 'edit') { UI.sbExpand = !UI.sbExpand; return renderSelBar(); }
   if (b.dataset.col != null) { const it = selItem(); if (it) mutate(() => { it.col = b.dataset.col || undefined; }); return; }
   if (k === 'col-all') { const it = selItem(); if (it) { mutate(() => { S.items.forEach(x => { if (CAT[x.type].rate) x.col = it.col; }); }); toast('Finish applied to all built-in carpentry'); } return; }
@@ -2685,7 +2749,7 @@ function sbExtra(it) {
   const sw = set ? `<span class="swatches" role="group" aria-label="${set === 'fabric' ? 'Fabric' : set === 'lam' ? 'Laminate' : 'Finish'}">${SWATCHES[set].map(([n, c]) => `<button class="sw" data-col="${c}" title="${esc(n)}" aria-label="${esc(n)}" aria-pressed="${it.col === c}" style="background:${c}"></button>`).join('')}<button class="sw none" data-col="" title="Default" aria-label="Default finish" aria-pressed="${!it.col}"></button></span>` : '';
   return `<div class="sb-extra">
     <span class="cdims"><label>W <input type="number" inputmode="numeric" id="sb-w" min="100" step="10" value="${Math.round(it.w)}" aria-label="Width in mm"></label><label>D <input type="number" inputmode="numeric" id="sb-d" min="100" step="10" value="${Math.round(it.d)}" aria-label="Depth in mm"></label></span>
-    ${t.custom ? `<label>Name <input id="sb-label" value="${esc(it.label || '')}" style="width:130px"></label><label>H <input type="number" inputmode="numeric" id="sb-h" min="10" step="10" value="${Math.round(it.h || 750)}" aria-label="Height in mm"></label><label>S$ <input type="number" inputmode="numeric" id="sb-price" min="0" step="10" value="${Math.round(itemCost(it))}" aria-label="Price"></label>` : ''}
+    ${t.custom ? `<label>Name <input id="sb-label" value="${esc(it.label || '')}" style="width:130px"></label><label>H <input type="number" inputmode="numeric" id="sb-h" min="10" step="10" value="${Math.round(it.h || 750)}" aria-label="Height in mm"></label>` : ''}
     ${set ? `<span>${set === 'fabric' ? 'Fabric' : set === 'lam' ? 'Laminate' : set === 'wood' ? 'Wood' : 'Colour'}</span>${sw}` : (t.custom ? '' : '<span>This item has no finish options.</span>')}
     ${set === 'lam' ? '<button class="btn sm" data-sb="col-all">Use on all carpentry</button>' : ''}
   </div>`;
@@ -2696,17 +2760,20 @@ function renderHint() {
   const h = $('#hint');
   let msg = '';
   if (UI.tool === 'measure') msg = 'Drag across the plan to measure. Press Esc when you’re done.';
-  else if (!UI.hintOff && !UI.sel) msg = UI.main === '3d' ? (UI.cam === 'walk' ? (coarse ? 'Tap the floor to walk there · joystick to steer · drag to look around' : 'Click the floor to walk there · W A S D to steer · drag to look around') : (coarse ? 'Drag to orbit · pinch to zoom · tap to edit · double-tap a floor to walk in' : 'Drag to orbit · right-drag to pan · click anything to edit · double-click a floor to walk in')) : 'Drag to pan · scroll to zoom · drag furniture to move it';
+  else if (UI.moveId && selItem()) msg = `Drag the ${(selItem().label || CAT[selItem().type].name).toLowerCase()} to move it, then tap Done.`;
+  else if (UI.cam === 'walk' && UI.main === '3d' && selItem()) msg = 'Tap Move to reposition this item. Dragging elsewhere just looks around.';
+  else if (!UI.hintOff && !UI.sel) msg = UI.main === '3d' ? (UI.cam === 'walk' ? (coarse ? 'Tap the floor to walk there · joystick to steer · drag to look around · Jump hops over things' : 'Click the floor to walk · W A S D to move · right-drag or Q / E to turn · scroll to zoom out · Space to jump') : (coarse ? 'Drag to orbit · pinch to zoom · tap to edit · double-tap a floor to walk in' : 'Right-drag to orbit · middle-drag to pan · scroll to zoom · click to edit · double-click a floor to walk in')) : 'Drag to pan · scroll to zoom · drag furniture to move it';
   h.hidden = !msg;
   if (msg) h.innerHTML = `<span>${msg}</span><button data-hint="x" aria-label="Dismiss"><svg class="ic sm"><use href="#i-close"/></svg></button>`;
 }
-$('#hint').addEventListener('click', e => { if (!e.target.closest('[data-hint]')) return; if (UI.tool === 'measure') { closeTool(); return; } UI.hintOff = true; saveUI(); renderHint(); });
+$('#hint').addEventListener('click', e => { if (!e.target.closest('[data-hint]')) return; if (UI.moveId) { UI.moveId = null; renderSelBar(); renderHint(); return; } if (UI.tool === 'measure') { closeTool(); return; } UI.hintOff = true; saveUI(); renderHint(); });
 
 /* ================================================================
    Tools + drawer
 ================================================================ */
-const TOOL_TITLES = { furnish: 'Furnish', finishes: 'Floors, paint & ceilings', walls: 'Walls', budget: 'Budget', compare: 'Compare designs', history: 'Versions & history', checks: 'Layout checks', timeline: 'Renovation timeline' };
+const TOOL_TITLES = { furnish: 'Furnish', finishes: 'Floors, paint & ceilings', walls: 'Walls', compare: 'Compare designs', history: 'Versions & history', checks: 'Layout checks', timeline: 'Renovation timeline' };
 function openTool(t) {
+  if (!TOOL_TITLES[t] && t !== 'measure') return;
   if (t === 'measure') {
     if (UI.tool === 'measure') return closeTool();
     UI.tool = 'measure'; if (UI.main !== '2d') setMain('2d'); svg.classList.add('measure');
@@ -2733,7 +2800,7 @@ function renderDrawer() {
   const st = body.scrollTop, same = body.dataset.tool === UI.tool;
   body.dataset.tool = UI.tool;
   if (UI.tool === 'furnish') { if (!same) { body.innerHTML = furnishShell(); } renderCatalogue(); }
-  else body.innerHTML = UI.tool === 'finishes' ? finishesHTML() : UI.tool === 'walls' ? wallsHTML() : UI.tool === 'compare' ? compareHTML() : UI.tool === 'checks' ? checksHTML() : UI.tool === 'timeline' ? timelineHTML() : UI.tool === 'history' ? historyHTML() : budgetHTML();
+  else body.innerHTML = UI.tool === 'finishes' ? finishesHTML() : UI.tool === 'walls' ? wallsHTML() : UI.tool === 'compare' ? compareHTML() : UI.tool === 'checks' ? checksHTML() : UI.tool === 'timeline' ? timelineHTML() : UI.tool === 'history' ? historyHTML() : '';
   body.scrollTop = same ? st : 0;
 }
 
@@ -2747,8 +2814,7 @@ function furnishShell() {
       <label class="field">Width (mm)<input class="input" id="own-w" type="number" inputmode="numeric" min="50" placeholder="2000" required></label>
       <label class="field">Depth (mm)<input class="input" id="own-d" type="number" inputmode="numeric" min="50" placeholder="900" required></label>
       <label class="field">Height (mm)<input class="input" id="own-h" type="number" inputmode="numeric" min="10" placeholder="800"></label>
-      <label class="field">Price (S$)<input class="input" id="own-p" type="number" inputmode="numeric" min="0" placeholder="0"></label>
-      <div class="field" style="grid-column:span 2">Colour<span class="swatches" id="own-col">${SWATCHES.custom.map(([n, c], i) => `<button type="button" class="sw" data-owncol="${c}" title="${esc(n)}" aria-label="${esc(n)}" aria-pressed="${i === 4}" style="background:${c};width:26px;height:26px"></button>`).join('')}</span></div>
+      <div class="field" style="grid-column:span 3">Colour<span class="swatches" id="own-col">${SWATCHES.custom.map(([n, c], i) => `<button type="button" class="sw" data-owncol="${c}" title="${esc(n)}" aria-label="${esc(n)}" aria-pressed="${i === 4}" style="background:${c};width:26px;height:26px"></button>`).join('')}</span></div>
       <p class="hint full" id="own-err" hidden></p>
       <div class="btnrow full"><button class="btn primary sm" type="submit">Add to plan</button><span class="hint">Also saved under My items.</span></div>
     </form></details>
@@ -2763,11 +2829,11 @@ function renderCatalogue() {
   const q = UI.q.trim().toLowerCase();
   const mine = myItems().filter(m => (UI.cat === 'All' || UI.cat === 'My items') && (!q || m.label.toLowerCase().includes(q)));
   const items = Object.entries(CAT).filter(([k, t]) => !t.custom && (UI.cat === 'All' || t.cat === UI.cat || ALSO_IN[k] === UI.cat) && (!q || t.name.toLowerCase().includes(q) || t.cat.toLowerCase().includes(q)));
-  const mineHTML = mine.map((m, i) => `<div class="icard" style="position:relative"><button data-addmine="${i}" title="Add ${esc(m.label)}" style="text-align:left;display:flex;flex-direction:column;gap:2px"><span class="thumb"><svg viewBox="-60 -60 ${m.w + 120} ${m.d + 120}" preserveAspectRatio="xMidYMid meet" aria-hidden="true"><g class="item" style="--furn:color-mix(in srgb, ${m.col} 62%, var(--paper))">${DRAW.custom(m.w, m.d, m)}</g></svg></span><span class="tag">My item</span><span class="nm">${esc(m.label)}</span><span class="mt">${mmf(m.w)} × ${mmf(m.d)} × ${mmf(m.h)}${m.price ? ' · ' + money(m.price) : ''}</span></button><button class="iconbtn" data-delmine="${i}" aria-label="Remove ${esc(m.label)} from My items" title="Remove from My items" style="position:absolute;top:6px;right:6px;width:28px;height:28px"><svg class="ic sm"><use href="#i-close"/></svg></button></div>`).join('');
+  const mineHTML = mine.map((m, i) => `<div class="icard" style="position:relative"><button data-addmine="${i}" title="Add ${esc(m.label)}" style="text-align:left;display:flex;flex-direction:column;gap:2px"><span class="thumb"><svg viewBox="-60 -60 ${m.w + 120} ${m.d + 120}" preserveAspectRatio="xMidYMid meet" aria-hidden="true"><g class="item" style="--furn:color-mix(in srgb, ${m.col} 62%, var(--paper))">${DRAW.custom(m.w, m.d, m)}</g></svg></span><span class="tag">My item</span><span class="nm">${esc(m.label)}</span><span class="mt">${mmf(m.w)} × ${mmf(m.d)} × ${mmf(m.h)}</span></button><button class="iconbtn" data-delmine="${i}" aria-label="Remove ${esc(m.label)} from My items" title="Remove from My items" style="position:absolute;top:6px;right:6px;width:28px;height:28px"><svg class="ic sm"><use href="#i-close"/></svg></button></div>`).join('');
   if (UI.cat === 'My items' && !mine.length) { list.innerHTML = '<p class="hint" style="grid-column:1/-1">Nothing here yet. Use “Add your own item” above to enter any product’s width, depth and height.</p>'; return; }
   list.innerHTML = mineHTML + (items.length ? items.map(([k, t]) => `<button class="icard" draggable="true" data-add="${k}" title="Add ${esc(t.name)}">
       <span class="thumb">${thumb(k)}</span>${t.rate ? '<span class="tag">Built-in</span>' : ''}<span class="nm">${esc(t.name)}</span>
-      <span class="mt">${t.elec ? '' : mmf(t.w) + ' × ' + mmf(t.d) + ' · '}${t.rate ? money(S.rates[t.rate]) + '/m' : t.erate ? money(S.rates[t.erate]) + ' each' : t.price ? money(t.price) : esc(t.note || 'No extra cost')}</span></button>`).join('')
+      <span class="mt">${t.elec ? esc(CAT_ELEC_NOTE[t.elec]) : mmf(t.w) + ' × ' + mmf(t.d) + ' mm'}</span></button>`).join('')
     : (mine.length ? '' : `<p class="hint" style="grid-column:1/-1">Nothing matches “${esc(UI.q)}”. Try “bed”, “cabinet” or “table”, or add your own item.</p>`));
 }
 
@@ -2784,13 +2850,13 @@ function finishesHTML() {
         <span class="dot2" style="background:${floorSwatch(x)}"><i style="background:${p.c || 'var(--surface)'}"></i></span>
         <span class="t"><b>${esc(x.name)}</b><small>${esc(FLOORS[s2.floor].name)}${s2.paint !== 'keep' ? ' · ' + esc(p.name) : ''}</small></span><span class="v">${x.area.toFixed(1)} m²</span></button>`; }).join('')}</div></div>
     ${note}
-    <div class="sec"><p class="eyebrow">Flooring · ${esc(r.name)}</p><div class="opts">${allowed.map(([k, v]) => { const c = k === 'asis' ? patSpec(r, { floor: 'asis' }).c[0] : Object.values(v.tones)[0].c[0]; return `<button class="opt" data-floor="${k}" aria-pressed="${st.floor === k}"><span class="sw0" style="background:${c}"></span><span class="t">${esc(v.name)}<small>${k === 'asis' ? 'No cost' : money(S.rates[v.rate]) + '/m² · ' + money(r.area * S.rates[v.rate]) + ' for this room'}</small></span></button>`; }).join('')}</div>
+    <div class="sec"><p class="eyebrow">Flooring · ${esc(r.name)}</p><div class="opts">${allowed.map(([k, v]) => { const c = k === 'asis' ? patSpec(r, { floor: 'asis' }).c[0] : Object.values(v.tones)[0].c[0]; return `<button class="opt" data-floor="${k}" aria-pressed="${st.floor === k}"><span class="sw0" style="background:${c}"></span><span class="t">${esc(v.name)}<small>${k === 'asis' ? 'Keep the existing floor' : Object.keys(v.tones).length + ' tones'}</small></span></button>`; }).join('')}</div>
     ${st.floor !== 'asis' ? `<div class="swatches" role="group" aria-label="Tone">${Object.entries(f.tones).map(([k, t]) => `<button class="sw sq" title="${esc(t.label)}" aria-label="${esc(t.label)}" data-tone="${k}" aria-pressed="${st.tone === k}" style="background:${t.c[0]}"></button>`).join('')}</div>
     <div class="btnrow"><button class="btn sm" data-apply="dry">Use on all bedrooms and living</button></div>` : ''}</div>
     <div class="sec"><p class="eyebrow">Wall paint · ${esc(r.name)}${r.tiled ? ' (ceiling only, walls are tiled)' : ''}</p>
     <div class="swatches" role="group" aria-label="Paint colour">${PAINTS.map(p => `<button class="sw${p.c ? '' : ' none'}" title="${esc(p.name)}" aria-label="${esc(p.name)}" data-paint="${p.id}" aria-pressed="${st.paint === p.id}" ${p.c ? `style="background:${p.c}"` : ''}></button>`).join('')}</div>
-    <p class="hint">${esc(PAINTS.find(p => p.id === st.paint).name)}${st.paint !== 'keep' ? ' · ' + money(paintCost(r, st)) : ''}</p></div>
-    <div class="sec"><p class="eyebrow">Ceiling · ${esc(r.name)}</p><div class="opts">${Object.entries(CEILS).map(([k, v]) => { const c = ceilCost(r, { ceil: k }); return `<button class="opt" data-ceil="${k}" aria-pressed="${(st.ceil || 'none') === k}"><span class="t">${esc(v.name)}<small>${k === 'none' ? 'No cost' : k === 'flat' ? money(S.rates.ce_flat) + '/m² · ' + money(c) : money(S.rates.ce_cove) + '/m run · ' + money(c)}</small></span></button>`; }).join('')}</div>
+    <p class="hint">${esc(PAINTS.find(p => p.id === st.paint).name)}</p></div>
+    <div class="sec"><p class="eyebrow">Ceiling · ${esc(r.name)}</p><div class="opts">${Object.entries(CEILS).map(([k, v]) => { const c = ceilCost(r, { ceil: k }); return `<button class="opt" data-ceil="${k}" aria-pressed="${(st.ceil || 'none') === k}"><span class="t">${esc(v.name)}<small>${k === 'none' ? 'Original ceiling' : k === 'flat' ? 'Lowered ceiling for downlights' : 'Recessed edge with hidden LED strip'}</small></span></button>`; }).join('')}</div>
     <p class="hint">Ceilings, lights and fans show when you Walk through the flat. Cove lighting glows at sunset and night.</p></div>
     <input type="hidden" id="dry-ids" value="${dry.join(',')}">`;
 }
@@ -2801,7 +2867,7 @@ function wallsHTML() {
   const removed = rem.filter(w => S.walls[w.id] && S.walls[w.id].removed);
   return `<p class="hint">Walls you can remove are highlighted on the model. Black walls are structural on the HDB plan and stay locked.</p>
     <div class="sec"><p class="eyebrow">Removable walls${removed.length ? ` · ${removed.length} marked` : ''}</p><div class="rows">${rem.map(w => { const on = !!(S.walls[w.id] && S.walls[w.id].removed); return `<div class="rowbtn" aria-current="${UI.sel && UI.sel.id === w.id}" data-wsel="${w.id}" style="cursor:pointer">
-      <span class="t"><b>${esc(w.name)}</b><small>${w.kind === 'wet' ? 'Bathroom wall · ' : ''}${mmf(w.len)} mm · ${money(wallCost(w))}</small></span>
+      <span class="t"><b>${esc(w.name)}</b><small>${w.kind === 'wet' ? 'Bathroom wall · ' : ''}${mmf(w.len)} mm long</small></span>
       <button class="switch" role="switch" aria-checked="${on}" aria-label="Remove ${esc(w.name)}" data-wt="${w.id}"></button></div>`; }).join('')}</div></div>
     <p class="note"><svg class="ic sm"><use href="#i-info"/></svg><span>Hacking non-structural walls needs an HDB renovation permit, which your contractor applies for. Bathroom walls also need fresh waterproofing, and can’t be hacked in the first 3 years.</span></p>`;
 }
@@ -2809,15 +2875,16 @@ function wallsHTML() {
 /* Versions & history */
 function relTime(t) { const m = Math.round((Date.now() - t) / 60000); if (m < 1) return 'just now'; if (m < 60) return `${m} min ago`; const h = Math.round(m / 60); if (h < 24) return `${h} h ago`; return new Date(t).toLocaleString('en-SG', { day: 'numeric', month: 'short', hour: 'numeric', minute: '2-digit' }); }
 function historyHTML() {
-  const list = (readVers()[dsId()] || []), now = budget().total, dn = DS.list[DS.active].name;
-  const row = x => { const tot = withState(normalize(JSON.parse(JSON.stringify(x.s))), () => budget().total), diff = tot - now;
+  const list = (readVers()[dsId()] || []), dn = DS.list[DS.active].name;
+  const row = x => {
     return `<div class="vrow"><span class="vic${x.auto ? '' : ' named'}"><svg class="ic sm"><use href="#i-${x.auto ? 'clock' : 'star'}"/></svg></span>
-      <span class="t">${UI.vRename === x.id ? `<input class="input" id="v-name" value="${esc(x.name || '')}" maxlength="40" aria-label="Version name">` : `<b>${esc(x.name || 'Auto-saved')}</b>`}<small>${relTime(x.t)} · ${money(tot)}${Math.abs(diff) >= 1 ? ` (${diff > 0 ? '+' : '−'}${money(Math.abs(diff))} vs now)` : ' · same cost as now'}</small></span>
+      <span class="t">${UI.vRename === x.id ? `<input class="input" id="v-name" value="${esc(x.name || '')}" maxlength="40" aria-label="Version name">` : `<b>${esc(x.name || 'Auto-saved')}</b>`}<small>${relTime(x.t)} · ${x.s.items.filter(i => CAT[i.type] && !CAT[i.type].elec).length} items · ${Object.values(x.s.walls || {}).filter(w => w.removed).length} walls removed</small></span>
       ${UI.vRename === x.id ? `<button class="btn sm primary" data-vsave="${x.id}">Save</button>` : `<button class="btn sm" data-vrestore="${x.id}">Restore</button>
       <button class="iconbtn" data-vrename="${x.id}" title="${x.auto ? 'Keep as a named version' : 'Rename'}" aria-label="Rename"><svg class="ic sm"><use href="#i-tag"/></svg></button>
       <button class="iconbtn${UI.vDel === x.id ? ' danger' : ''}" data-vdel="${x.id}" title="Delete" aria-label="${UI.vDel === x.id ? 'Confirm delete' : 'Delete'}">${UI.vDel === x.id ? '<b style="font-size:11px">Sure?</b>' : '<svg class="ic sm"><use href="#i-trash"/></svg>'}</button>`}</div>`; };
   const named = list.filter(x => !x.auto), autos = list.filter(x => x.auto);
   return `<form class="sec" id="v-form"><label class="field">Save the current state of ${esc(dn)}<span style="display:flex;gap:8px"><input class="input" id="v-new" maxlength="40" placeholder="e.g. Before meeting the ID"><button class="btn primary" type="submit">Save</button></span></label></form>
+    <div class="sec"><p class="eyebrow">Base</p><div class="vrow"><span class="vic named"><svg class="ic sm"><use href="#i-home"/></svg></span><span class="t"><b>Bare house</b><small>As handed over · no furniture · always available</small></span><button class="btn sm${UI.vBare ? ' danger' : ''}" data-vbare="1">${UI.vBare ? 'Reset now?' : 'Reset to this'}</button></div></div>
     <div class="sec"><p class="eyebrow">Saved versions${named.length ? ' · ' + named.length : ''}</p>${named.length ? named.map(row).join('') : '<p class="hint">None yet. Save one before trying a big change.</p>'}</div>
     <div class="sec"><p class="eyebrow">Automatic history${autos.length ? ' · ' + autos.length : ''}</p>${autos.length ? autos.map(row).join('') : '<p class="hint">Snapshots appear here every few minutes while you work, and before restores and resets.</p>'}</div>
     <p class="hint">History is kept for each design option on this device. Restoring saves the current state first, so nothing is lost.</p>`;
@@ -2825,6 +2892,8 @@ function historyHTML() {
 function findVer(id) { const v = readVers(), list = v[dsId()] || []; return { v, list, x: list.find(y => y.id === id) }; }
 body.addEventListener('submit', e => { if (e.target.id !== 'v-form') return; e.preventDefault(); const n = ($('#v-new').value || '').trim() || 'Version ' + new Date().toLocaleString('en-SG', { day: 'numeric', month: 'short', hour: 'numeric', minute: '2-digit' }); if (UI.before) setBefore(false); persist(); toast(addVersion(n, false) !== false ? `Saved “${n}”` : 'Couldn’t save: this browser’s storage is full. Delete some versions.'); renderDrawer(); });
 body.addEventListener('click', e => {
+  const bb = e.target.closest('[data-vbare]');
+  if (bb) { if (!UI.vBare) { UI.vBare = true; return renderDrawer(); } UI.vBare = false; setBefore(false); addVersion('Before reset to bare house', true); lastAuto = Date.now(); mutate(() => { S = bareHouse(); UI.sel = null; }); toast('Reset to bare house. Undo is available.'); return renderDrawer(); }
   const b = e.target.closest('[data-vrestore],[data-vrename],[data-vsave],[data-vdel]'); if (!b) return;
   if (b.dataset.vrestore) { const { x } = findVer(b.dataset.vrestore); if (!x) return; setBefore(false); addVersion('Before restoring “' + (x.name || 'auto-save') + '”', true); lastAuto = Date.now(); mutate(() => { S = normalize(JSON.parse(JSON.stringify(x.s))); UI.sel = null; }); toast(`Restored ${x.name ? '“' + x.name + '”' : 'the ' + relTime(x.t) + ' snapshot'}. Undo is available.`); return renderDrawer(); }
   if (b.dataset.vrename) { UI.vRename = b.dataset.vrename; UI.vDel = null; renderDrawer(); const i = $('#v-name'); if (i) { i.focus(); i.select(); } return; }
@@ -2879,9 +2948,7 @@ function timeline() {
   ];
   const by = {}; T.forEach(t => { t.s = Math.max(0, ...t.deps.map(d => by[d].e)); t.e = t.s + t.dur; by[t.id] = t; });
   const end = by.clean.e, start = S.startDate;
-  const b = budget(), contract = b.groups.filter(g => g.id !== 'furn').reduce((a, g) => a + g.total, 0) * (S.gst ? 1.09 : 1);
-  const pays = [['Deposit when you sign', 0, 0.1], ['Works start', by.hack.s, 0.4], ['Carpentry installed', (by.carp.dur ? by.carp.e : by.paint.e), 0.4], ['Handover', end, 0.1]].map(([n, d, f]) => ({ n, date: wdDate(start, d), amt: contract * f, pct: f * 100 }));
-  return { tasks: T, end, start, endDate: wdDate(start, end - 1), weeks: Math.ceil(end / 6), contract, pays };
+  return { tasks: T, end, start, endDate: wdDate(start, end - 1), weeks: Math.ceil(end / 6) };
 }
 function timelineHTML() {
   const tl = timeline(), total = Math.max(1, tl.end), wk = (6 / total * 100).toFixed(3) + '%';
@@ -2890,30 +2957,9 @@ function timelineHTML() {
     <p class="hint">Built from this design: steps you don’t need are left out. Counts working days, Monday to Saturday.</p></div>
     <div class="gantt">${tl.tasks.filter(t => t.dur).map(t => `<div class="grow"><b>${esc(t.name)}</b><small>${fmtD(wdDate(tl.start, t.s))} – ${fmtD(wdDate(tl.start, t.e - 1))} · ${t.dur} days · ${esc(t.why)}</small>
       <div class="gtrack" style="--wk:${wk}"><i class="${t.off ? 'off' : ''}" style="left:${(t.s / total * 100).toFixed(2)}%;width:${(t.dur / total * 100).toFixed(2)}%;background:${t.c}"></i></div></div>`).join('')}</div>
-    <div class="sec"><p class="eyebrow">Payment schedule (typical)</p><table class="pay">${tl.pays.map(p => `<tr><td>${esc(p.n)}<br><small class="hint">${fmtD(p.date)} · ${p.pct}%</small></td><td class="n">${money(p.amt)}</td></tr>`).join('')}<tr><td><b>Renovation contract</b><br><small class="hint">Excludes loose furniture and appliances you buy yourself</small></td><td class="n"><b>${money(tl.contract)}</b></td></tr></table></div>
     <p class="note"><svg class="ic sm"><use href="#i-info"/></svg><span>HDB allows renovation from 9am to 6pm, Monday to Saturday, and noisy work like hacking and drilling only from 9am to 5pm on weekdays. No work on Sundays and public holidays (holidays aren’t counted here). Your contractor’s schedule may differ.</span></p>`;
 }
 
-/* Budget */
-function budgetHTML() {
-  const b = budget(), over = b.total > S.budget;
-  const bar = b.groups.filter(g => g.total > 0).map(g => `<i style="flex:${g.total.toFixed(0)};background:${g.c}" title="${esc(g.name)}: ${money(g.total)}"></i>`).join('');
-  return `<div class="sec"><div class="total">${money(b.total)} <small>estimate</small></div>
-    <div class="stack" aria-hidden="true">${bar}</div>
-    <div class="btnrow" style="align-items:flex-end;justify-content:space-between"><label class="field" style="flex:1">Your budget (S$)<input class="input" type="number" id="f-budget" step="1000" min="0" value="${S.budget}"></label>
-    <span class="flag ${over ? '' : 'ok'}" style="margin-bottom:7px">${over ? money(b.total - S.budget) + ' over' : money(S.budget - b.total) + ' to spare'}</span></div></div>
-    <div class="glist">${b.groups.map(g => `<details><summary><span class="k" style="background:${g.c}"></span>${esc(g.name)}<span class="amt">${money(g.total)}</span><svg class="ic sm chev"><use href="#i-chev"/></svg></summary><div class="lines">${g.lines.length ? g.lines.map(l => `<div class="line"><span>${esc(l.label)}</span><span class="a">${money(l.amt)}</span><span class="d">${esc(l.detail)}</span></div>`).join('') : '<span class="hint">Nothing yet.</span>'}</div></details>`).join('')}</div>
-    <div class="sec"><p class="eyebrow">Electrical &amp; services</p><div class="kv">${EXTRAS.map(x => `<span>${esc(x.name)}<br><small class="hint">${money(S.rates[x.id])} each</small></span><span class="stepper"><button data-ex="${x.id}" data-dx="-1" aria-label="Fewer ${esc(x.name)}"><svg class="ic sm"><use href="#i-minus"/></svg></button><output>${S.extras[x.id] || 0}</output><button data-ex="${x.id}" data-dx="1" aria-label="More ${esc(x.name)}"><svg class="ic sm"><use href="#i-plus"/></svg></button></span>`).join('')}</div></div>
-    <div class="sec"><div class="kv">
-      <span>Subtotal</span><span class="a">${money(b.sub)}</span>
-      <span style="display:flex;align-items:center;gap:6px">Contingency <input class="input" type="number" id="f-cont" min="0" max="50" step="1" value="${S.contingency}" style="width:58px;height:30px"> %</span><span class="a">${money(b.cont)}</span>
-      <label style="display:flex;align-items:center;gap:6px"><input type="checkbox" id="f-gst" ${S.gst ? 'checked' : ''}> GST 9%</label><span class="a">${money(b.gst)}</span>
-      <span class="grand">Total</span><span class="a grand">${money(b.total)}</span>
-    </div></div>
-    <details class="more"><summary>Edit rates</summary><div class="rates">${RATE_LABELS.map(([h, list]) => `<h4>${esc(h)}</h4>` + list.map(([k, l]) => `<label for="r-${k}">${esc(l)}</label><input class="input" type="number" min="0" step="${k === 'ceiling' ? 10 : 5}" id="r-${k}" data-rate="${k}" value="${S.rates[k]}">`).join('')).join('')}</div>
-      <div class="btnrow" style="margin-top:10px"><button class="btn sm" id="rates-reset">Reset to defaults</button></div></details>
-    <p class="hint">Indicative Singapore prices for planning. Get itemised quotes from HDB-registered contractors before committing.</p>`;
-}
 
 body.addEventListener('click', e => {
   const b = e.target.closest('button, [data-wsel]'); if (!b) return;
@@ -2938,7 +2984,7 @@ body.addEventListener('click', e => {
 body.addEventListener('submit', e => {
   if (e.target.id !== 'own-form') return; e.preventDefault();
   const v = id => $('#' + id).value.trim(), err = $('#own-err');
-  const m = { label: v('own-name'), w: Math.round(+v('own-w')), d: Math.round(+v('own-d')), h: Math.round(+v('own-h') || 800), price: Math.max(0, +v('own-p') || 0), col: (body.querySelector('[data-owncol][aria-pressed="true"]') || {}).dataset?.owncol || '#c9b79c' };
+  const m = { label: v('own-name'), w: Math.round(+v('own-w')), d: Math.round(+v('own-d')), h: Math.round(+v('own-h') || 800), price: 0, col: (body.querySelector('[data-owncol][aria-pressed="true"]') || {}).dataset?.owncol || '#c9b79c' };
   const bad = !m.label ? 'Give the item a name.' : !(m.w >= 50 && m.w <= 8000) ? 'Enter a width between 50 and 8,000 mm.' : !(m.d >= 50 && m.d <= 8000) ? 'Enter a depth between 50 and 8,000 mm.' : !(m.h >= 10 && m.h <= 2600) ? 'Enter a height up to 2,600 mm.' : '';
   if (bad) { err.textContent = bad; err.hidden = false; return; }
   err.hidden = true; const a = myItems(); a.unshift(m); ls.set(KEY_MY, JSON.stringify(a.slice(0, 40)));
@@ -2963,14 +3009,9 @@ function renderTop() {
   $('#brand-sub').innerHTML = `<span class="dsn">${esc(dn)}<svg class="ic"><use href="#i-chev"/></svg></span> · 4-Room Type 2`;
   $('#ba-before').setAttribute('aria-pressed', !!UI.before); $('#ba-after').setAttribute('aria-pressed', !UI.before);
   $('#bchip').hidden = !UI.before;
-  const b = budget(), over = b.total > S.budget;
-  $('#pill-total').textContent = compactUI() && b.total >= 10000 ? 'S$' + (b.total / 1000).toFixed(1) + 'k' : money(b.total);
-  $('#pill-bar').style.width = (S.budget ? Math.min(100, b.total / S.budget * 100) : 0) + '%';
-  $('#pill').classList.toggle('over', over);
-  $('#pill').title = `${money(b.total)} of your ${money(S.budget)} budget${over ? ' (over)' : ''}`;
 }
 $('#undo').onclick = undo; $('#redo').onclick = redo;
-$('#pill').onclick = () => UI.tool === 'budget' ? closeTool() : openTool('budget');
+
 
 /* ---------------- Layouts menu ---------------- */
 function readSaves() { try { return JSON.parse(ls.get(KEY_SAVES) || '{}'); } catch (e) { return {}; } }
@@ -2980,9 +3021,9 @@ function renderMenu() {
   m.innerHTML = `<div style="display:flex;justify-content:space-between;align-items:center"><h3>File</h3><button class="iconbtn" data-m="close" aria-label="Close"><svg class="ic sm"><use href="#i-close"/></svg></button></div>
     <div class="sec"><p class="eyebrow">Share</p><div class="btnrow"><button class="btn primary sm" data-m="share"><svg class="ic sm"><use href="#i-share"/></svg>Share a link to this design</button></div><p class="hint">Send it on WhatsApp or email; it opens your exact design.</p></div>
     <div class="sec"><p class="eyebrow">Versions</p><div class="btnrow"><button class="btn sm" data-m="history"><svg class="ic sm"><use href="#i-clock"/></svg>Versions &amp; history</button></div><p class="hint">Save named versions and go back to earlier states.</p></div>
-    <div class="sec"><p class="eyebrow">Export for contractors</p><div class="btnrow"><button class="btn primary sm" data-m="export"><svg class="ic sm"><use href="#i-print"/></svg>Open export pack</button></div><p class="hint">Plan, 3D views, schedules and budget on printable A4 pages.</p></div>
+    <div class="sec"><p class="eyebrow">Export for contractors</p><div class="btnrow"><button class="btn primary sm" data-m="export"><svg class="ic sm"><use href="#i-print"/></svg>Open export pack</button></div><p class="hint">Plan, 3D views and schedules on printable A4 pages.</p></div>
     <p class="hint">Your work saves automatically. Switch or add design options from the card at the top left.</p>
-    <div class="sec"><p class="eyebrow">Start again</p><div class="btnrow"><button class="btn sm${UI.menu.confirm === 'starter' ? ' danger solid' : ''}" data-m="starter">${UI.menu.confirm === 'starter' ? 'Replace this design?' : 'Reset to example'}</button><button class="btn sm${UI.menu.confirm === 'empty' ? ' danger solid' : ''}" data-m="empty">${UI.menu.confirm === 'empty' ? 'Clear this design?' : 'Clear to empty unit'}</button></div><p class="hint">Applies to the current design option. Both can be undone.</p></div>
+    <div class="sec"><p class="eyebrow">Start again</p><div class="btnrow"><button class="btn sm${UI.menu.confirm === 'empty' ? ' danger solid' : ' primary'}" data-m="empty">${UI.menu.confirm === 'empty' ? 'Reset this design?' : 'Reset to bare house'}</button><button class="btn sm${UI.menu.confirm === 'starter' ? ' danger solid' : ''}" data-m="starter">${UI.menu.confirm === 'starter' ? 'Replace this design?' : 'Reset to example'}</button></div><p class="hint">Bare house is the flat as handed over: no furniture, nothing changed. Applies to the current design option; your current state is saved to history first and Undo works.</p></div>
     <div class="sec"><p class="eyebrow">Share or back up</p><div class="btnrow"><button class="btn sm" data-m="copy">Copy layout code</button><label class="btn sm" for="imp-file">Open .json file</label><input type="file" id="imp-file" accept=".json,application/json" hidden></div>
     <textarea id="imp-text" placeholder="Paste a layout code here" aria-label="Layout code"></textarea><div class="btnrow"><button class="btn sm" data-m="import">Load pasted code</button></div></div>`;
 }
@@ -2997,7 +3038,7 @@ $('#menu').addEventListener('click', e => {
   if (a === 'save') { const n = ($('#save-name').value || '').trim() || 'Layout ' + new Date().toLocaleString('en-SG', { dateStyle: 'medium', timeStyle: 'short' }); const s = readSaves(); s[n] = { t: Date.now(), s: S }; toast(ls.set(KEY_SAVES, JSON.stringify(s)) ? `Saved “${n}”` : 'This browser blocked saving. Use “Copy layout code” instead.'); return renderMenu(); }
   if (b.dataset.load) { const s = readSaves()[b.dataset.load]; if (s) { mutate(() => { S = normalize(s.s); UI.sel = null; }); toast(`Opened “${b.dataset.load}”`); UI.menu = null; renderMenu(); } return; }
   if (b.dataset.del) { const key = 'del:' + b.dataset.del; if (UI.menu.confirm !== key) { UI.menu.confirm = key; return renderMenu(); } const s = readSaves(); delete s[b.dataset.del]; ls.set(KEY_SAVES, JSON.stringify(s)); UI.menu.confirm = null; toast('Deleted'); return renderMenu(); }
-  if (a === 'starter' || a === 'empty') { if (UI.menu.confirm !== a) { UI.menu.confirm = a; return renderMenu(); } UI.menu = null; renderMenu(); addVersion(a === 'starter' ? 'Before reset to example' : 'Before clearing', true); mutate(() => { S = newState(a === 'starter'); UI.sel = null; }); return toast(a === 'starter' ? 'Example layout loaded' : 'Unit cleared'); }
+  if (a === 'starter' || a === 'empty') { if (UI.menu.confirm !== a) { UI.menu.confirm = a; return renderMenu(); } UI.menu = null; renderMenu(); addVersion(a === 'starter' ? 'Before reset to example' : 'Before reset to bare house', true); mutate(() => { S = newState(a === 'starter'); UI.sel = null; }); return toast(a === 'starter' ? 'Example layout loaded' : 'Reset to bare house'); }
   if (a === 'copy') { const txt = JSON.stringify(S); const fb = () => { const ta = $('#imp-text'); ta.value = txt; ta.focus(); ta.select(); toast('Copy the selected text'); }; try { navigator.clipboard.writeText(txt).then(() => toast('Layout code copied'), fb); } catch (err) { fb(); } return; }
   if (a === 'import') importText($('#imp-text').value);
 });
@@ -3012,7 +3053,8 @@ document.addEventListener('keydown', e => {
   if (mod && k === 'y') { e.preventDefault(); redo(); return; }
   if (mod && k === 'd') { e.preventDefault(); dupSel(); return; }
   if (mod) return;
-  if (UI.main === '3d' && UI.cam === 'walk' && ['w', 'a', 's', 'd', 'arrowup', 'arrowdown', 'arrowleft', 'arrowright'].includes(k)) { e.preventDefault(); keys.add(k); requestRender(); return; }
+  if (UI.main === '3d' && UI.cam === 'walk' && ['w', 'a', 's', 'd', 'q', 'e', 'arrowup', 'arrowdown', 'arrowleft', 'arrowright'].includes(k)) { e.preventDefault(); keys.add(k); requestRender(); return; }
+  if (UI.main === '3d' && UI.cam === 'walk' && k === ' ') { e.preventDefault(); jump(); return; }
   const step = e.shiftKey ? 100 : 10;
   switch (k) {
     case 'delete': case 'backspace': if (selItem()) { e.preventDefault(); deleteSel(); } break;
@@ -3046,18 +3088,18 @@ window.addEventListener('resize', () => { clearTimeout(window.__rt); window.__rt
 function toggleDoor(id) {
   const closed = S.doors[id] === 'closed';
   mutate(() => { S.doors[id] = closed ? 'open' : 'closed'; });
-  if (!UI.before) toast(`${DOOR_NAMES[id][0].toUpperCase() + DOOR_NAMES[id].slice(1)} ${closed ? 'opened' : 'closed'}`);
   renderTC();
 }
 $('#where').addEventListener('click', () => {
   const L = $('#where-list'); if (!L.hidden) { L.hidden = true; return; }
   const cur = roomAt(AV.x * 1000, AV.z * 1000);
-  L.innerHTML = ROOMS.map(r => `<button role="option" data-go="${r.id}" aria-selected="${cur && cur.id === r.id}">${esc(r.name)}<small>${r.area.toFixed(1)} m²</small></button>`).join('') + `<button role="option" data-go="entrance">Front door<small>Entrance</small></button>`;
+  L.innerHTML = ROOMS.map(r => `<button role="option" data-go="${r.id}" aria-selected="${cur && cur.id === r.id}">${esc(r.name)}<small>${r.area.toFixed(1)} m²</small></button>`).join('') + `<button role="option" data-go="entrance">Front door<small>Entrance</small></button><button role="option" data-go="corridor">Common corridor<small>Outside</small></button>`;
   L.hidden = false;
 });
 $('#where-list').addEventListener('click', e => {
   const b = e.target.closest('[data-go]'); if (!b) return; $('#where-list').hidden = true;
   if (b.dataset.go === 'entrance') return camWalk(9.7, 7.35, V3v(0, 0, -1), 'fade');
+  if (b.dataset.go === 'corridor') return camWalk(9.7, 9.9, V3v(0, 0, -1), 'fade');
   const [x, z] = LABEL_AT[b.dataset.go]; camWalk(x, z, null, 'fade');
 });
 
@@ -3067,10 +3109,12 @@ function renderCharPop() {
   const opt = (k, label, col) => `<div class="charopt" role="button" tabindex="0" data-char="${k}" aria-pressed="${UI.char.kind === k}">${figSVG(k === 'f', col)}<span><b>${label}</b><small>Eye level ${(UI.char[k] - 11)} cm</small></span><label class="h"><input type="number" inputmode="numeric" min="100" max="220" step="1" data-charh="${k}" value="${UI.char[k]}" aria-label="${label} height in cm">cm</label></div>`;
   el.innerHTML = `<div style="display:flex;justify-content:space-between;align-items:center"><h3>Character</h3><button class="iconbtn" data-charclose="1" aria-label="Close"><svg class="ic sm"><use href="#i-close"/></svg></button></div>
     ${opt('m', 'Man', '#2f7a6c')}${opt('f', 'Woman', '#b25d6e')}
-    <p class="hint">The figure and camera use this height, so first person shows what this person sees.</p>`;
+    <label class="rowbtn" style="margin:0;cursor:pointer"><span class="t"><b>Walk through furniture</b><small>Walls and closed doors still stop you</small></span><button class="switch" role="switch" aria-checked="${!!UI.ghost}" data-ghost="1" aria-label="Walk through furniture" style="background:${UI.ghost ? 'var(--accent)' : ''}"></button></label>
+    <p class="hint">The figure and camera use this height, so first person shows what this person sees. ${coarse ? 'Tap Jump' : 'Press Space'} to hop over low furniture.</p>`;
 }
 $('#char-pop').addEventListener('click', e => {
   if (e.target.closest('[data-charclose]')) { UI.charOpen = false; renderCharPop(); renderTC(); return; }
+  if (e.target.closest('[data-ghost]')) { UI.ghost = !UI.ghost; saveUI(); renderCharPop(); return; }
   if (e.target.closest('input')) return;
   const o = e.target.closest('[data-char]'); if (o && o.dataset.char !== UI.char.kind) { setChar({ kind: o.dataset.char }); toast(o.dataset.char === 'f' ? `Walking as a woman, ${UI.char.f} cm` : `Walking as a man, ${UI.char.m} cm`); }
 });
@@ -3102,7 +3146,7 @@ async function openShare() {
   let url; try { url = shareBase() + '#d=' + await packDesign(); } catch (e) { el.innerHTML = '<p class="hint">Couldn’t make a link in this browser. Use File → Copy layout code instead.</p>'; return; }
   const canShare = !!(navigator.share && location.protocol.startsWith('http'));
   el.innerHTML = `<div style="display:flex;justify-content:space-between;align-items:center"><h3>Share ${esc(DS.list[DS.active].name)}</h3><button class="iconbtn" data-shareclose="1" aria-label="Close"><svg class="ic sm"><use href="#i-close"/></svg></button></div>
-    <p class="hint">Anyone with this link sees your exact design: layout, finishes, walls, electrical and budget. It opens as a new design option on their device, so nothing of theirs is replaced.</p>
+    <p class="hint">Anyone with this link sees your exact design: layout, finishes, walls and electrical. It opens as a new design option on their device, so nothing of theirs is replaced.</p>
     <input class="input" id="share-url" readonly value="${esc(url)}" aria-label="Share link" style="font-family:var(--mono);font-size:12px">
     <div class="btnrow">${canShare ? '<button class="btn primary sm" data-sharego="1">Share…</button>' : ''}<button class="btn sm${canShare ? '' : ' primary'}" data-sharecopy="1">Copy link</button></div>
     <p class="hint">${(url.length / 1000).toFixed(1)}k characters. Later changes aren’t sent automatically; share again after big changes.</p>`;
@@ -3117,9 +3161,9 @@ $('#share-pop').addEventListener('click', e => {
 async function checkSharedLink() {
   const m = location.hash.match(/^#d=([zj][A-Za-z0-9_-]+)$/); if (!m) return;
   let d; try { d = await unpackDesign(m[1]); } catch (e) { toast('This share link is incomplete or damaged. Ask for it to be sent again.'); return; }
-  const tot = withState(d.s, () => budget().total), el = $('#share-pop');
+  const el = $('#share-pop');
   el.hidden = false;
-  el.innerHTML = `<h3>Open shared design?</h3><p class="hint"><b style="color:var(--ink)">${esc(d.name)}</b> · ${money(tot)} · ${d.s.items.filter(x => !CAT[x.type].elec).length} items · ${Object.values(d.s.walls).filter(w => w.removed).length} walls removed</p>
+  el.innerHTML = `<h3>Open shared design?</h3><p class="hint"><b style="color:var(--ink)">${esc(d.name)}</b> · ${d.s.items.filter(x => !CAT[x.type].elec).length} items · ${Object.values(d.s.walls).filter(w => w.removed).length} walls removed</p>
     <p class="hint">It’s added as a new design option. Your own designs stay as they are.</p>
     <div class="btnrow"><button class="btn primary sm" data-shareadd="1">Add as new option</button><button class="btn sm" data-sharenot="1">Not now</button></div>`;
   const clear = () => { try { history.replaceState(null, '', location.pathname + location.search); } catch (e) {} el.hidden = true; };
@@ -3183,16 +3227,16 @@ function renderDesigns() {
   const el = $('#designs'); el.hidden = !dsUI.open; if (!dsUI.open) return;
   persist();
   el.innerHTML = `<div style="display:flex;justify-content:space-between;align-items:center"><h3>Design options</h3><button class="iconbtn" data-ds="close" aria-label="Close"><svg class="ic sm"><use href="#i-close"/></svg></button></div>
-    <p class="hint">Try different ideas for the same flat. Each option keeps its own layout, finishes and budget.</p>
-    <div>${DS.list.map((d, i) => { const b = withState(d.s, budget); const cur = i === DS.active;
+    <p class="hint">Try different ideas for the same flat. Each option keeps its own layout and finishes.</p>
+    <div>${DS.list.map((d, i) => { const cur = i === DS.active;
       return `<div class="drow" aria-current="${cur}"><span class="letter">${esc(d.name.replace(/^Option /, '').slice(0, 2))}</span>
-        ${dsUI.rename === i ? `<input class="input" id="ds-name" value="${esc(d.name)}" maxlength="32" aria-label="Design name" style="flex:1">` : `<button class="t" data-ds="open" data-i="${i}"><b>${esc(d.name)}</b><small>${money(b.total)} · ${d.s.items.filter(x => !CAT[x.type].elec).length} items · ${Object.values(d.s.walls).filter(w => w.removed).length} walls removed</small></button>`}
+        ${dsUI.rename === i ? `<input class="input" id="ds-name" value="${esc(d.name)}" maxlength="32" aria-label="Design name" style="flex:1">` : `<button class="t" data-ds="open" data-i="${i}"><b>${esc(d.name)}</b><small>${d.s.items.filter(x => !CAT[x.type].elec).length} items · ${Object.values(d.s.walls).filter(w => w.removed).length} walls removed</small></button>`}
         ${dsUI.rename === i ? `<button class="btn sm primary" data-ds="save-name" data-i="${i}">Save</button>` : `<button class="iconbtn" data-ds="rename" data-i="${i}" title="Rename" aria-label="Rename ${esc(d.name)}"><svg class="ic sm"><use href="#i-tag"/></svg></button>
         <button class="iconbtn" data-ds="dup" data-i="${i}" title="Duplicate" aria-label="Duplicate ${esc(d.name)}"><svg class="ic sm"><use href="#i-copy"/></svg></button>
         ${DS.list.length > 1 ? `<button class="btn sm danger${dsUI.confirm === i ? ' solid' : ' ghost'}" data-ds="del" data-i="${i}" aria-label="Delete ${esc(d.name)}">${dsUI.confirm === i ? 'Delete?' : '<svg class="ic sm"><use href="#i-trash"/></svg>'}</button>` : ''}`}</div>`; }).join('')}</div>
     <div class="sec"><p class="eyebrow">New option</p><div class="btnrow">
       <button class="btn sm" data-ds="new-copy">Copy of ${esc(DS.list[DS.active].name)}</button>
-      <button class="btn sm" data-ds="new-blank">As handed over</button>
+      <button class="btn sm" data-ds="new-blank">Bare house</button>
       <button class="btn sm" data-ds="new-example">Example layout</button></div></div>
     ${DS.list.length > 1 ? `<button class="btn primary" data-ds="compare">Compare ${DS.list.length} options side by side</button>` : ''}`;
   const inp = $('#ds-name'); if (inp) { inp.focus(); inp.select(); }
@@ -3208,21 +3252,17 @@ $('#designs').addEventListener('click', e => {
   if (a === 'dup') { persist(); addDesign(JSON.parse(JSON.stringify(DS.list[i].s)), 'Copy of ' + DS.list[i].name.replace(/ \(Option .\)$/, '')); return renderDesigns(); }
   if (a === 'del') { if (dsUI.confirm !== i) { dsUI.confirm = i; return renderDesigns(); } dsUI.confirm = null; const wasActive = i === DS.active; const name = DS.list[i].name; DS.list.splice(i, 1); if (DS.active >= i && DS.active > 0) DS.active--; if (wasActive) { S = DS.list[DS.active].s; undoStack.length = 0; redoStack.length = 0; UI.sel = null; } saveDesigns(); renderAll(); toast(`Deleted ${name}`); return renderDesigns(); }
   if (a === 'new-copy') { persist(); addDesign(JSON.parse(JSON.stringify(S))); return renderDesigns(); }
-  if (a === 'new-blank') { addDesign(newState(false)); return renderDesigns(); }
+  if (a === 'new-blank') { addDesign(bareHouse(), 'Bare house'); return renderDesigns(); }
   if (a === 'new-example') { addDesign(newState(true)); return renderDesigns(); }
   if (a === 'compare') { dsUI.open = false; renderDesigns(); return openTool('compare'); }
 });
 $('#designs').addEventListener('keydown', e => { if (e.key === 'Enter' && e.target.id === 'ds-name') { e.preventDefault(); $('#designs [data-ds="save-name"]').click(); } });
 function compareHTML() {
   persist();
-  const cols = DS.list.map((d, i) => { const b = withState(d.s, budget); return { i, d, b, walls: Object.values(d.s.walls).filter(w => w.removed).length, carp: d.s.items.filter(x => CAT[x.type].rate).reduce((s, x) => s + x.w, 0) / 1000, furn: d.s.items.filter(x => !CAT[x.type].rate && !CAT[x.type].elec).length, elec: d.s.items.filter(x => CAT[x.type].elec).length }; });
-  const min = Math.min(...cols.map(c => c.b.total));
+  const cols = DS.list.map((d, i) => { return { i, d, walls: Object.values(d.s.walls).filter(w => w.removed).length, carp: d.s.items.filter(x => CAT[x.type].rate).reduce((s, x) => s + x.w, 0) / 1000, furn: d.s.items.filter(x => !CAT[x.type].rate && !CAT[x.type].elec).length, elec: d.s.items.filter(x => CAT[x.type].elec).length }; });
   const row = (label, f, cls = '') => `<tr class="${cls}"><td>${label}</td>${cols.map(c => `<td>${f(c)}</td>`).join('')}</tr>`;
-  return `<p class="hint">Totals include contingency and GST. Open any option to keep working on it.</p>
+  return `<p class="hint">How the options differ. Open any option to keep working on it.</p>
     <div class="cmp"><table><thead><tr><th></th>${cols.map(c => `<th>${esc(c.d.name)}<br><button class="btn sm" data-cmp="${c.i}" style="margin-top:6px"${c.i === DS.active ? ' disabled' : ''}>${c.i === DS.active ? 'Open now' : 'Open'}</button></th>`).join('')}</tr></thead><tbody>
-    ${row('Total', c => `<span class="${c.b.total === min ? 'best' : ''}">${money(c.b.total)}</span>`, 'tot')}
-    ${row('vs budget', c => { const d = c.b.total - c.d.s.budget; return d > 0 ? `<span style="color:var(--danger)">+${money(d)}</span>` : `−${money(-d)}`; })}
-    ${GROUPS.map(g => row(esc(g.name), c => money(c.b.groups.find(x => x.id === g.id).total))).join('')}
     ${row('Walls removed', c => c.walls)}
     ${row('Built-in carpentry', c => c.carp.toFixed(1) + ' m')}
     ${row('Furniture items', c => c.furn)}
@@ -3233,7 +3273,8 @@ function compareHTML() {
 body.addEventListener('click', e => { const b = e.target.closest('[data-cmp]'); if (b) switchDesign(+b.dataset.cmp); });
 
 /* ---------------- Joystick (touch screens, Walk mode) ---------------- */
-function renderJoy() { $('#joy').hidden = !(coarse && V3.ready && UI.main === '3d' && UI.cam === 'walk'); }
+$('#jump-btn').addEventListener('pointerdown', e => { e.preventDefault(); jump(); });
+function renderJoy() { const on = V3.ready && UI.main === '3d' && UI.cam === 'walk'; $('#joy').hidden = !(coarse && on); $('#jump-btn').hidden = !(coarse && on); $('#app').classList.toggle('walking', on); }
 (() => {
   const joy = $('#joy'), knob = $('#joy-knob'); let pid = null;
   const move = e => { const r = joy.getBoundingClientRect(); let dx = e.clientX - (r.left + r.width / 2), dy = e.clientY - (r.top + r.height / 2); const L = Math.hypot(dx, dy), M = 40; if (L > M) { dx *= M / L; dy *= M / L; } JOY.x = dx / M; JOY.y = dy / M; knob.style.transform = `translate(${dx}px, ${dy}px)`; requestRender(); };
@@ -3272,8 +3313,8 @@ function snapshot3D(kind) {
 }
 function openExport() {
   setBefore(false);
-  const x = $('#export'), b = budget(), dn = DS.list[DS.active].name, date = new Date().toLocaleDateString('en-SG', { day: 'numeric', month: 'long', year: 'numeric' });
-  const head = (title) => `<header><div><h1>${title}</h1><p>Blk 74A · 4-Room Type 2 · ${esc(dn)} · ${date}</p></div><div class="tot">Estimated total<b>${money(b.total)}</b></div></header>`;
+  const x = $('#export'), dn = DS.list[DS.active].name, date = new Date().toLocaleDateString('en-SG', { day: 'numeric', month: 'long', year: 'numeric' });
+  const head = (title) => `<header><div><h1>${title}</h1><p>Blk 74A · 4-Room Type 2 · ${esc(dn)} · ${date}</p></div></header>`;
   const over = snapshot3D('orbit'), walk = snapshot3D('walk');
   const roomOf = it => { const f = fp(it), r = roomAt(f.x + f.w / 2, f.y + f.h / 2); return r ? r.name : 'Other'; };
   const ECOL = [['Lights', ['e_light', 'e_pendant']], ['Downlights', ['e_down']], ['Fans', ['e_fan']], ['Power', ['e_power']], ['Data / TV', ['e_data']], ['Switches', ['e_switch']], ['Aircon', ['e_ac']]];
@@ -3293,29 +3334,20 @@ function openExport() {
         <p class="fine">Drawn from the HDB sales plan; dimensions in mm to wall centrelines. Verify on site before fabrication.</p></section>
       <section class="page">${head('3D views & room schedule')}
         <div class="shots">${over ? `<figure><img src="${over}" alt="3D overview of the flat"><figcaption>Overview · ${UI.tod}</figcaption></figure><figure><img src="${walk}" alt="Eye-level view of the living and dining area"><figcaption>Living / dining at eye level</figcaption></figure>` : '<p class="fine">3D views are unavailable because the 3D engine did not load.</p>'}</div>
-        <table><thead><tr><th>Room</th><th class="n">Area</th><th>Flooring</th><th>Walls</th><th>Ceiling</th><th class="n">Cost</th></tr></thead><tbody>
-        ${ROOMS.map(r => { const st = S.rooms[r.id], f = FLOORS[st.floor], tone = f.tones[st.tone]; return `<tr><td>${esc(r.name)}</td><td class="n">${r.area.toFixed(1)} m²</td><td>${esc(f.name)}${st.floor !== 'asis' && tone ? ', ' + esc(tone.label) : ''}</td><td>${esc(PAINTS.find(p => p.id === st.paint).name)}</td><td>${esc(CEILS[st.ceil || 'none'].name)}</td><td class="n">${money(floorCost(r, st) + paintCost(r, st) + ceilCost(r, st))}</td></tr>`; }).join('')}
+        <table><thead><tr><th>Room</th><th class="n">Area</th><th>Flooring</th><th>Walls</th><th>Ceiling</th></tr></thead><tbody>
+        ${ROOMS.map(r => { const st = S.rooms[r.id], f = FLOORS[st.floor], tone = f.tones[st.tone]; return `<tr><td>${esc(r.name)}</td><td class="n">${r.area.toFixed(1)} m²</td><td>${esc(f.name)}${st.floor !== 'asis' && tone ? ', ' + esc(tone.label) : ''}</td><td>${esc(PAINTS.find(p => p.id === st.paint).name)}</td><td>${esc(CEILS[st.ceil || 'none'].name)}</td></tr>`; }).join('')}
         </tbody></table>
         ${Object.values(S.walls).some(w => w.removed) ? `<p><b>Walls to remove:</b> ${WALLS.filter(w => S.walls[w.id] && S.walls[w.id].removed).map(w => esc(w.name) + (w.kind === 'wet' ? ' (bathroom wall)' : '')).join('; ')}</p>` : ''}</section>
       <section class="page">${head('Electrical & carpentry schedules')}<div class="cols">
         <div><h2>Electrical points</h2><table><thead><tr><th>Room</th>${ECOL.map(([n]) => `<th class="n">${n}</th>`).join('')}</tr></thead><tbody>
           ${eRows.length ? eRows.map(r => `<tr><td>${esc(r.rn)}</td>${r.v.map(v => `<td class="n">${v || ''}</td>`).join('')}</tr>`).join('') : `<tr><td colspan="${ECOL.length + 1}">No electrical points placed yet.</td></tr>`}
           <tr class="t"><td>Total</td>${ECOL.map(([, t]) => `<td class="n">${S.items.filter(it => t.includes(it.type)).length}</td>`).join('')}</tr></tbody></table></div>
-        <div><h2>Built-in carpentry</h2><table><thead><tr><th>Item</th><th>Room</th><th class="n">Run</th><th class="n">Depth</th><th class="n">Cost</th></tr></thead><tbody>
-          ${carp.length ? carp.map(it => `<tr><td>${esc(it.label || CAT[it.type].name)}</td><td>${esc(roomOf(it))}</td><td class="n">${(it.w / 1000).toFixed(2)} m</td><td class="n">${mmf(it.d)}</td><td class="n">${money(itemCost(it))}</td></tr>`).join('') : '<tr><td colspan="5">No built-in carpentry yet.</td></tr>'}
-          <tr class="t"><td colspan="2">Total</td><td class="n">${(carp.reduce((s, it) => s + it.w, 0) / 1000).toFixed(2)} m</td><td></td><td class="n">${money(carp.reduce((s, it) => s + itemCost(it), 0))}</td></tr></tbody></table></div>
+        <div><h2>Built-in carpentry</h2><table><thead><tr><th>Item</th><th>Room</th><th class="n">Run</th><th class="n">Depth</th></tr></thead><tbody>
+          ${carp.length ? carp.map(it => `<tr><td>${esc(it.label || CAT[it.type].name)}</td><td>${esc(roomOf(it))}</td><td class="n">${(it.w / 1000).toFixed(2)} m</td><td class="n">${mmf(it.d)}</td></tr>`).join('') : '<tr><td colspan="4">No built-in carpentry yet.</td></tr>'}
+          <tr class="t"><td colspan="2">Total</td><td class="n">${(carp.reduce((s, it) => s + it.w, 0) / 1000).toFixed(2)} m</td><td></td></tr></tbody></table></div>
         </div></section>
       <section class="page">${head('Schedule & payments')}${(() => { const tl = timeline(); return `<table><thead><tr><th>Stage</th><th>Dates</th><th class="n">Working days</th><th>Scope</th></tr></thead><tbody>${tl.tasks.filter(t => t.dur).map(t => `<tr><td>${esc(t.name)}</td><td>${fmtD(wdDate(tl.start, t.s))} – ${fmtD(wdDate(tl.start, t.e - 1))}</td><td class="n">${t.dur}</td><td>${esc(t.why)}</td></tr>`).join('')}<tr class="t"><td>Move in around</td><td colspan="3">${tl.endDate.toLocaleDateString('en-SG', { day: 'numeric', month: 'long', year: 'numeric' })} (${tl.weeks} weeks)</td></tr></tbody></table>
-        <h2>Payments (typical)</h2><table><tbody>${tl.pays.map(p => `<tr><td>${esc(p.n)}</td><td>${fmtD(p.date)}</td><td class="n">${p.pct}%</td><td class="n">${money(p.amt)}</td></tr>`).join('')}<tr class="t"><td colspan="3">Renovation contract, excluding loose furniture and appliances</td><td class="n">${money(tl.contract)}</td></tr></tbody></table>
         <p class="fine">Working days Monday to Saturday. HDB: renovation 9am–6pm Mon–Sat; noisy works 9am–5pm weekdays; no work on Sundays and public holidays.</p>`; })()}</section>
-      <section class="page">${head('Budget estimate')}
-        <table><thead><tr><th>Item</th><th>Basis</th><th class="n">Amount</th></tr></thead><tbody>
-        ${b.groups.filter(g => g.total > 0).map(g => `<tr class="g"><td colspan="2">${esc(g.name)}</td><td class="n">${money(g.total)}</td></tr>` + g.lines.map(l => `<tr><td>${esc(l.label)}</td><td>${esc(l.detail || '')}</td><td class="n">${money(l.amt)}</td></tr>`).join('')).join('')}
-        <tr><td colspan="2">Subtotal</td><td class="n">${money(b.sub)}</td></tr>
-        <tr><td colspan="2">Contingency ${S.contingency}%</td><td class="n">${money(b.cont)}</td></tr>
-        ${S.gst ? `<tr><td colspan="2">GST 9%</td><td class="n">${money(b.gst)}</td></tr>` : ''}
-        <tr class="t"><td colspan="2">Estimated total (budget ${money(S.budget)})</td><td class="n">${money(b.total)}</td></tr></tbody></table>
-        <p class="fine">Indicative prices for planning only. Please quote against the schedules above.</p></section>
     </div>`;
   $('#x-plan').appendChild(planClone());
   x.hidden = false; x.scrollTop = 0; x._shots = { over, walk };
