@@ -252,7 +252,8 @@ details.more > summary::-webkit-details-marker { display: none; }
 .selbar .who b { display: block; font-size: 13.5px; font-weight: 600; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; max-width: 220px; }
 .selbar .who small { display: block; font-size: 12px; color: var(--muted); font-variant-numeric: tabular-nums; white-space: nowrap; }
 .selbar .sep { width: 1px; align-self: stretch; background: var(--line); margin: 4px 4px; }
-.selbar .dims { display: flex; align-items: center; gap: 4px; font-size: 12px; color: var(--muted); }
+.selbar .dims { display: flex; align-items: center; gap: 8px; font-size: 12px; color: var(--muted); }
+.selbar .dims label { display: flex; align-items: center; gap: 4px; }
 .selbar .dims input { width: 72px; height: 32px; border: 1px solid var(--line-strong); border-radius: 8px; background: var(--surface); padding: 0 8px; font-size: 13px; font-variant-numeric: tabular-nums; color: var(--ink); }
 .selbar .iconbtn { width: 38px; height: 38px; }
 .selbar .iconbtn.danger { color: var(--danger); }
@@ -355,33 +356,82 @@ textarea { width: 100%; min-height: 72px; border: 1px solid var(--line-strong); 
   :root { --mini-w: 240px; --mini-h: 172px; --drawer-w: 320px; }
   .brand small { display: none; }
 }
-/* ---- Phone ---- */
-@media (max-width: 760px) {
-  :root { --mini-w: 150px; --mini-h: 112px; --rail-w: 0px; }
-  .brand { padding: 6px 10px 6px 6px; }
-  .brand .mark { width: 30px; height: 30px; }
-  .brand b { font-size: 13px; }
-  .tc { top: calc(var(--gt) + 56px); left: var(--gl); transform: none; flex-wrap: wrap; max-width: calc(100vw - var(--mini-w) - 48px); }
-  .where { top: calc(var(--gt) + 200px); }
-  .tc .seg button span { display: none; }
-  .tc .seg button { padding: 0 10px; }
-  .pill { min-width: 0; padding: 6px 10px; }
-  .pill .lab { display: none; }
-  .tr .iconbar { display: none; }
-  .ba button { padding: 0 8px; font-size: 12px; }
+/* ---- Compact: phones in either orientation ---- */
+.phone-only, .tod-cycle { display: none !important; }
+@media (max-width: 760px), (max-height: 500px) {
+  .phone-only { display: grid !important; }
+  .desk-only, .tod-full { display: none !important; }
+  .tod-cycle { display: inline-flex !important; }
   .brand > div { display: none; }
   .brand { padding: 6px; }
+  .brand .mark { width: 32px; height: 32px; }
+  .tc .seg button span { display: none; }
+  .tc .seg button { padding: 0; width: 36px; justify-content: center; }
+  .tc { gap: 6px; }
+  .seg { padding: 3px; }
+  .pill { min-width: 0; padding: 5px 10px; }
+  .pill .lab { display: none; }
+  .pill b { font-size: 14px; }
+  .tr { gap: 6px; }
+  .tr .iconbar { padding: 3px; }
+  #redo { display: none; }
+  .ba button { padding: 0 8px; font-size: 12.5px; height: 32px; }
+  .iconbtn { width: 34px; height: 34px; }
+  .card.iconbtn { width: 40px; height: 40px; }
+  .zoom { display: none; }
+  .rl { font-size: 11px; padding: 3px 8px; }
+  .rl small { display: none; }
+  .mini-label { display: none; }
+  .mini-head .iconbtn { width: 28px; height: 28px; }
+  .selbar { flex-wrap: nowrap; padding: 5px; gap: 2px; }
+  .selbar.expanded { flex-wrap: wrap; }
+  .selbar .sep { display: none; }
+  .selbar .dims { display: none; }
+  .selbar.expanded .dims { display: flex; flex-basis: 100%; justify-content: center; gap: 10px; padding: 4px 0 2px; order: 9; }
+  .selbar .who { padding: 0 6px 0 2px; gap: 8px; flex: 1; min-width: 0; }
+  .selbar .who .th { display: none; }
+  .selbar .who b { max-width: none; }
+  .selbar .who > div { min-width: 0; }
+  .selbar .who small { overflow: hidden; text-overflow: ellipsis; }
+  .flag .ft { display: none; }
+  .flag { padding: 5px; }
+  .hintchip { font-size: 12px; }
+  .bchip .bt-long { display: none; }
+  .bchip { padding-left: 12px; font-size: 12.5px; white-space: nowrap; }
+  .menu, .pop { top: calc(var(--gt) + 52px); }
+}
+.bchip .bt-short { display: none; }
+@media (max-width: 760px), (max-height: 500px) { .bchip .bt-short { display: inline; } }
+/* ---- Portrait phone ---- */
+@media (max-width: 760px) {
+  :root { --mini-w: 118px; --mini-h: 86px; --rail-w: 0px; }
+  .tc { top: calc(var(--gt) + 54px); left: var(--gl); transform: none; flex-wrap: nowrap; }
+  .mini { top: calc(var(--gt) + 54px); bottom: auto; }
+  .where, .bchip { top: calc(var(--gt) + 150px); }
+  .toast { top: calc(var(--gt) + 150px); }
   .rail { top: auto; bottom: var(--gb); left: var(--gl); right: var(--gr); width: auto; flex-direction: row; justify-content: space-around; padding: 4px; }
   .rail hr { display: none; }
   .tool { flex: 1; padding: 7px 2px 5px; }
-  .drawer { left: var(--gl); right: var(--gr); width: auto; top: auto; bottom: calc(var(--gb) + 70px); height: 58vh; }
+  .drawer { left: var(--gl); right: var(--gr); width: auto; top: auto; bottom: calc(var(--gb) + 70px); height: min(62vh, 560px); }
+  .drawer::before { content: ""; position: absolute; top: 6px; left: 50%; width: 36px; height: 4px; margin-left: -18px; border-radius: 2px; background: var(--line-strong); }
+  .drawer-head { padding-top: 16px; }
   .bottom-zone { left: var(--gl); right: var(--gr); bottom: calc(var(--gb) + 70px); }
   .app.drawer-open .bottom-zone { display: none; }
-  .mini { top: calc(var(--gt) + 56px); bottom: auto; }
-  .zoom { display: none; }
-  .selbar .who b { max-width: 140px; }
-  .selbar .dims { display: none; }
-  .menu { top: calc(var(--gt) + 52px); }
+  .mini.collapsed { top: calc(var(--gt) + 54px); }
+}
+@media (max-width: 360px) { .ba button { padding: 0 6px; font-size: 12px; } .tr { gap: 4px; } .pill { padding: 5px 7px; } }
+/* ---- Landscape phone ---- */
+@media (max-height: 500px) and (min-width: 761px) {
+  :root { --mini-w: 184px; --mini-h: 124px; --rail-w: 52px; --drawer-w: 320px; --gt: calc(10px + env(safe-area-inset-top, 0px)); --gb: calc(10px + env(safe-area-inset-bottom, 0px)); }
+  .tc { left: calc(var(--gl) + 54px); transform: none; }
+  .rail { top: calc(var(--gt) + 52px); padding: 4px; }
+  .rail hr { margin: 2px 4px; }
+  .tool { font-size: 0; gap: 0; padding: 8px 2px; }
+  .drawer { top: calc(var(--gt) + 52px); }
+  .drawer-head { padding: 10px 10px 6px 16px; }
+  .where, .bchip, .toast { top: calc(var(--gt) + 52px); }
+  .hintchip { display: none; }
+  .joy { width: 108px; height: 108px; }
 }
 /* brand as design switcher */
 button.brand { text-align: left; cursor: pointer; }
@@ -510,7 +560,7 @@ button.brand:hover { border-color: var(--line-strong); }
     <div><b>Blk 74A · 4-Room Type 2</b><small id="brand-sub">89 m²</small></div>
   </button>
   <div class="card pop" id="designs" hidden role="dialog" aria-label="Design options"></div>
-  <div class="card bchip" id="bchip" hidden><span>As handed over · read-only</span><button class="btn sm" id="bchip-back">Back to my design</button></div>
+  <div class="card bchip" id="bchip" hidden><span class="bt-long">As handed over · read-only</span><span class="bt-short">Before · read-only</span><button class="btn sm" id="bchip-back">Back to After</button></div>
   <div class="joy" id="joy" hidden aria-label="Walk joystick"><i id="joy-knob"></i></div>
 
   <div class="tc" id="tc"></div>
@@ -1267,7 +1317,7 @@ function fitView() {
   const box = isMini() ? { x: -250, y: -250, w: 13250, h: 9550 } : { x: -1450, y: -1400, w: 15100, h: 11550 };
   const r = svg.getBoundingClientRect(), W = r.width || 800, Hh = r.height || 600;
   // keep the drawing clear of the floating chrome when the plan is the main view
-  const phone = W < 760, pad = isMini() ? [0, 0, 0, 0] : phone ? [124, 16, 84, 16] : [76, 56, 84, 104]; // top, right, bottom, left (px)
+  const phone = W < 760, land = !phone && Hh < 500, pad = isMini() ? [0, 0, 0, 0] : phone ? [150, 12, 150, 12] : land ? [56, 16, 16, 70] : [76, 56, 84, 104]; // top, right, bottom, left (px)
   const aw = Math.max(50, W - pad[1] - pad[3]), ah = Math.max(50, Hh - pad[0] - pad[2]);
   const k = Math.max(box.w / aw, box.h / ah);
   VB.w = W * k; VB.h = Hh * k;
@@ -1430,7 +1480,9 @@ async function init3D() {
   size3D(); camOrbit(false);
   sync3D(); setScenery(); applyTOD();
 }
-function size3D() { if (!renderer) return; const r = cv.getBoundingClientRect(); if (!r.width || !r.height) return; renderer.setSize(r.width, r.height, false); camera.aspect = r.width / r.height; camera.updateProjectionMatrix(); requestRender(); }
+let lastShape = '';
+function size3D() { if (!renderer) return; const r = cv.getBoundingClientRect(); if (!r.width || !r.height) return; renderer.setSize(r.width, r.height, false); camera.aspect = r.width / r.height; camera.updateProjectionMatrix();
+  const shape = (r.width / r.height < 0.9 ? 'P' : 'L') + (cv.parentElement && cv.parentElement.id); if (lastShape && shape !== lastShape && UI.cam === 'orbit' && !tw.on && cv.parentElement.id === 'view-main') camOrbit(false); lastShape = shape; requestRender(); }
 
 /* render loop on demand */
 let frameReq = false, lastT = 0;
@@ -1467,12 +1519,21 @@ function stepTween(t) {
 }
 function camOrbit(animate = true) {
   UI.cam = 'orbit'; setScenery(); renderJoy();
-  const tgt = new THREE.Vector3(6.3, 0, 4.4), off = new THREE.Vector3(3.9, 13.8, 12.4);
-  const asp = camera.aspect || 1.6; if (asp < 1.25) off.multiplyScalar(Math.min(2.1, 1.25 / asp)); // portrait screens: step back so the whole flat fits
-  const pos = tgt.clone().add(off);
+  const { pos, tgt, fov } = overviewPose();
   const fin = () => setControls({ minDistance: 3, maxDistance: 40, enablePan: true, enableZoom: true, rotateSpeed: 0.9, maxPolarAngle: Math.PI * 0.47, minPolarAngle: 0.05 });
-  if (animate) tweenTo(pos, tgt, 40, 700, fin); else { camera.position.copy(pos); controls.target.copy(tgt); camera.fov = 40; camera.updateProjectionMatrix(); fin(); controls.update(); }
+  if (animate) tweenTo(pos, tgt, fov, 700, fin); else { camera.position.copy(pos); controls.target.copy(tgt); camera.fov = fov; camera.updateProjectionMatrix(); fin(); controls.update(); }
   renderTC(); renderHint();
+}
+// Frame the whole flat for this screen: portrait screens view it from the east so its long side runs down the screen.
+function overviewPose(aspect) {
+  const a = aspect || camera.aspect || 1.6, portrait = a < 0.9, compact = compactUI();
+  const fov = portrait ? 46 : 40, tgt = portrait ? new THREE.Vector3(5.7, 0, 4.0) : new THREE.Vector3(6.3, 0, 4.5);
+  const dir = (portrait ? new THREE.Vector3(1, 1.25, 0.18) : new THREE.Vector3(0.3, 1.1, 1)).normalize();
+  const halfV = fov * Math.PI / 360, halfH = Math.atan(Math.tan(halfV) * a);
+  const across = portrait ? 5.2 : 7.2, along = portrait ? 5.6 : 4.9; // half-extents seen across / up the screen (m, foreshortened)
+  const use = compact ? 0.78 : 0.9; // leave room for floating controls
+  const dist = Math.max(across / Math.tan(halfH * use), along / Math.tan(halfV * use)) * 0.86;
+  return { pos: tgt.clone().add(dir.multiplyScalar(dist)), tgt, fov };
 }
 function camWalk(x, z, dir) {
   UI.cam = 'walk'; setScenery(); renderJoy();
@@ -1605,6 +1666,7 @@ function setScenery() {
   const walk = UI.cam === 'walk';
   dome.visible = walk; if (groundMesh) groundMesh.visible = !walk;
   if (gCeil) gCeil.visible = walk && !UI.low;
+  gMarks.visible = !walk; // selection and overlap boxes are for planning, not for walking around
   ITEMS3D.forEach((e, id) => { const it = S.items.find(i => i.id === id); if (it && CAT[it.type].elec === 'ceil') e.g.visible = walk && !UI.low; });
   renderer.shadowMap.needsUpdate = true; requestRender();
 }
@@ -2034,7 +2096,8 @@ function renderTC() {
         <button data-tc="walk" aria-pressed="${UI.cam === 'walk'}" title="Walk through at eye level"><svg class="ic sm"><use href="#i-walk"/></svg><span>Walk</span></button>
       </div>
       <div class="card seg"><button data-tc="cut" aria-pressed="${UI.low}" title="Cut-away: lower the walls" aria-label="Cut-away walls"><svg class="ic sm"><use href="#i-cut"/></svg></button><button data-tc="labels" aria-pressed="${UI.show.labels}" title="Room labels" aria-label="Room labels"><svg class="ic sm"><use href="#i-tag"/></svg></button></div>
-      <div class="card seg" role="group" aria-label="Time of day">
+      <button class="card iconbtn tod-cycle" data-todcycle="1" title="Time of day" aria-label="Time of day: ${UI.tod}"><svg class="ic sm"><use href="#i-${UI.tod === 'day' ? 'sun' : UI.tod === 'sunset' ? 'sunset' : 'moon'}"/></svg></button>
+      <div class="card seg tod-full" role="group" aria-label="Time of day">
         <button data-tod="day" aria-pressed="${UI.tod === 'day'}" title="Day" aria-label="Day"><svg class="ic sm"><use href="#i-sun"/></svg></button>
         <button data-tod="sunset" aria-pressed="${UI.tod === 'sunset'}" title="Sunset" aria-label="Sunset"><svg class="ic sm"><use href="#i-sunset"/></svg></button>
         <button data-tod="night" aria-pressed="${UI.tod === 'night'}" title="Night" aria-label="Night"><svg class="ic sm"><use href="#i-moon"/></svg></button>
@@ -2049,6 +2112,7 @@ function renderTC() {
   }
 }
 $('#tc').addEventListener('click', e => {
+  if (e.target.closest('[data-todcycle]')) { const order = ['day', 'sunset', 'night']; UI.tod = order[(order.indexOf(UI.tod) + 1) % 3]; saveUI(); applyTOD(); renderTC(); toast(UI.tod === 'night' ? 'Night' : UI.tod === 'sunset' ? 'Sunset' : 'Day'); return; }
   const tb = e.target.closest('[data-tod]');
   if (tb) { UI.tod = tb.dataset.tod; saveUI(); applyTOD(); renderTC(); if (UI.cam !== 'walk') toast(UI.tod === 'night' ? 'Night. Walk in to see the city lights through the windows.' : UI.tod === 'sunset' ? 'Sunset. Walk in to see the view.' : 'Daytime'); return; }
   const b = e.target.closest('[data-tc]'); if (!b) return;
@@ -2070,6 +2134,7 @@ $('#z-fit').onclick = () => UI.main === '3d' ? camOrbit() : fitView();
    Selection, items
 ================================================================ */
 function select(sel) {
+  if (!sel || !UI.sel || sel.id !== UI.sel.id) UI.sbExpand = false;
   UI.sel = sel;
   if (sel && sel.kind === 'room' && UI.tool === 'finishes') UI.finRoom = sel.id;
   renderWalls(); renderOverlay(); renderSelBar(); renderHint();
@@ -2105,15 +2170,16 @@ function renderSelBar() {
   if (!sel || (sel.kind === 'item' && !selItem())) { bar.hidden = true; return; }
   bar.hidden = false;
   const close = `<button class="iconbtn" data-sb="close" title="Deselect (Esc)" aria-label="Deselect"><svg class="ic sm"><use href="#i-close"/></svg></button>`;
+  bar.classList.toggle('expanded', !!UI.sbExpand && sel.kind === 'item');
   if (sel.kind === 'item') {
     const it = selItem(), t = CAT[it.type], bad = BAD.get(it.id), room = roomAt(it.x + fp(it).w / 2, it.y + fp(it).h / 2);
     bar.innerHTML = `<div class="who"><div class="th">${thumb(it.type)}</div><div><b>${esc(it.label || t.name)}</b><small>${room ? esc(room.name) + ' · ' : ''}${money(itemCost(it))}${t.rate ? ` · ${(it.w / 1000).toFixed(2)} m run` : ''}</small></div></div>
-      ${bad ? `<span class="flag" title="${esc(bad)}"><svg class="ic sm"><use href="#i-alert"/></svg>${esc(bad)}</span>` : ''}
+      ${bad ? `<span class="flag" title="${esc(bad)}" aria-label="${esc(bad)}"><svg class="ic sm"><use href="#i-alert"/></svg><span class="ft">${esc(bad)}</span></span>` : ''}
       <span class="sep"></span>
-      <label class="dims">W<input type="number" id="sb-w" min="100" step="10" value="${Math.round(it.w)}" aria-label="Width in mm"></label>
-      <label class="dims">D<input type="number" id="sb-d" min="100" step="10" value="${Math.round(it.d)}" aria-label="Depth in mm"></label>
+      <span class="dims"><label>W <input type="number" inputmode="numeric" id="sb-w" min="100" step="10" value="${Math.round(it.w)}" aria-label="Width in mm"></label><label>D <input type="number" inputmode="numeric" id="sb-d" min="100" step="10" value="${Math.round(it.d)}" aria-label="Depth in mm"></label><small>mm</small></span>
       <span class="sep"></span>
-      <button class="iconbtn" data-sb="rotl" title="Rotate left (Shift+R)" aria-label="Rotate left"><svg class="ic"><use href="#i-rotl"/></svg></button>
+      <button class="iconbtn phone-only" data-sb="size" title="Size" aria-label="Edit size" aria-expanded="${!!UI.sbExpand}"><svg class="ic"><use href="#i-ruler"/></svg></button>
+      <button class="iconbtn desk-only" data-sb="rotl" title="Rotate left (Shift+R)" aria-label="Rotate left"><svg class="ic"><use href="#i-rotl"/></svg></button>
       <button class="iconbtn" data-sb="rotr" title="Rotate right (R)" aria-label="Rotate right"><svg class="ic"><use href="#i-rotr"/></svg></button>
       <button class="iconbtn" data-sb="dup" title="Duplicate (Ctrl+D)" aria-label="Duplicate"><svg class="ic"><use href="#i-copy"/></svg></button>
       <button class="iconbtn danger" data-sb="del" title="Delete (Del)" aria-label="Delete"><svg class="ic"><use href="#i-trash"/></svg></button>
@@ -2124,10 +2190,10 @@ function renderSelBar() {
     const r = ROOM_BY[sel.id], st = S.rooms[r.id], p = PAINTS.find(q => q.id === st.paint);
     bar.innerHTML = `<div class="who"><div><b>${esc(r.name)}</b><small>${r.area.toFixed(1)} m² · ${money(floorCost(r, st) + paintCost(r, st))}</small></div></div>
       <span class="sep"></span>
-      <button class="chipbtn" data-sb="fin"><span class="minisw" style="background:${floorSwatch(r)}"></span><span><small>Floor</small>${esc(FLOORS[st.floor].name)}</span></button>
-      <button class="chipbtn" data-sb="fin"><span class="minisw" style="${p.c ? 'background:' + p.c : 'background:repeating-linear-gradient(45deg,var(--surface) 0 3px,var(--line-strong) 3px 4px)'}"></span><span><small>Walls</small>${esc(p.name)}</span></button>
+      <button class="chipbtn desk-only" data-sb="fin"><span class="minisw" style="background:${floorSwatch(r)}"></span><span><small>Floor</small>${esc(FLOORS[st.floor].name)}</span></button>
+      <button class="chipbtn desk-only" data-sb="fin"><span class="minisw" style="${p.c ? 'background:' + p.c : 'background:repeating-linear-gradient(45deg,var(--surface) 0 3px,var(--line-strong) 3px 4px)'}"></span><span><small>Walls</small>${esc(p.name)}</span></button>
       <span class="sep"></span>
-      <button class="btn primary sm" data-sb="fin">Change finishes</button>
+      <button class="btn primary sm" data-sb="fin">Finishes</button>
       ${close}`;
     return;
   }
@@ -2146,6 +2212,7 @@ $('#selbar').addEventListener('click', e => {
   const b = e.target.closest('[data-sb]'); if (!b) return;
   const k = b.dataset.sb;
   if (k === 'close') return select(null);
+  if (k === 'size') { UI.sbExpand = !UI.sbExpand; return renderSelBar(); }
   if (k === 'rotl') return rotateSel(-90);
   if (k === 'rotr') return rotateSel(90);
   if (k === 'dup') return dupSel();
@@ -2313,7 +2380,7 @@ function renderTop() {
   $('#ba-before').setAttribute('aria-pressed', !!UI.before); $('#ba-after').setAttribute('aria-pressed', !UI.before);
   $('#bchip').hidden = !UI.before;
   const b = budget(), over = b.total > S.budget;
-  $('#pill-total').textContent = money(b.total);
+  $('#pill-total').textContent = compactUI() && b.total >= 10000 ? 'S$' + (b.total / 1000).toFixed(1) + 'k' : money(b.total);
   $('#pill-bar').style.width = (S.budget ? Math.min(100, b.total / S.budget * 100) : 0) + '%';
   $('#pill').classList.toggle('over', over);
   $('#pill').title = `${money(b.total)} of your ${money(S.budget)} budget${over ? ' (over)' : ''}`;
@@ -2382,6 +2449,9 @@ document.addEventListener('keydown', e => {
 });
 document.addEventListener('keyup', e => keys.delete(e.key.toLowerCase()));
 window.addEventListener('blur', () => keys.clear());
+
+function compactUI() { return window.matchMedia('(max-width: 760px), (max-height: 500px)').matches; }
+window.addEventListener('resize', () => { clearTimeout(window.__rt); window.__rt = setTimeout(() => { renderTop(); renderSelBar(); }, 150); });
 
 /* ---------------- Before / After ---------------- */
 let afterState = null;
@@ -2490,10 +2560,10 @@ function snapshot3D(kind) {
   renderer.setSize(1600, 1000, false); camera.aspect = 1.6;
   UI.cam = kind === 'walk' ? 'walk' : 'orbit'; setScenery(); gMarks.visible = false;
   if (kind === 'walk') { camera.position.set(11.4, 1.6, 4.7); camera.fov = 68; camera.lookAt(10.4, 1.5, 4.55); }
-  else { camera.position.set(6.3 + 3.9, 13.8, 4.4 + 12.4); camera.fov = 40; camera.lookAt(6.3, 0, 4.4); }
+  else { const o = overviewPose(1.6); camera.position.copy(o.pos); camera.fov = o.fov; camera.lookAt(o.tgt); }
   camera.updateProjectionMatrix(); renderer.shadowMap.needsUpdate = true; renderer.render(scene, camera);
   const url = cv.toDataURL('image/jpeg', 0.9);
-  UI.cam = save.cam; setScenery(); gMarks.visible = true;
+  UI.cam = save.cam; setScenery();
   camera.position.copy(save.p); controls.target.copy(save.t); camera.fov = save.fov; camera.updateProjectionMatrix();
   size3D(); controls.update(); requestRender();
   return url;
