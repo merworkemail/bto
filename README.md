@@ -20,6 +20,17 @@ The 3D model fills the screen. Everything else floats on top of it, so the model
 
 ## Features
 
+- **Design options.** Click the card at the top left to keep several complete versions of the flat (Option A, B, C…). Each has its own layout, finishes and budget. You can duplicate, rename or delete them, and **Compare** them side by side, cost group by cost group.
+- **Before / After.** One switch (or the **B** key) flips between the flat as handed over and your design. The Before view is read-only.
+- **Electrical layout.** Place ceiling lights, downlights, pendants, fans, power points, data points, switches and aircon units. They show as standard symbols on the plan, are counted in the budget, and appear in 3D.
+- **Ceilings.** Choose no false ceiling, a flat false ceiling, or cove lighting (an L-box with an LED strip) per room, with costs. Ceilings, lights and fans show in Walk mode, and cove lighting glows at sunset and at night.
+- **Export pack.** **File → Open export pack** builds printable A4 pages: the floor plan with dimensions and electrical symbols, 3D views, a room schedule, electrical and carpentry schedules, and the budget. Print or save it as PDF, or download the plan and 3D views as images.
+- **Touch screens.**
+  - An on-screen joystick lets you walk in Walk mode.
+  - Double-tap a floor to walk there.
+  - Twist two fingers to rotate the selected item.
+  - Pinch to zoom.
+
 - **Floor plan to scale** from the HDB plan, with dimension strings.
 - **Walls.** Structural walls (shaded black on the HDB plan) are locked. Partitions can be removed, and bathroom walls come with HDB warnings.
 - **Flooring and paint per room.** Six flooring types with tones, and 10 paint colours. You can apply one flooring across every dry room.
@@ -49,6 +60,7 @@ The 3D model fills the screen. Everything else floats on top of it, so the model
 | Arrows (Shift) | Nudge by 10 mm (100 mm) |
 | M | Measure tool |
 | Tab | Swap plan and 3D |
+| B | Before / After |
 | W A S D | Walk (in Walk mode) |
 | Ctrl+Z / Ctrl+Shift+Z | Undo / redo |
 | Esc | Deselect |
