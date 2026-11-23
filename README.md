@@ -9,7 +9,7 @@ It's a single `index.html` file with no build step. Open it in a browser to use 
 The 3D model fills the screen. Everything else floats on top of it, so the model stays the focus:
 
 - **Plan inset (bottom right).** A live floor plan that shows where you're looking. Click a room on it to fly the camera there. Use the expand button, or press **Tab**, to swap the plan and the 3D view.
-- **Tool rail (left).** Furnish, Finishes, Walls, Measure, Checks and Timeline. Each tool opens one panel, and only that panel.
+- **Tool rail (left).** Furnish, Finishes, Walls, Measure and Checks. Each tool opens one panel, and only that panel.
 - **Selection bar (bottom).** Click anything to get its actions in one place:
   - **Furniture:** size, rotate, duplicate, delete.
   - **Rooms:** flooring and paint.
@@ -24,7 +24,7 @@ The 3D model fills the screen. Everything else floats on top of it, so the model
 - **Before / After.** One switch (or the **B** key) flips between the flat as handed over and your design. The Before view is read-only.
 - **Electrical layout.** Place ceiling lights, downlights, pendants, fans, power points, data points, switches and aircon units. They show as standard symbols on the plan and appear in 3D.
 - **Ceilings.** Choose no false ceiling, a flat false ceiling, or cove lighting (an L-box with an LED strip) per room. Ceilings, lights and fans show in Walk mode, and cove lighting glows at sunset and at night.
-- **Export pack.** **File → Open export pack** builds printable A4 pages: the floor plan with dimensions and electrical symbols, 3D views, a room schedule, electrical and carpentry schedules, and the renovation schedule. Print or save it as PDF, or download the plan and 3D views as images.
+- **Export pack.** **File → Open export pack** builds printable A4 pages: the floor plan with dimensions and electrical symbols, 3D views, a room schedule, and electrical and carpentry schedules. Print or save it as PDF, or download the plan and 3D views as images.
 - **Walk mode built for comfort.**
   - A third-person, over-the-shoulder camera follows a see-through figure. First person is one tap away.
   - Movement eases in and out, and you stop at walls, closed doors and furniture.
@@ -53,7 +53,6 @@ The 3D model fills the screen. Everything else floats on top of it, so the model
 - **Layout checks.** The **Checks** tool flags furniture that stops a door from opening (the blocked swing shows red on the plan), overlapping items, and walkways under 600 mm. A badge shows the count.
 - **Custom items.** Add any product by name and W × D × H, with price and colour. It's saved under **My items** for reuse.
 - **Colours and materials.** Choose fabric for sofas, wood for loose furniture, and laminate for carpentry (with "use on all carpentry"). Colours show in 3D and tint the plan.
-- **Renovation timeline.** A schedule built from your design, with a move-in estimate and HDB working-hour rules. The schedule is also included in the export pack.
 - **Touch screens.**
   - An on-screen joystick lets you walk in Walk mode.
   - Double-tap a floor to walk there.

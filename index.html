@@ -684,7 +684,6 @@ button.brand:hover { border-color: var(--line-strong); }
     <button class="tool" data-tool="measure" aria-pressed="false"><svg class="ic"><use href="#i-ruler"/></svg>Measure</button>
     <hr>
     <button class="tool" data-tool="checks" aria-pressed="false"><span class="tico"><svg class="ic"><use href="#i-check"/></svg><b class="tbadge" id="checks-badge" hidden></b></span>Checks</button>
-    <button class="tool" data-tool="timeline" aria-pressed="false"><svg class="ic"><use href="#i-cal"/></svg>Timeline</button>
   </nav>
 
   <section class="card drawer" id="drawer" hidden aria-labelledby="drawer-title">
@@ -2771,7 +2770,7 @@ $('#hint').addEventListener('click', e => { if (!e.target.closest('[data-hint]')
 /* ================================================================
    Tools + drawer
 ================================================================ */
-const TOOL_TITLES = { furnish: 'Furnish', finishes: 'Floors, paint & ceilings', walls: 'Walls', compare: 'Compare designs', history: 'Versions & history', checks: 'Layout checks', timeline: 'Renovation timeline' };
+const TOOL_TITLES = { furnish: 'Furnish', finishes: 'Floors, paint & ceilings', walls: 'Walls', compare: 'Compare designs', history: 'Versions & history', checks: 'Layout checks' };
 function openTool(t) {
   if (!TOOL_TITLES[t] && t !== 'measure') return;
   if (t === 'measure') {
@@ -2800,7 +2799,7 @@ function renderDrawer() {
   const st = body.scrollTop, same = body.dataset.tool === UI.tool;
   body.dataset.tool = UI.tool;
   if (UI.tool === 'furnish') { if (!same) { body.innerHTML = furnishShell(); } renderCatalogue(); }
-  else body.innerHTML = UI.tool === 'finishes' ? finishesHTML() : UI.tool === 'walls' ? wallsHTML() : UI.tool === 'compare' ? compareHTML() : UI.tool === 'checks' ? checksHTML() : UI.tool === 'timeline' ? timelineHTML() : UI.tool === 'history' ? historyHTML() : '';
+  else body.innerHTML = UI.tool === 'finishes' ? finishesHTML() : UI.tool === 'walls' ? wallsHTML() : UI.tool === 'compare' ? compareHTML() : UI.tool === 'checks' ? checksHTML() : UI.tool === 'history' ? historyHTML() : '';
   body.scrollTop = same ? st : 0;
 }
 
@@ -2924,41 +2923,6 @@ function renderBadge() {
   b.hidden = !n; b.textContent = n > 9 ? '9+' : n; b.classList.toggle('amber', !c.red);
 }
 
-/* Timeline */
-function wdDate(start, i) { const d = new Date(start + 'T00:00:00'); let n = 0; while (d.getDay() === 0) d.setDate(d.getDate() + 1); while (n < i) { d.setDate(d.getDate() + 1); if (d.getDay() !== 0) n++; } return d; }
-const fmtD = d => d.toLocaleDateString('en-SG', { day: 'numeric', month: 'short' });
-function timeline() {
-  const removed = WALLS.filter(w => S.walls[w.id] && S.walls[w.id].removed), wet = removed.some(w => w.kind === 'wet');
-  const nElec = S.items.filter(i => CAT[i.type].elec).length + (S.extras.x_light || 0) + (S.extras.x_power || 0);
-  const ac = (S.extras.x_aircon || 0) > 0 || S.items.some(i => i.type === 'e_ac');
-  const ceilA = ROOMS.filter(r => (S.rooms[r.id].ceil || 'none') !== 'none').reduce((a, r) => a + r.area, 0);
-  const fl = ROOMS.filter(r => S.rooms[r.id].floor !== 'asis'), flA = fl.reduce((a, r) => a + r.area, 0), tiles = fl.some(r => ['tile6', 'tile12', 'micro'].includes(S.rooms[r.id].floor));
-  const painted = ROOMS.filter(r => S.rooms[r.id].paint !== 'keep').length, run = S.items.filter(i => CAT[i.type].rate).reduce((a, i) => a + i.w, 0) / 1000;
-  const T = [
-    { id: 'permit', name: 'Permits & preparation', why: 'HDB renovation permit, site protection', dur: 5, deps: [], c: 'var(--muted)' },
-    { id: 'hack', name: 'Hacking & making good', why: `${removed.length} wall${removed.length === 1 ? '' : 's'} removed${wet ? ', incl. re-waterproofing' : ''}`, dur: removed.length ? (removed.length <= 2 ? 4 : 7) + (wet ? 3 : 0) : 0, deps: ['permit'], c: 'var(--g1)' },
-    { id: 'me', name: 'Wiring & aircon piping', why: `${nElec} electrical points${ac ? ', aircon trunking' : ''}`, dur: nElec || ac ? Math.min(8, 3 + Math.ceil(nElec / 15)) : 0, deps: ['hack'], c: 'var(--g6)' },
-    { id: 'ceil', name: 'False ceilings & cove', why: `${ceilA.toFixed(0)} m² of ceiling work`, dur: ceilA ? 3 + Math.ceil(ceilA / 15) : 0, deps: ['me'], c: 'var(--g7)' },
-    { id: 'floor', name: 'Flooring', why: `${flA.toFixed(0)} m² ${tiles ? 'tiling incl. curing' : 'vinyl'}`, dur: flA ? (tiles ? 2 + Math.ceil(flA / 12) : 1 + Math.ceil(flA / 25)) : 0, deps: ['ceil'], c: 'var(--g2)' },
-    { id: 'paint', name: 'Painting', why: `${painted} room${painted === 1 ? '' : 's'}`, dur: painted ? 2 + Math.ceil(painted / 2) : 0, deps: ['floor'], c: 'var(--g3)' },
-    { id: 'fab', name: 'Carpentry made off-site', why: 'Starts after site measurement', dur: run ? 18 : 0, deps: ['hack'], c: 'var(--g4)', off: true },
-    { id: 'carp', name: 'Carpentry installation', why: `${run.toFixed(1)} m of built-ins`, dur: run ? 2 + Math.ceil(run / 4) : 0, deps: ['paint', 'fab'], c: 'var(--g4)' },
-    { id: 'final', name: 'Lights, fans, aircon units, curtains', why: 'Final fit-out', dur: nElec || ac || (S.extras.x_curtain || 0) ? 3 : 0, deps: ['carp'], c: 'var(--g6)' },
-    { id: 'clean', name: 'Cleaning & handover', why: 'Chemical wash and defect check', dur: 2, deps: ['final'], c: 'var(--muted)' },
-  ];
-  const by = {}; T.forEach(t => { t.s = Math.max(0, ...t.deps.map(d => by[d].e)); t.e = t.s + t.dur; by[t.id] = t; });
-  const end = by.clean.e, start = S.startDate;
-  return { tasks: T, end, start, endDate: wdDate(start, end - 1), weeks: Math.ceil(end / 6) };
-}
-function timelineHTML() {
-  const tl = timeline(), total = Math.max(1, tl.end), wk = (6 / total * 100).toFixed(3) + '%';
-  return `<label class="field">Works start (after key collection)<input class="input" type="date" id="f-start" value="${S.startDate}"></label>
-    <div class="sec"><div class="total">${tl.weeks} weeks <small>move in around ${tl.endDate.toLocaleDateString('en-SG', { day: 'numeric', month: 'long', year: 'numeric' })}</small></div>
-    <p class="hint">Built from this design: steps you don’t need are left out. Counts working days, Monday to Saturday.</p></div>
-    <div class="gantt">${tl.tasks.filter(t => t.dur).map(t => `<div class="grow"><b>${esc(t.name)}</b><small>${fmtD(wdDate(tl.start, t.s))} – ${fmtD(wdDate(tl.start, t.e - 1))} · ${t.dur} days · ${esc(t.why)}</small>
-      <div class="gtrack" style="--wk:${wk}"><i class="${t.off ? 'off' : ''}" style="left:${(t.s / total * 100).toFixed(2)}%;width:${(t.dur / total * 100).toFixed(2)}%;background:${t.c}"></i></div></div>`).join('')}</div>
-    <p class="note"><svg class="ic sm"><use href="#i-info"/></svg><span>HDB allows renovation from 9am to 6pm, Monday to Saturday, and noisy work like hacking and drilling only from 9am to 5pm on weekdays. No work on Sundays and public holidays (holidays aren’t counted here). Your contractor’s schedule may differ.</span></p>`;
-}
 
 
 body.addEventListener('click', e => {
@@ -2994,7 +2958,6 @@ body.addEventListener('toggle', e => { if (e.target.id === 'add-own') UI.addOpen
 body.addEventListener('input', e => { if (e.target.id === 'cat-q') { UI.q = e.target.value; renderCatalogue(); } });
 body.addEventListener('change', e => {
   const t = e.target;
-  if (t.id === 'f-start') { if (/^\d{4}-\d{2}-\d{2}$/.test(t.value)) mutate(() => { S.startDate = t.value; }); return; }
   if (t.id === 'f-budget') return mutate(() => { S.budget = Math.max(0, +t.value || 0); });
   if (t.id === 'f-cont') return mutate(() => { S.contingency = Math.min(50, Math.max(0, +t.value || 0)); });
   if (t.id === 'f-gst') return mutate(() => { S.gst = t.checked; });
@@ -3346,8 +3309,6 @@ function openExport() {
           ${carp.length ? carp.map(it => `<tr><td>${esc(it.label || CAT[it.type].name)}</td><td>${esc(roomOf(it))}</td><td class="n">${(it.w / 1000).toFixed(2)} m</td><td class="n">${mmf(it.d)}</td></tr>`).join('') : '<tr><td colspan="4">No built-in carpentry yet.</td></tr>'}
           <tr class="t"><td colspan="2">Total</td><td class="n">${(carp.reduce((s, it) => s + it.w, 0) / 1000).toFixed(2)} m</td><td></td></tr></tbody></table></div>
         </div></section>
-      <section class="page">${head('Schedule & payments')}${(() => { const tl = timeline(); return `<table><thead><tr><th>Stage</th><th>Dates</th><th class="n">Working days</th><th>Scope</th></tr></thead><tbody>${tl.tasks.filter(t => t.dur).map(t => `<tr><td>${esc(t.name)}</td><td>${fmtD(wdDate(tl.start, t.s))} – ${fmtD(wdDate(tl.start, t.e - 1))}</td><td class="n">${t.dur}</td><td>${esc(t.why)}</td></tr>`).join('')}<tr class="t"><td>Move in around</td><td colspan="3">${tl.endDate.toLocaleDateString('en-SG', { day: 'numeric', month: 'long', year: 'numeric' })} (${tl.weeks} weeks)</td></tr></tbody></table>
-        <p class="fine">Working days Monday to Saturday. HDB: renovation 9am–6pm Mon–Sat; noisy works 9am–5pm weekdays; no work on Sundays and public holidays.</p>`; })()}</section>
     </div>`;
   $('#x-plan').appendChild(planClone());
   x.hidden = false; x.scrollTop = 0; x._shots = { over, walk };
