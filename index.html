@@ -106,6 +106,23 @@ svg.ic.sm { width: 16px; height: 16px; }
 .roomlist2 button { text-align: left; padding: 9px 10px; border-radius: 9px; font-size: 13.5px; display: flex; justify-content: space-between; }
 .roomlist2 button:hover, .roomlist2 button[aria-selected="true"] { background: var(--surface-2); }
 .roomlist2 button small { color: var(--muted); }
+.pop.sunpop { left: auto; right: var(--gr); top: calc(var(--gt) + 60px); width: min(360px, calc(100vw - 32px)); }
+.sunrow { display: flex; gap: 12px; align-items: flex-end; }
+.sunrow input[type=range] { width: 100%; accent-color: var(--accent); height: 36px; }
+.sunnow { margin: 0; font-size: 13px; padding: 9px 11px; border-radius: 10px; background: var(--surface-2); }
+.hotrow { display: grid; grid-template-columns: 1fr 90px 36px; gap: 8px; align-items: center; font-size: 12.5px; }
+.hotrow .bar { height: 6px; border-radius: 3px; background: var(--surface-2); overflow: hidden; }
+.hotrow .bar i { display: block; height: 100%; background: var(--warn); }
+.hotrow small { color: var(--muted); text-align: right; font-variant-numeric: tabular-nums; }
+.northarrow { position: absolute; right: calc(var(--gr) + var(--mini-w) + 12px); bottom: calc(var(--gb) + 6px); width: 44px; height: 44px; pointer-events: none; z-index: 1; }
+.pop.charpop { left: 50%; transform: translateX(-50%); top: calc(var(--gt) + 60px); width: min(300px, calc(100vw - 32px)); }
+.charopt { display: flex; align-items: center; gap: 12px; padding: 10px; border-radius: 12px; border: 1px solid var(--line); }
+.charopt[aria-pressed="true"] { border-color: var(--accent); box-shadow: inset 0 0 0 1px var(--accent); }
+.charopt .fig { width: 34px; height: 44px; flex: none; }
+.charopt b { display: block; font-size: 13.5px; font-weight: 600; }
+.charopt small { display: block; color: var(--muted); font-size: 12px; }
+.charopt .h { margin-left: auto; display: flex; align-items: center; gap: 4px; font-size: 12px; color: var(--muted); }
+.charopt .h input { width: 58px; height: 30px; border: 1px solid var(--line-strong); border-radius: 8px; padding: 0 6px; background: var(--surface); color: var(--ink); text-align: right; font-variant-numeric: tabular-nums; }
 .fade { position: absolute; inset: 0; background: var(--stage); opacity: 0; pointer-events: none; transition: opacity .17s ease; z-index: 2; }
 .fade.on { opacity: 1; }
 .loading { position: absolute; inset: 0; display: grid; place-items: center; color: var(--muted); font-size: 13px; pointer-events: none; }
@@ -419,6 +436,9 @@ textarea { width: 100%; min-height: 72px; border: 1px solid var(--line-strong); 
   .mini { top: calc(var(--gt) + 54px); bottom: auto; }
   .where, .bchip { top: calc(var(--gt) + 150px); }
   .pop.roomlist2 { top: calc(var(--gt) + 194px); }
+  .pop.charpop { top: calc(var(--gt) + 100px); }
+  .pop.sunpop { top: calc(var(--gt) + 100px); right: var(--gl); left: var(--gl); width: auto; max-height: 60vh; }
+  .northarrow { right: auto; left: var(--gl); bottom: auto; top: calc(var(--gt) + 104px); width: 38px; height: 38px; }
   .toast { top: calc(var(--gt) + 150px); }
   .rail { top: auto; bottom: var(--gb); left: var(--gl); right: var(--gr); width: auto; flex-direction: row; justify-content: space-around; padding: 4px; }
   .rail hr { display: none; }
@@ -450,6 +470,14 @@ textarea { width: 100%; min-height: 72px; border: 1px solid var(--line-strong); 
 .tbadge { position: absolute; top: -6px; right: -10px; min-width: 17px; height: 17px; padding: 0 4px; border-radius: 9px; background: var(--danger); color: #fff; font-size: 10.5px; font-weight: 700; display: grid; place-items: center; line-height: 1; }
 .tbadge.amber { background: var(--warn); }
 /* checks */
+.vrow { display: flex; align-items: center; gap: 8px; padding: 8px 0; border-bottom: 1px solid var(--line); }
+.vrow .t { flex: 1; min-width: 0; }
+.vrow .t b { display: block; font-size: 13px; font-weight: 500; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+.vrow .t small { display: block; font-size: 11.5px; color: var(--muted); font-variant-numeric: tabular-nums; }
+.vrow .iconbtn { width: 32px; height: 32px; }
+.vrow .iconbtn.danger { color: var(--danger); width: auto; padding: 0 6px; }
+.vic { width: 28px; height: 28px; border-radius: 8px; display: grid; place-items: center; background: var(--surface-2); color: var(--muted); flex: none; }
+.vic.named { background: var(--accent-weak); color: var(--accent); }
 .issue { display: flex; gap: 10px; align-items: flex-start; padding: 9px 8px; margin: 0 -8px; border-radius: 10px; text-align: left; width: calc(100% + 16px); }
 .issue:hover { background: var(--surface-2); }
 .issue .dot3 { width: 22px; height: 22px; border-radius: 50%; display: grid; place-items: center; flex: none; background: var(--danger-weak); color: var(--danger); }
@@ -603,6 +631,8 @@ button.brand:hover { border-color: var(--line-strong); }
   <symbol id="i-plusbox" viewBox="0 0 24 24"><rect x="3.5" y="3.5" width="17" height="17" rx="3"/><path d="M12 8v8M8 12h8"/></symbol>
   <symbol id="i-person" viewBox="0 0 24 24"><circle cx="12" cy="6" r="2.6"/><path d="M7.5 21v-5.5a4.5 4.5 0 019 0V21"/></symbol>
   <symbol id="i-doors" viewBox="0 0 24 24"><path d="M4 21h16M6 21V3.5h8V21"/><path d="M14 5.5l5 1.5v14"/><path d="M11.5 12v.5"/></symbol>
+  <symbol id="i-clock" viewBox="0 0 24 24"><circle cx="12" cy="12" r="8.5"/><path d="M12 7.5V12l3 2"/></symbol>
+  <symbol id="i-star" viewBox="0 0 24 24"><path d="M12 3.8l2.5 5.2 5.6.7-4.1 3.9 1 5.6-5-2.8-5 2.8 1-5.6-4.1-3.9 5.6-.7z"/></symbol>
   <symbol id="i-eye" viewBox="0 0 24 24"><path d="M2.5 12S6 5.5 12 5.5 21.5 12 21.5 12 18 18.5 12 18.5 2.5 12 2.5 12z"/><circle cx="12" cy="12" r="2.8"/></symbol>
 </svg>
 
@@ -612,7 +642,7 @@ button.brand:hover { border-color: var(--line-strong); }
 
   <button class="card brand" id="brand" aria-haspopup="dialog" title="Design options">
     <div class="mark"><svg class="ic"><use href="#i-home"/></svg></div>
-    <div><b>Blk 74A · 4-Room Type 2</b><small id="brand-sub">89 m²</small></div>
+    <div><b>Blk 74A · #25-509</b><small id="brand-sub">89 m²</small></div>
   </button>
   <div class="card pop" id="designs" hidden role="dialog" aria-label="Design options"></div>
   <div class="card bchip" id="bchip" hidden><span class="bt-long">As handed over · read-only</span><span class="bt-short">Before · read-only</span><button class="btn sm" id="bchip-back">Back to After</button></div>
@@ -622,6 +652,9 @@ button.brand:hover { border-color: var(--line-strong); }
   <button class="card where" id="where" hidden aria-haspopup="listbox" title="Go to another room"></button>
   <div class="card pop roomlist2" id="where-list" hidden role="listbox" aria-label="Go to room"></div>
   <div class="fade" id="fade"></div>
+  <svg class="northarrow" id="north" viewBox="-22 -22 44 44" role="img" aria-label="North arrow"><circle r="20" fill="var(--surface)" stroke="var(--line-strong)"/><g id="north-rot"><path d="M0 -15 L5 3 L0 0 L-5 3 Z" fill="var(--danger)"/><path d="M0 15 L5 -3 L0 0 L-5 -3 Z" fill="var(--muted)" opacity=".5"/></g><text id="north-n" text-anchor="middle" font-size="7" font-weight="700" fill="var(--ink)" font-family="Inter, sans-serif">N</text></svg>
+  <div class="card pop charpop" id="char-pop" hidden role="dialog" aria-label="Character"></div>
+  <div class="card pop sunpop" id="sun-pop" hidden role="dialog" aria-label="Sun study"></div>
 
   <div class="tr">
     <div class="card seg ba" role="group" aria-label="Compare with the flat as handed over">
@@ -1126,7 +1159,30 @@ function readOnly() { if (UI.before) { toast('You’re viewing the flat as hande
 function mutate(fn) { if (readOnly()) return; pushUndo(JSON.stringify(S)); fn(); persist(); renderAll(); }
 function undo() { if (readOnly() || !undoStack.length) return; redoStack.push(JSON.stringify(S)); S = JSON.parse(undoStack.pop()); validateSel(); persist(); renderAll(); toast('Undone'); }
 function redo() { if (readOnly() || !redoStack.length) return; undoStack.push(JSON.stringify(S)); S = JSON.parse(redoStack.pop()); validateSel(); persist(); renderAll(); toast('Redone'); }
-function persist() { if (typeof UI !== 'undefined' && UI.before) return; DS.list[DS.active].s = S; saveDesigns(); }
+function persist() { if (typeof UI !== 'undefined' && UI.before) return; DS.list[DS.active].s = S; saveDesigns(); autoVersion(); }
+/* versions & history: named saves plus automatic snapshots, kept per design option */
+const KEY_VER = 'bto74a.versions', AUTO_EVERY = 4 * 60 * 1000, MAX_AUTO = 20, MAX_NAMED = 30;
+function readVers() { try { const v = JSON.parse(ls.get(KEY_VER) || '{}'); return v && typeof v === 'object' ? v : {}; } catch (e) { return {}; } }
+function writeVers(v) {
+  for (let tries = 0; tries < 30; tries++) { // if storage is full, drop the oldest automatic snapshots first
+    if (ls.set(KEY_VER, JSON.stringify(v))) return true;
+    let oldest = null; Object.values(v).forEach(list => list.forEach(x => { if (x.auto && (!oldest || x.t < oldest.x.t)) oldest = { list, x }; }));
+    if (!oldest) return false; oldest.list.splice(oldest.list.indexOf(oldest.x), 1);
+  }
+  return false;
+}
+function dsId() { return DS.list[DS.active].id; }
+function addVersion(name, auto, state) {
+  const v = readVers(), id = dsId(), list = v[id] = v[id] || [];
+  const snap = JSON.stringify(state || S);
+  if (auto && list.length && list[0].auto && JSON.stringify(list[0].s) === snap) return false; // nothing changed
+  list.unshift({ id: uid(), t: Date.now(), name: name || null, auto: !!auto, s: JSON.parse(snap) });
+  const autos = list.filter(x => x.auto), named = list.filter(x => !x.auto);
+  autos.slice(MAX_AUTO).forEach(x => list.splice(list.indexOf(x), 1)); named.slice(MAX_NAMED).forEach(x => list.splice(list.indexOf(x), 1));
+  return writeVers(v);
+}
+let lastAuto = 0;
+function autoVersion() { const now = Date.now(); if (now - lastAuto < AUTO_EVERY) return; lastAuto = now; addVersion(null, true); }
 /* design options: several complete layouts of the same flat */
 const KEY_DESIGNS = 'bto74a.designs';
 let DS;
@@ -1146,9 +1202,9 @@ if (hot && hot.snapshot) { try { hot.snapshot(() => ({ state: S })); } catch (e)
 
 /* UI state */
 const coarse = window.matchMedia && window.matchMedia('(pointer: coarse)').matches;
-const UI = { sel: null, tool: null, main: '3d', cat: 'All', q: '', show: { dims: true, grid: false, furn: true, snap: true, labels: true, elec: true }, measure: null, cam: 'orbit', low: false, menu: null, hintOff: false, finRoom: 'liv', tod: 'day', pov: 'third' };
-try { const u = JSON.parse(ls.get(KEY_UI) || '{}'); if (u.show) Object.assign(UI.show, u.show); if (u.hintOff) UI.hintOff = true; if (u.main === '2d') UI.main = '2d'; if (['day', 'sunset', 'night'].includes(u.tod)) UI.tod = u.tod; if (u.pov === 'first') UI.pov = 'first'; } catch (e) {}
-function saveUI() { ls.set(KEY_UI, JSON.stringify({ show: UI.show, hintOff: UI.hintOff, main: UI.main, tod: UI.tod, pov: UI.pov })); }
+const UI = { sel: null, tool: null, main: '3d', cat: 'All', q: '', show: { dims: true, grid: false, furn: true, snap: true, labels: true, elec: true }, measure: null, cam: 'orbit', low: false, menu: null, hintOff: false, finRoom: 'liv', tod: 'day', hour: 11, month: new Date().getMonth(), pov: 'third', char: { kind: 'm', m: 177, f: 170 } };
+try { const u = JSON.parse(ls.get(KEY_UI) || '{}'); if (u.show) Object.assign(UI.show, u.show); if (u.hintOff) UI.hintOff = true; if (u.main === '2d') UI.main = '2d'; if (['day', 'sunset', 'night'].includes(u.tod)) { UI.tod = u.tod; UI.hour = { day: 11, sunset: 18.75, night: 21 }[u.tod]; } if (u.hour >= 6 && u.hour <= 23) UI.hour = +u.hour; if (u.month >= 0 && u.month <= 11) UI.month = +u.month; if (u.pov === 'first') UI.pov = 'first'; if (u.char && (u.char.kind === 'm' || u.char.kind === 'f')) UI.char = { kind: u.char.kind, m: Math.min(220, Math.max(100, +u.char.m || 177)), f: Math.min(220, Math.max(100, +u.char.f || 170)) }; } catch (e) {}
+function saveUI() { ls.set(KEY_UI, JSON.stringify({ show: UI.show, hintOff: UI.hintOff, main: UI.main, tod: UI.tod, hour: UI.hour, month: UI.month, pov: UI.pov, char: UI.char })); }
 function validateSel() {
   if (!UI.sel) return;
   if (UI.sel.kind === 'item' && !S.items.find(i => i.id === UI.sel.id)) UI.sel = null;
@@ -1366,6 +1422,7 @@ function splitTwo(s) { const words = s.split(' '); const mid = Math.ceil(words.l
 function renderDims() {
   if (!UI.show.dims) { G('g-dims').innerHTML = ''; return; }
   let s = '';
+  { const a = 360 - SITE.planUp, cx = 13350, cy = -900; s += `<g transform="translate(${cx} ${cy}) rotate(${a})"><circle r="420" fill="var(--paper)" stroke="var(--muted)" stroke-width="1" vector-effect="non-scaling-stroke"/><path d="M0 -340 L110 60 L0 0 L-110 60 Z" fill="var(--danger)"/><text x="0" y="-150" class="dim-t" style="font-size:150px;font-weight:700;fill:var(--ink)" transform="rotate(${-a} 0 -150)">N</text></g>`; }
   // labels follow the HDB drawing (its chains sum to 12655 at the bottom; geometry uses 12650)
   const chainH = (xs, y, lb) => { s += `<line x1="${xs[0]}" y1="${y}" x2="${xs[xs.length - 1]}" y2="${y}" class="dim"/>`; xs.forEach(x => { s += `<line x1="${x}" y1="${y - 90}" x2="${x}" y2="${y + 90}" class="dim"/>`; }); for (let i = 0; i < xs.length - 1; i++) s += `<text x="${(xs[i] + xs[i + 1]) / 2}" y="${y - 70}" class="dim-t">${lb ? lb[i] : xs[i + 1] - xs[i]}</text>`; };
   const chainV = (ys, x) => { s += `<line x1="${x}" y1="${ys[0]}" x2="${x}" y2="${ys[ys.length - 1]}" class="dim"/>`; ys.forEach(y => { s += `<line x1="${x - 90}" y1="${y}" x2="${x + 90}" y2="${y}" class="dim"/>`; }); for (let i = 0; i < ys.length - 1; i++) { const cy = (ys[i] + ys[i + 1]) / 2; s += `<text x="${x - 70}" y="${cy}" class="dim-t" transform="rotate(-90 ${x - 70} ${cy})">${ys[i + 1] - ys[i]}</text>`; } };
@@ -1617,11 +1674,14 @@ function renderFrame(t) {
   if (controls.update()) busy = true;
   if (UI.cam === 'walk' && UI.pov === 'third' && !tw.on) fitThirdCam();
   renderer.render(scene, camera);
-  updateLabels();
+  updateLabels(); updateNorth();
   if (UI.main === '3d') renderCamThrottled();
   if (busy) requestRender(); else lastT = 0;
 }
 let camPending = false;
+function updateNorth() { // screen-space angle of true north for the current camera
+  const d = new THREE.Vector3(); camera.getWorldDirection(d); const camYaw = Math.atan2(d.x, -d.z) * 180 / Math.PI; // 0 = looking along plan-up
+  const ang = (360 - SITE.planUp) - camYaw; const g = $('#north-rot'); if (g) g.setAttribute('transform', `rotate(${ang.toFixed(1)})`); const n = $('#north-n'); if (n) { const r = ang * Math.PI / 180; n.setAttribute('x', (Math.sin(r) * 11).toFixed(1)); n.setAttribute('y', (-Math.cos(r) * 11 + 2.5).toFixed(1)); } }
 function renderCamThrottled() { if (camPending) return; camPending = true; setTimeout(() => { camPending = false; renderCam(); }, 60); }
 
 /* camera modes */
@@ -1639,6 +1699,7 @@ function stepTween(t) {
   return true;
 }
 function camOrbit(animate = true) {
+  UI.charOpen = false; if (typeof renderCharPop === 'function') renderCharPop();
   UI.cam = 'orbit'; setScenery(); renderJoy();
   const { pos, tgt, fov } = overviewPose();
   const fin = () => setControls({ minDistance: 3, maxDistance: 40, enablePan: true, enableZoom: true, rotateSpeed: 0.9, maxPolarAngle: Math.PI * 0.47, minPolarAngle: 0.05 });
@@ -1660,21 +1721,38 @@ function overviewPose(aspect) {
 const AV = { x: 11.4, z: 4.7, yaw: -Math.PI / 2, vx: 0, vz: 0, dest: null, dist: 2.3, t: 0 };
 let avatar, legL, legR, destRing, avMats = [], wallMeshes = [], OBST = [];
 const V3v = (x, y, z) => new THREE.Vector3(x, y, z);
+const charH = () => (UI.char.kind === 'f' ? UI.char.f : UI.char.m) / 100; // metres
+const eyeH = () => charH() - 0.11;
+const pivotH = () => charH() * 0.82;
 function buildAvatar() {
+  if (avatar) { scene.remove(avatar); avMats.forEach(m => m.dispose()); avMats = []; }
+  const fem = UI.char.kind === 'f';
   avatar = new THREE.Group();
+  const body = new THREE.Group(); avatar.add(body);
   const M = hex => { const m = new THREE.MeshStandardMaterial({ color: new THREE.Color(hex).convertSRGBToLinear(), roughness: 0.7, transparent: true }); avMats.push(m); return m; };
-  const skin = M('#e6c9ae'), shirt = M('#2f7a6c'), pants = M('#394047'), shoe = M('#22262a');
+  const skin = M(fem ? '#e9cdb5' : '#e2c3a6'), shirt = M(fem ? '#b25d6e' : '#2f7a6c'), pants = M(fem ? '#3c3f57' : '#394047'), shoe = M('#22262a'), hair = M(fem ? '#3a2a22' : '#2a2522');
   const add = (parent, geo, m, x, y, z, sx, sy, sz) => { const o = new THREE.Mesh(geo, m); o.position.set(x, y, z); o.scale.set(sx, sy, sz); o.castShadow = true; parent.add(o); return o; };
-  const leg = (x) => { const g = new THREE.Group(); g.position.set(x, 0.86, 0); add(g, UNIT_CYL, pants, 0, -0.42, 0, 0.068, 0.84, 0.072); add(g, UNIT_BOX, shoe, 0, -0.83, 0.04, 0.1, 0.06, 0.2); avatar.add(g); return g; };
+  const sh = fem ? 0.9 : 1; // narrower shoulders and hips for the woman
+  const leg = (x) => { const g = new THREE.Group(); g.position.set(x * sh, 0.86, 0); add(g, UNIT_CYL, pants, 0, -0.42, 0, 0.066, 0.84, 0.07); add(g, UNIT_BOX, shoe, 0, -0.83, 0.04, 0.095, 0.06, 0.2); body.add(g); return g; };
   legL = leg(-0.09); legR = leg(0.09);
-  add(avatar, UNIT_CYL, shirt, 0, 1.15, 0, 0.19, 0.62, 0.12);
-  add(avatar, UNIT_SPH, shirt, 0, 1.44, 0, 0.21, 0.07, 0.12);
-  add(avatar, UNIT_CYL, skin, 0, 1.5, 0, 0.045, 0.1, 0.045);
-  add(avatar, UNIT_SPH, skin, 0, 1.63, 0, 0.105, 0.125, 0.11);
-  add(avatar, UNIT_SPH, M('#2a2522'), 0, 1.69, -0.02, 0.11, 0.08, 0.11); // hair, so the back of the head reads clearly
+  add(body, UNIT_CYL, shirt, 0, 1.15, 0, 0.19 * sh, 0.62, 0.12);
+  add(body, UNIT_SPH, shirt, 0, 1.44, 0, 0.21 * sh, 0.07, 0.12);
+  add(body, UNIT_CYL, skin, -0.215 * sh, 1.12, 0, 0.04, 0.56, 0.04); add(body, UNIT_CYL, skin, 0.215 * sh, 1.12, 0, 0.04, 0.56, 0.04); // arms
+  add(body, UNIT_CYL, skin, 0, 1.5, 0, 0.045, 0.1, 0.045);
+  add(body, UNIT_SPH, skin, 0, 1.63, 0, 0.105, 0.125, 0.11);
+  if (fem) { add(body, UNIT_SPH, hair, 0, 1.67, -0.025, 0.118, 0.1, 0.12); add(body, UNIT_SPH, hair, 0, 1.5, -0.075, 0.11, 0.17, 0.06); } // shoulder-length hair
+  else add(body, UNIT_SPH, hair, 0, 1.69, -0.02, 0.11, 0.08, 0.11);
+  body.scale.setScalar(charH() / 1.755); // model is built 1.755 m tall
   avatar.visible = false; scene.add(avatar);
-  destRing = new THREE.Mesh(new THREE.RingGeometry(0.17, 0.24, 40), new THREE.MeshBasicMaterial({ color: new THREE.Color(cssVar('--accent')), transparent: true, opacity: 0.85, depthWrite: false }));
-  destRing.rotation.x = -Math.PI / 2; destRing.position.y = 0.012; destRing.visible = false; scene.add(destRing);
+  if (!destRing) {
+    destRing = new THREE.Mesh(new THREE.RingGeometry(0.17, 0.24, 40), new THREE.MeshBasicMaterial({ color: new THREE.Color(cssVar('--accent')), transparent: true, opacity: 0.85, depthWrite: false }));
+    destRing.rotation.x = -Math.PI / 2; destRing.position.y = 0.012; destRing.visible = false; scene.add(destRing);
+  }
+}
+function setChar(c) {
+  UI.char = { ...UI.char, ...c }; saveUI(); buildAvatar(); placeAvatar(); setScenery();
+  if (UI.cam === 'walk') { const d = new THREE.Vector3(); camera.getWorldDirection(d); camWalk(AV.x, AV.z, d, 'fade'); }
+  renderTC(); renderCharPop();
 }
 function avatarOpacity(o) { avMats.forEach(m => { m.opacity = o; m.depthWrite = false; }); }
 function placeAvatar(sp = 0) { if (!avatar) return; avatar.position.set(AV.x, 0, AV.z); avatar.rotation.y = AV.yaw; const sw = Math.sin(AV.t) * Math.min(0.45, sp * 0.38); legL.rotation.x = sw; legR.rotation.x = -sw; }
@@ -1686,8 +1764,8 @@ function obstacleRects() {
 }
 function collide(x, z) { const px = x * 1000, pz = z * 1000, R = 190; return OBST.some(r => px > r.x - R && px < r.x + r.w + R && pz > r.y - R && pz < r.y + r.h + R); }
 function walkPose(dir) {
-  if (UI.pov === 'first') { const pos = V3v(AV.x, 1.6, AV.z); return { pos, tgt: pos.clone().addScaledVector(dir, 0.05), fov: 66 }; }
-  const right = V3v(-dir.z, 0, dir.x), tgt = V3v(AV.x, 1.45, AV.z).addScaledVector(right, 0.38); return { pos: tgt.clone().addScaledVector(dir, -AV.dist * 0.95).add(V3v(0, AV.dist * 0.22, 0)), tgt, fov: 62 };
+  if (UI.pov === 'first') { const pos = V3v(AV.x, eyeH(), AV.z); return { pos, tgt: pos.clone().addScaledVector(dir, 0.05), fov: 66 }; }
+  const right = V3v(-dir.z, 0, dir.x), tgt = V3v(AV.x, pivotH(), AV.z).addScaledVector(right, 0.38); return { pos: tgt.clone().addScaledVector(dir, -AV.dist * 0.95).add(V3v(0, AV.dist * 0.22, 0)), tgt, fov: 62 };
 }
 function walkControls() {
   return UI.pov === 'first'
@@ -1740,7 +1818,7 @@ function walkUpdate(dt) {
   if (sp > 0.05) { const want = Math.atan2(AV.vx, AV.vz); let d = want - AV.yaw; d = Math.atan2(Math.sin(d), Math.cos(d)); AV.yaw += d * Math.min(1, dt * 8); }
   AV.t += dt * sp * 5.5; placeAvatar(sp);
   if (UI.pov === 'first' && sp > 0.02) { // first person: gently turn toward travel direction only when walking to a tapped spot
-    if (AV.dest) { const look = V3v(Math.sin(AV.yaw), 0, Math.cos(AV.yaw)); const tg = V3v(AV.x, 1.6, AV.z).addScaledVector(look, 0.05); controls.target.lerp(tg, Math.min(1, dt * 4)); camera.position.set(AV.x, 1.6, AV.z); }
+    if (AV.dest) { const look = V3v(Math.sin(AV.yaw), 0, Math.cos(AV.yaw)); const tg = V3v(AV.x, eyeH(), AV.z).addScaledVector(look, 0.05); controls.target.lerp(tg, Math.min(1, dt * 4)); camera.position.set(AV.x, eyeH(), AV.z); }
   }
   return true;
 }
@@ -1748,7 +1826,7 @@ const camRay = { r: null };
 function fitThirdCam() { // over-the-shoulder: keep the pivot beside the head, the camera inside the room and below the ceiling
   if (!camRay.r) camRay.r = new THREE.Raycaster();
   const look = new THREE.Vector3(); camera.getWorldDirection(look); look.y = 0; if (look.lengthSq() > 1e-6) { look.normalize();
-    const want = V3v(AV.x, 1.45, AV.z).addScaledVector(V3v(-look.z, 0, look.x), 0.38), shift = want.sub(controls.target);
+    const want = V3v(AV.x, pivotH(), AV.z).addScaledVector(V3v(-look.z, 0, look.x), 0.38), shift = want.sub(controls.target);
     controls.target.add(shift); camera.position.add(shift); }
   const tgt = controls.target, dir = camera.position.clone().sub(tgt); if (dir.lengthSq() < 1e-8) return; dir.normalize();
   let d = AV.dist; camRay.r.set(tgt, dir); camRay.r.far = d;
@@ -1765,6 +1843,30 @@ function dolly3D(k) {
 }
 
 /* ---- Scenery: 360° panorama seen from a high floor, plus time-of-day lighting ---- */
+/* Site: Blk 74A Tanglin Halt Cascadia, unit #25-509. On the HDB site plan the block is turned ~27° anticlockwise,
+   so "up" on this floor plan points to bearing 333° (NNW). */
+const SITE = { unit: '#25-509', level: 25, planUp: 333, lat: 1.297, lon: 103.79, drop: 130 };
+const bearingVec = b => { const t = (b - SITE.planUp) * Math.PI / 180; return { x: Math.sin(t), z: -Math.cos(t) }; }; // plan x / plan y(down)
+const COMPASS = ['N', 'NNE', 'NE', 'ENE', 'E', 'ESE', 'SE', 'SSE', 'S', 'SSW', 'SW', 'WSW', 'W', 'WNW', 'NW', 'NNW'];
+const compass = b => COMPASS[Math.round(((b % 360) + 360) % 360 / 22.5) % 16];
+const MONTHS = ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'];
+function solarPos(month, hour) { // NOAA approximation, mid-month, Singapore time (UTC+8)
+  const lat = SITE.lat * Math.PI / 180, doy = [17, 47, 75, 105, 135, 162, 198, 228, 258, 288, 318, 344][month];
+  const g = 2 * Math.PI / 365 * (doy - 1 + (hour - 12) / 24);
+  const eqt = 229.18 * (0.000075 + 0.001868 * Math.cos(g) - 0.032077 * Math.sin(g) - 0.014615 * Math.cos(2 * g) - 0.040849 * Math.sin(2 * g));
+  const decl = 0.006918 - 0.399912 * Math.cos(g) + 0.070257 * Math.sin(g) - 0.006758 * Math.cos(2 * g) + 0.000907 * Math.sin(2 * g) - 0.002697 * Math.cos(3 * g) + 0.00148 * Math.sin(3 * g);
+  const tst = hour * 60 + eqt + 4 * SITE.lon - 480, ha = (tst / 4 - 180) * Math.PI / 180;
+  const cosZ = Math.sin(lat) * Math.sin(decl) + Math.cos(lat) * Math.cos(decl) * Math.cos(ha), zen = Math.acos(Math.max(-1, Math.min(1, cosZ)));
+  let az = Math.acos(Math.max(-1, Math.min(1, (Math.sin(decl) - Math.sin(lat) * cosZ) / (Math.cos(lat) * Math.sin(zen) || 1e-6)))) * 180 / Math.PI;
+  if (ha > 0) az = 360 - az;
+  return { el: 90 - zen * 180 / Math.PI, az };
+}
+const WINDOW_FACE = WINDOWS.map(w => { const hz = w.y1 === w.y2, mx = (w.x1 + w.x2) / 2, my = (w.y1 + w.y2) / 2;
+  const a = hz ? roomAt(mx, my + 300) : roomAt(mx + 300, my), b = hz ? roomAt(mx, my - 300) : roomAt(mx - 300, my), r = a || b;
+  const bearing = hz ? (a ? SITE.planUp : SITE.planUp + 180) : (a ? SITE.planUp + 270 : SITE.planUp + 90); // window faces away from its room
+  return { w, room: r, bearing: ((bearing % 360) + 360) % 360 }; });
+function sunOnWindows(month, hour) { const sp = solarPos(month, hour); if (sp.el < 2) return []; return WINDOW_FACE.filter(f => Math.abs(((sp.az - f.bearing + 540) % 360) - 180) < 78); }
+const TOD_HOURS = { day: 11, sunset: 18.75, night: 21 };
 const TOD = {
   day:    { sun: 0xfff2e0, sunI: 1.15, sunPos: [2.5, 17, 13], hemiSky: 0xffffff, hemiGround: 0x9aa09a, hemiI: 0.62, fillI: 0.28, lampI: 0, exp: 1.05 },
   sunset: { sun: 0xffa463, sunI: 1.25, sunPos: [-13, 5.5, 9], hemiSky: 0xffd2b0, hemiGround: 0x6d5f66, hemiI: 0.48, fillI: 0.12, lampI: 0.35, exp: 1.0 },
@@ -1795,10 +1897,11 @@ function paintPano(tod) {
     for (let k = 0; k < 6; k++) { g.beginPath(); g.ellipse(x + (k - 3) * w * 0.16 + R() * 30, y + R() * 18, w * (0.18 + R() * 0.12), 26 + R() * 22, 0, 0, 7); g.fill(); }
   }
   const wrap = (x, w, fn) => { fn(x); if (x + w > W) fn(x - W); };
+  const DROP = SITE.drop; // from a high floor, neighbouring blocks and trees sit lower in view
   // far skyline: hazy towers
   let x = 0;
   while (x < W) {
-    const w = 40 + R() * 110, top = hy - 40 - R() * (R() < 0.15 ? 300 : 150);
+    const w = 40 + R() * 110, top = hy - 40 - R() * (R() < 0.15 ? 300 : 150) + DROP * 0.45;
     g.fillStyle = night ? '#1b2440' : dusk ? '#7e6481' : '#b7c7d3';
     g.fillRect(x, top, w, hy + 200 - top);
     if (night) for (let yy = top + 8; yy < hy + 180; yy += 10) for (let xx = x + 4; xx < x + w - 4; xx += 9) if (R() < 0.12) { g.fillStyle = 'rgba(255,214,140,.7)'; g.fillRect(xx, yy, 3, 3); }
@@ -1808,7 +1911,7 @@ function paintPano(tod) {
   const facades = night ? ['#262d3d', '#2b3242', '#232a38'] : dusk ? ['#e4b99b', '#d9a98f', '#e8c3a2', '#cfa38f'] : ['#efe7da', '#e6d8c2', '#dfe6e7', '#f1e3cf', '#e2e9de', '#ebdcd2'];
   const bands = night ? ['#3a3346', '#2f3d3a'] : ['#c46a4c', '#5d8fa8', '#7aa36b', '#c9a24a', '#8b6fa8'];
   for (let i = 0; i < 30; i++) {
-    const w = 150 + R() * 260, bx = (i / 30) * W + R() * 80, top = hy - 70 - R() * 230, bottom = hy + 330;
+    const w = 150 + R() * 260, bx = (i / 30) * W + R() * 80, top = hy - 70 - R() * 230 + DROP, bottom = hy + 330 + DROP * 0.6;
     const face = facades[(R() * facades.length) | 0], band = bands[(R() * bands.length) | 0], litP = 0.3 + R() * 0.3;
     wrap(bx, w, X => {
       g.fillStyle = face; g.fillRect(X, top, w, bottom - top);
@@ -1830,14 +1933,14 @@ function paintPano(tod) {
   if (night) { ground.addColorStop(0, '#0f1a15'); ground.addColorStop(1, '#070b09'); }
   else if (dusk) { ground.addColorStop(0, '#4f5b3c'); ground.addColorStop(1, '#2f3524'); }
   else { ground.addColorStop(0, '#6f9a5a'); ground.addColorStop(1, '#4f7440'); }
-  g.fillStyle = ground; g.fillRect(0, hy + 280, W, H - hy - 280);
-  g.fillStyle = night ? '#1d2126' : dusk ? '#6e6262' : '#9a9d9a'; g.fillRect(0, hy + 470, W, 60); // road
+  g.fillStyle = ground; g.fillRect(0, hy + 280 + DROP * 0.6, W, H);
+  g.fillStyle = night ? '#1d2126' : dusk ? '#6e6262' : '#9a9d9a'; g.fillRect(0, hy + 470 + DROP * 0.6, W, 60); // road
   for (let i = 0; i < 70; i++) { // street lamps / road markings
     const lx = i * W / 70;
-    if (night) glow(lx, hy + 466, 26, 'rgba(255,190,110,.8)'); else { g.fillStyle = 'rgba(255,255,255,.7)'; g.fillRect(lx, hy + 498, 22, 4); }
+    if (night) glow(lx, hy + 466 + DROP * 0.6, 26, 'rgba(255,190,110,.8)'); else { g.fillStyle = 'rgba(255,255,255,.7)'; g.fillRect(lx, hy + 498 + DROP * 0.6, 22, 4); }
   }
   for (let i = 0; i < 520; i++) {
-    const tx = R() * W, ty = hy + 230 + R() * 140 + (R() < 0.3 ? 220 : 0), r = 26 + R() * 46;
+    const tx = R() * W, ty = hy + 230 + R() * 140 + (R() < 0.3 ? 220 : 0) + DROP * 0.6, r = 26 + R() * 46;
     const greens = night ? ['#0c1611', '#122019', '#0e1a14'] : dusk ? ['#4a5a35', '#3e4c30', '#56643c'] : ['#4f8a45', '#5f9a4f', '#3f7a3c', '#6aa456'];
     g.fillStyle = greens[(R() * greens.length) | 0]; g.beginPath(); g.arc(tx, ty, r, 0, 7); g.fill();
   }
@@ -1867,18 +1970,29 @@ function setScenery() {
   ITEMS3D.forEach((e, id) => { const it = S.items.find(i => i.id === id); if (it && CAT[it.type].elec === 'ceil') e.g.visible = walk && !UI.low; });
   renderer.shadowMap.needsUpdate = true; requestRender();
 }
+function lightPhase() { const sp = solarPos(UI.month, UI.hour); return { sp, phase: sp.el > 12 ? 'day' : sp.el > -6 ? 'sunset' : 'night' }; }
 function applyTOD(render = true) {
   if (!V3.ready) return;
-  const P = TOD[UI.tod];
-  sunL.color.setHex(P.sun); sunL.intensity = P.sunI;
-  const d = new THREE.Vector3(...P.sunPos).normalize().multiplyScalar(28);
-  sunL.position.set(6.3 + d.x, d.y, 4.5 + d.z);
-  hemiL.color.setHex(P.hemiSky); hemiL.groundColor.setHex(P.hemiGround); hemiL.intensity = P.hemiI;
-  fillL.intensity = P.fillI; lamps.forEach(l => { l.intensity = P.lampI; });
-  glowMat.emissiveIntensity = UI.tod === 'night' ? 1.6 : UI.tod === 'sunset' ? 0.7 : 0.12;
-  renderer.toneMappingExposure = P.exp;
-  scene.background = new THREE.Color(UI.tod === 'night' ? '#161c29' : UI.tod === 'sunset' ? '#e7d9cf' : cssVar('--stage'));
-  if (dome) { dome.material.map = panoTex(UI.tod); dome.material.needsUpdate = true; }
+  const { sp, phase } = lightPhase(), el = sp.el;
+  const mix = (a, b, k) => new THREE.Color(a).lerp(new THREE.Color(b), Math.max(0, Math.min(1, k)));
+  if (el > 0) {
+    const k = Math.min(1, el / 30);
+    sunL.color.copy(mix(0xff9a55, 0xfff2e0, (el - 3) / 22)); sunL.intensity = 0.55 + 0.75 * k;
+    const v = bearingVec(sp.az), r = Math.cos(el * Math.PI / 180) * 28, h = Math.max(1.2, Math.sin(el * Math.PI / 180) * 28);
+    sunL.position.set(6.3 + v.x * r, h, 4.5 + v.z * r);
+    hemiL.color.copy(mix(0xffd2b0, 0xffffff, k)); hemiL.groundColor.copy(mix(0x6d5f66, 0x9aa09a, k)); hemiL.intensity = 0.42 + 0.22 * k;
+    fillL.intensity = 0.1 + 0.18 * k;
+  } else {
+    sunL.color.setHex(0x8fa6ff); sunL.intensity = el > -6 ? 0.25 : 0.12; sunL.position.set(6.3 + 16, 14, 4.5 - 4);
+    hemiL.color.setHex(el > -6 ? 0x5a4a6a : 0x2b3a5c); hemiL.groundColor.setHex(0x111418); hemiL.intensity = el > -6 ? 0.36 : 0.28; fillL.intensity = 0.04;
+  }
+  const lampI = el > 10 ? 0 : el > 0 ? 0.35 * (1 - el / 10) + 0.25 : el > -6 ? 0.8 : 1.25;
+  lamps.forEach(l => { l.intensity = lampI; });
+  glowMat.emissiveIntensity = phase === 'night' ? 1.6 : phase === 'sunset' ? 0.8 : 0.12;
+  renderer.toneMappingExposure = phase === 'night' ? 1.12 : 1.04;
+  scene.background = new THREE.Color(phase === 'night' ? '#161c29' : phase === 'sunset' ? '#e7d9cf' : cssVar('--stage'));
+  if (dome) { dome.material.map = panoTex(phase); dome.material.needsUpdate = true; }
+  UI.tod = Object.keys(TOD_HOURS).find(k => TOD_HOURS[k] === UI.hour) || 'custom';
   renderer.shadowMap.needsUpdate = true;
   if (render) requestRender();
 }
@@ -2286,7 +2400,7 @@ function setMain(m) {
   if (m === '3d' && UI.tool === 'measure') { UI.tool = null; UI.measure = null; renderRail(); }
   lastPlanSize = '';
   requestAnimationFrame(() => { fitView(); size3D(); requestRender(); });
-  renderPlan(); renderTC(); renderHint();
+  renderPlan(); renderTC(); renderHint(); if (typeof renderSunPop === 'function') renderSunPop(); $('#north').style.display = m === '3d' ? '' : 'none';
 }
 $('#mini-swap').onclick = e => { e.stopPropagation(); setMain(UI.main === '3d' ? '2d' : '3d'); };
 $('#view-mini').addEventListener('click', () => { if (UI.main === '2d' && V3.ready) setMain('3d'); });
@@ -2295,8 +2409,9 @@ $('#mini-toggle').onclick = () => { const c = $('#mini').classList.toggle('colla
 /* top-centre controls depend on the main view */
 function renderTC() {
   const tc = $('#tc');
-  const tod = `<button class="card iconbtn tod-cycle" data-todcycle="1" title="Time of day" aria-label="Time of day: ${UI.tod}"><svg class="ic sm"><use href="#i-${UI.tod === 'day' ? 'sun' : UI.tod === 'sunset' ? 'sunset' : 'moon'}"/></svg></button>
+  const tod = `<button class="card iconbtn tod-cycle" data-todcycle="1" title="Sun study" aria-label="Sun study, ${fmtHour(UI.hour)}"><svg class="ic sm"><use href="#i-${lightPhaseName() === 'day' ? 'sun' : lightPhaseName() === 'sunset' ? 'sunset' : 'moon'}"/></svg></button>
       <div class="card seg tod-full" role="group" aria-label="Time of day">
+        <button data-tc="sun" aria-pressed="${!!UI.sunOpen}" title="Sun study: real sunlight for #25-509" aria-label="Sun study"><svg class="ic sm"><use href="#i-clock"/></svg><span>${fmtHour(UI.hour)}</span></button>
         <button data-tod="day" aria-pressed="${UI.tod === 'day'}" title="Day" aria-label="Day"><svg class="ic sm"><use href="#i-sun"/></svg></button>
         <button data-tod="sunset" aria-pressed="${UI.tod === 'sunset'}" title="Sunset" aria-label="Sunset"><svg class="ic sm"><use href="#i-sunset"/></svg></button>
         <button data-tod="night" aria-pressed="${UI.tod === 'night'}" title="Night" aria-label="Night"><svg class="ic sm"><use href="#i-moon"/></svg></button>
@@ -2310,7 +2425,7 @@ function renderTC() {
         <button data-tc="walk" aria-pressed="${walk}" title="Walk through"><svg class="ic sm"><use href="#i-walk"/></svg><span>Walk</span></button>
       </div>
       <div class="card seg">${walk
-        ? `<button data-tc="pov" aria-pressed="${UI.pov === 'first'}" title="${UI.pov === 'first' ? 'Switch to third person (follow camera)' : 'Switch to first person (eye level)'}" aria-label="First-person view"><svg class="ic sm"><use href="#i-${UI.pov === 'first' ? 'eye' : 'person'}"/></svg><span>${UI.pov === 'first' ? '1st person' : '3rd person'}</span></button>`
+        ? `<button data-tc="pov" aria-pressed="${UI.pov === 'first'}" title="${UI.pov === 'first' ? 'Switch to third person (follow camera)' : 'Switch to first person (eye level)'}" aria-label="First-person view"><svg class="ic sm"><use href="#i-${UI.pov === 'first' ? 'eye' : 'person'}"/></svg><span>${UI.pov === 'first' ? '1st person' : '3rd person'}</span></button><button data-tc="char" aria-pressed="${!!UI.charOpen}" title="Change character" aria-label="Character: ${UI.char.kind === 'f' ? 'woman' : 'man'}, ${UI.char.kind === 'f' ? UI.char.f : UI.char.m} cm"><svg class="ic sm"><use href="#i-person"/></svg><span>${UI.char.kind === 'f' ? UI.char.f : UI.char.m} cm</span></button>`
         : `<button data-tc="cut" aria-pressed="${UI.low}" title="Cut-away: lower the walls" aria-label="Cut-away walls"><svg class="ic sm"><use href="#i-cut"/></svg></button><button data-tc="labels" aria-pressed="${UI.show.labels}" title="Room labels" aria-label="Room labels"><svg class="ic sm"><use href="#i-tag"/></svg></button>`}${doors}</div>
       ${tod}`;
   } else {
@@ -2323,14 +2438,15 @@ function renderTC() {
   }
 }
 $('#tc').addEventListener('click', e => {
-  if (e.target.closest('[data-todcycle]')) { const order = ['day', 'sunset', 'night']; UI.tod = order[(order.indexOf(UI.tod) + 1) % 3]; saveUI(); applyTOD(); renderTC(); toast(UI.tod === 'night' ? 'Night' : UI.tod === 'sunset' ? 'Sunset' : 'Day'); return; }
+  if (e.target.closest('[data-todcycle]') || e.target.closest('[data-tc="sun"]')) { UI.sunOpen = !UI.sunOpen; renderSunPop(); renderTC(); return; }
   const tb = e.target.closest('[data-tod]');
-  if (tb) { UI.tod = tb.dataset.tod; saveUI(); applyTOD(); renderTC(); if (UI.cam !== 'walk') toast(UI.tod === 'night' ? 'Night. Walk in to see the city lights through the windows.' : UI.tod === 'sunset' ? 'Sunset. Walk in to see the view.' : 'Daytime'); return; }
+  if (tb) { setHour(TOD_HOURS[tb.dataset.tod]); return; }
   const b = e.target.closest('[data-tc]'); if (!b) return;
   const k = b.dataset.tc;
   if (k === 'orbit') camOrbit();
   else if (k === 'walk') { if (UI.cam !== 'walk') camWalk(11.4, 4.7, V3v(-1, 0, -0.15), 'tween'); } // living room, looking toward dining
   else if (k === 'pov') setPov(UI.pov === 'first' ? 'third' : 'first');
+  else if (k === 'char') { UI.charOpen = !UI.charOpen; renderCharPop(); renderTC(); }
   else if (k === 'doors') { const close = !activeDoors().every(d => S.doors[d.id] === 'closed'); mutate(() => { activeDoors().forEach(d => { S.doors[d.id] = close ? 'closed' : 'open'; }); }); renderTC(); toast(close ? 'All doors closed' : 'All doors open'); }
   else if (k === 'cut') { UI.low = !UI.low; sync3D(); setScenery(); renderTC(); }
   else if (k === 'labels') { UI.show.labels = !UI.show.labels; saveUI(); renderTC(); requestRender(); }
@@ -2477,7 +2593,7 @@ $('#hint').addEventListener('click', e => { if (!e.target.closest('[data-hint]')
 /* ================================================================
    Tools + drawer
 ================================================================ */
-const TOOL_TITLES = { furnish: 'Furnish', finishes: 'Floors, paint & ceilings', walls: 'Walls', budget: 'Budget', compare: 'Compare designs', checks: 'Layout checks', timeline: 'Renovation timeline' };
+const TOOL_TITLES = { furnish: 'Furnish', finishes: 'Floors, paint & ceilings', walls: 'Walls', budget: 'Budget', compare: 'Compare designs', history: 'Versions & history', checks: 'Layout checks', timeline: 'Renovation timeline' };
 function openTool(t) {
   if (t === 'measure') {
     if (UI.tool === 'measure') return closeTool();
@@ -2505,7 +2621,7 @@ function renderDrawer() {
   const st = body.scrollTop, same = body.dataset.tool === UI.tool;
   body.dataset.tool = UI.tool;
   if (UI.tool === 'furnish') { if (!same) { body.innerHTML = furnishShell(); } renderCatalogue(); }
-  else body.innerHTML = UI.tool === 'finishes' ? finishesHTML() : UI.tool === 'walls' ? wallsHTML() : UI.tool === 'compare' ? compareHTML() : UI.tool === 'checks' ? checksHTML() : UI.tool === 'timeline' ? timelineHTML() : budgetHTML();
+  else body.innerHTML = UI.tool === 'finishes' ? finishesHTML() : UI.tool === 'walls' ? wallsHTML() : UI.tool === 'compare' ? compareHTML() : UI.tool === 'checks' ? checksHTML() : UI.tool === 'timeline' ? timelineHTML() : UI.tool === 'history' ? historyHTML() : budgetHTML();
   body.scrollTop = same ? st : 0;
 }
 
@@ -2577,6 +2693,33 @@ function wallsHTML() {
       <button class="switch" role="switch" aria-checked="${on}" aria-label="Remove ${esc(w.name)}" data-wt="${w.id}"></button></div>`; }).join('')}</div></div>
     <p class="note"><svg class="ic sm"><use href="#i-info"/></svg><span>Hacking non-structural walls needs an HDB renovation permit, which your contractor applies for. Bathroom walls also need fresh waterproofing, and can’t be hacked in the first 3 years.</span></p>`;
 }
+
+/* Versions & history */
+function relTime(t) { const m = Math.round((Date.now() - t) / 60000); if (m < 1) return 'just now'; if (m < 60) return `${m} min ago`; const h = Math.round(m / 60); if (h < 24) return `${h} h ago`; return new Date(t).toLocaleString('en-SG', { day: 'numeric', month: 'short', hour: 'numeric', minute: '2-digit' }); }
+function historyHTML() {
+  const list = (readVers()[dsId()] || []), now = budget().total, dn = DS.list[DS.active].name;
+  const row = x => { const tot = withState(normalize(JSON.parse(JSON.stringify(x.s))), () => budget().total), diff = tot - now;
+    return `<div class="vrow"><span class="vic${x.auto ? '' : ' named'}"><svg class="ic sm"><use href="#i-${x.auto ? 'clock' : 'star'}"/></svg></span>
+      <span class="t">${UI.vRename === x.id ? `<input class="input" id="v-name" value="${esc(x.name || '')}" maxlength="40" aria-label="Version name">` : `<b>${esc(x.name || 'Auto-saved')}</b>`}<small>${relTime(x.t)} · ${money(tot)}${Math.abs(diff) >= 1 ? ` (${diff > 0 ? '+' : '−'}${money(Math.abs(diff))} vs now)` : ' · same cost as now'}</small></span>
+      ${UI.vRename === x.id ? `<button class="btn sm primary" data-vsave="${x.id}">Save</button>` : `<button class="btn sm" data-vrestore="${x.id}">Restore</button>
+      <button class="iconbtn" data-vrename="${x.id}" title="${x.auto ? 'Keep as a named version' : 'Rename'}" aria-label="Rename"><svg class="ic sm"><use href="#i-tag"/></svg></button>
+      <button class="iconbtn${UI.vDel === x.id ? ' danger' : ''}" data-vdel="${x.id}" title="Delete" aria-label="${UI.vDel === x.id ? 'Confirm delete' : 'Delete'}">${UI.vDel === x.id ? '<b style="font-size:11px">Sure?</b>' : '<svg class="ic sm"><use href="#i-trash"/></svg>'}</button>`}</div>`; };
+  const named = list.filter(x => !x.auto), autos = list.filter(x => x.auto);
+  return `<form class="sec" id="v-form"><label class="field">Save the current state of ${esc(dn)}<span style="display:flex;gap:8px"><input class="input" id="v-new" maxlength="40" placeholder="e.g. Before meeting the ID"><button class="btn primary" type="submit">Save</button></span></label></form>
+    <div class="sec"><p class="eyebrow">Saved versions${named.length ? ' · ' + named.length : ''}</p>${named.length ? named.map(row).join('') : '<p class="hint">None yet. Save one before trying a big change.</p>'}</div>
+    <div class="sec"><p class="eyebrow">Automatic history${autos.length ? ' · ' + autos.length : ''}</p>${autos.length ? autos.map(row).join('') : '<p class="hint">Snapshots appear here every few minutes while you work, and before restores and resets.</p>'}</div>
+    <p class="hint">History is kept for each design option on this device. Restoring saves the current state first, so nothing is lost.</p>`;
+}
+function findVer(id) { const v = readVers(), list = v[dsId()] || []; return { v, list, x: list.find(y => y.id === id) }; }
+body.addEventListener('submit', e => { if (e.target.id !== 'v-form') return; e.preventDefault(); const n = ($('#v-new').value || '').trim() || 'Version ' + new Date().toLocaleString('en-SG', { day: 'numeric', month: 'short', hour: 'numeric', minute: '2-digit' }); if (UI.before) setBefore(false); persist(); toast(addVersion(n, false) !== false ? `Saved “${n}”` : 'Couldn’t save: this browser’s storage is full. Delete some versions.'); renderDrawer(); });
+body.addEventListener('click', e => {
+  const b = e.target.closest('[data-vrestore],[data-vrename],[data-vsave],[data-vdel]'); if (!b) return;
+  if (b.dataset.vrestore) { const { x } = findVer(b.dataset.vrestore); if (!x) return; setBefore(false); addVersion('Before restoring “' + (x.name || 'auto-save') + '”', true); lastAuto = Date.now(); mutate(() => { S = normalize(JSON.parse(JSON.stringify(x.s))); UI.sel = null; }); toast(`Restored ${x.name ? '“' + x.name + '”' : 'the ' + relTime(x.t) + ' snapshot'}. Undo is available.`); return renderDrawer(); }
+  if (b.dataset.vrename) { UI.vRename = b.dataset.vrename; UI.vDel = null; renderDrawer(); const i = $('#v-name'); if (i) { i.focus(); i.select(); } return; }
+  if (b.dataset.vsave) { const { v, x } = findVer(b.dataset.vsave); if (x) { x.name = ($('#v-name').value || '').trim() || x.name || 'Saved version'; x.auto = false; writeVers(v); } UI.vRename = null; return renderDrawer(); }
+  if (b.dataset.vdel) { if (UI.vDel !== b.dataset.vdel) { UI.vDel = b.dataset.vdel; return renderDrawer(); } const { v, list, x } = findVer(b.dataset.vdel); if (x) { list.splice(list.indexOf(x), 1); writeVers(v); } UI.vDel = null; toast('Version deleted'); return renderDrawer(); }
+});
+body.addEventListener('keydown', e => { if (e.target.id === 'v-name' && e.key === 'Enter') { e.preventDefault(); const b = body.querySelector('[data-vsave]'); if (b) b.click(); } });
 
 /* Checks */
 function allIssues() {
@@ -2705,7 +2848,7 @@ body.addEventListener('dragstart', e => { const b = e.target.closest('[data-add]
 function renderTop() {
   $('#undo').disabled = !undoStack.length || UI.before; $('#redo').disabled = !redoStack.length || UI.before;
   const dn = DS.list[DS.active].name;
-  $('#brand-sub').innerHTML = `<span class="dsn">${esc(dn)}<svg class="ic"><use href="#i-chev"/></svg></span> · 89 m²`;
+  $('#brand-sub').innerHTML = `<span class="dsn">${esc(dn)}<svg class="ic"><use href="#i-chev"/></svg></span> · 4-Room Type 2`;
   $('#ba-before').setAttribute('aria-pressed', !!UI.before); $('#ba-after').setAttribute('aria-pressed', !UI.before);
   $('#bchip').hidden = !UI.before;
   const b = budget(), over = b.total > S.budget;
@@ -2723,6 +2866,7 @@ function renderMenu() {
   const m = $('#menu'); if (!UI.menu) { m.hidden = true; return; }
   m.hidden = false;
   m.innerHTML = `<div style="display:flex;justify-content:space-between;align-items:center"><h3>File</h3><button class="iconbtn" data-m="close" aria-label="Close"><svg class="ic sm"><use href="#i-close"/></svg></button></div>
+    <div class="sec"><p class="eyebrow">Versions</p><div class="btnrow"><button class="btn sm" data-m="history"><svg class="ic sm"><use href="#i-clock"/></svg>Versions &amp; history</button></div><p class="hint">Save named versions and go back to earlier states.</p></div>
     <div class="sec"><p class="eyebrow">Export for contractors</p><div class="btnrow"><button class="btn primary sm" data-m="export"><svg class="ic sm"><use href="#i-print"/></svg>Open export pack</button></div><p class="hint">Plan, 3D views, schedules and budget on printable A4 pages.</p></div>
     <p class="hint">Your work saves automatically. Switch or add design options from the card at the top left.</p>
     <div class="sec"><p class="eyebrow">Start again</p><div class="btnrow"><button class="btn sm${UI.menu.confirm === 'starter' ? ' danger solid' : ''}" data-m="starter">${UI.menu.confirm === 'starter' ? 'Replace this design?' : 'Reset to example'}</button><button class="btn sm${UI.menu.confirm === 'empty' ? ' danger solid' : ''}" data-m="empty">${UI.menu.confirm === 'empty' ? 'Clear this design?' : 'Clear to empty unit'}</button></div><p class="hint">Applies to the current design option. Both can be undone.</p></div>
@@ -2735,10 +2879,11 @@ $('#menu').addEventListener('click', e => {
   const a = b.dataset.m;
   if (a === 'close') { UI.menu = null; return renderMenu(); }
   if (a === 'export') { UI.menu = null; renderMenu(); openExport(); return; }
+  if (a === 'history') { UI.menu = null; renderMenu(); openTool('history'); return; }
   if (a === 'save') { const n = ($('#save-name').value || '').trim() || 'Layout ' + new Date().toLocaleString('en-SG', { dateStyle: 'medium', timeStyle: 'short' }); const s = readSaves(); s[n] = { t: Date.now(), s: S }; toast(ls.set(KEY_SAVES, JSON.stringify(s)) ? `Saved “${n}”` : 'This browser blocked saving. Use “Copy layout code” instead.'); return renderMenu(); }
   if (b.dataset.load) { const s = readSaves()[b.dataset.load]; if (s) { mutate(() => { S = normalize(s.s); UI.sel = null; }); toast(`Opened “${b.dataset.load}”`); UI.menu = null; renderMenu(); } return; }
   if (b.dataset.del) { const key = 'del:' + b.dataset.del; if (UI.menu.confirm !== key) { UI.menu.confirm = key; return renderMenu(); } const s = readSaves(); delete s[b.dataset.del]; ls.set(KEY_SAVES, JSON.stringify(s)); UI.menu.confirm = null; toast('Deleted'); return renderMenu(); }
-  if (a === 'starter' || a === 'empty') { if (UI.menu.confirm !== a) { UI.menu.confirm = a; return renderMenu(); } UI.menu = null; renderMenu(); mutate(() => { S = newState(a === 'starter'); UI.sel = null; }); return toast(a === 'starter' ? 'Example layout loaded' : 'Unit cleared'); }
+  if (a === 'starter' || a === 'empty') { if (UI.menu.confirm !== a) { UI.menu.confirm = a; return renderMenu(); } UI.menu = null; renderMenu(); addVersion(a === 'starter' ? 'Before reset to example' : 'Before clearing', true); mutate(() => { S = newState(a === 'starter'); UI.sel = null; }); return toast(a === 'starter' ? 'Example layout loaded' : 'Unit cleared'); }
   if (a === 'copy') { const txt = JSON.stringify(S); const fb = () => { const ta = $('#imp-text'); ta.value = txt; ta.focus(); ta.select(); toast('Copy the selected text'); }; try { navigator.clipboard.writeText(txt).then(() => toast('Layout code copied'), fb); } catch (err) { fb(); } return; }
   if (a === 'import') importText($('#imp-text').value);
 });
@@ -2762,7 +2907,8 @@ document.addEventListener('keydown', e => {
     case 'b': setBefore(!UI.before); break;
     case 'tab': if (V3.ready) { e.preventDefault(); setMain(UI.main === '3d' ? '2d' : '3d'); } break;
     case 'escape':
-      if (!$('#export').hidden) { $('#export').hidden = true; $('#export').innerHTML = ''; }
+      if (UI.charOpen) { UI.charOpen = false; renderCharPop(); renderTC(); }
+      else if (!$('#export').hidden) { $('#export').hidden = true; $('#export').innerHTML = ''; }
       else if (dsUI.open) { dsUI.open = false; renderDesigns(); }
       else if (UI.menu) { UI.menu = null; renderMenu(); }
       else if (UI.tool === 'measure') closeTool();
@@ -2800,6 +2946,49 @@ $('#where-list').addEventListener('click', e => {
   const [x, z] = LABEL_AT[b.dataset.go]; camWalk(x, z, null, 'fade');
 });
 
+function figSVG(fem, col) { return `<svg class="fig" viewBox="0 0 34 44" aria-hidden="true"><circle cx="17" cy="7" r="5.5" fill="${fem ? '#3a2a22' : '#2a2522'}"/><circle cx="17" cy="8" r="4.6" fill="#e6c9ae"/>${fem ? '<rect x="11.5" y="7" width="11" height="9" rx="4" fill="#3a2a22" opacity=".9"/><circle cx="17" cy="8.4" r="4.2" fill="#e6c9ae"/>' : ''}<rect x="${fem ? 11 : 10}" y="14" width="${fem ? 12 : 14}" height="14" rx="4" fill="${col}"/><rect x="${fem ? 12 : 11.5}" y="27" width="4.5" height="15" rx="2" fill="#394047"/><rect x="${fem ? 17.5 : 18.5}" y="27" width="4.5" height="15" rx="2" fill="#394047"/></svg>`; }
+function renderCharPop() {
+  const el = $('#char-pop'); el.hidden = !(UI.charOpen && UI.cam === 'walk' && UI.main === '3d'); if (el.hidden) return;
+  const opt = (k, label, col) => `<div class="charopt" role="button" tabindex="0" data-char="${k}" aria-pressed="${UI.char.kind === k}">${figSVG(k === 'f', col)}<span><b>${label}</b><small>Eye level ${(UI.char[k] - 11)} cm</small></span><label class="h"><input type="number" inputmode="numeric" min="100" max="220" step="1" data-charh="${k}" value="${UI.char[k]}" aria-label="${label} height in cm">cm</label></div>`;
+  el.innerHTML = `<div style="display:flex;justify-content:space-between;align-items:center"><h3>Character</h3><button class="iconbtn" data-charclose="1" aria-label="Close"><svg class="ic sm"><use href="#i-close"/></svg></button></div>
+    ${opt('m', 'Man', '#2f7a6c')}${opt('f', 'Woman', '#b25d6e')}
+    <p class="hint">The figure and camera use this height, so first person shows what this person sees.</p>`;
+}
+$('#char-pop').addEventListener('click', e => {
+  if (e.target.closest('[data-charclose]')) { UI.charOpen = false; renderCharPop(); renderTC(); return; }
+  if (e.target.closest('input')) return;
+  const o = e.target.closest('[data-char]'); if (o && o.dataset.char !== UI.char.kind) { setChar({ kind: o.dataset.char }); toast(o.dataset.char === 'f' ? `Walking as a woman, ${UI.char.f} cm` : `Walking as a man, ${UI.char.m} cm`); }
+});
+$('#char-pop').addEventListener('keydown', e => { const o = e.target.closest('[data-char]'); if (o && (e.key === 'Enter' || e.key === ' ') && e.target === o) { e.preventDefault(); o.click(); } });
+$('#char-pop').addEventListener('change', e => { const k = e.target.dataset.charh; if (!k) return; const v = Math.round(+e.target.value); if (!(v >= 100 && v <= 220)) { toast('Enter a height between 100 and 220 cm.'); renderCharPop(); return; } setChar({ [k]: v, kind: k }); });
+
+/* ---------------- Sun study ---------------- */
+function lightPhaseName() { const el = solarPos(UI.month, UI.hour).el; return el > 12 ? 'day' : el > -6 ? 'sunset' : 'night'; }
+function fmtHour(h) { const H = Math.floor(h), M = Math.round((h - H) * 60); const ap = H >= 12 ? 'pm' : 'am', h12 = ((H + 11) % 12) + 1; return `${h12}${M ? ':' + String(M).padStart(2, '0') : ''}${ap}`; }
+function setHour(h) { UI.hour = Math.round(h * 4) / 4; saveUI(); applyTOD(); renderTC(); renderSunPop(); }
+function renderSunPop() {
+  const el = $('#sun-pop'); el.hidden = !(UI.sunOpen && UI.main === '3d'); if (el.hidden) return;
+  const sp = solarPos(UI.month, UI.hour), lit = sunOnWindows(UI.month, UI.hour);
+  const rooms = [...new Set(lit.map(f => f.room && f.room.name).filter(Boolean))];
+  const hot = {}; for (let h = 14; h < 18.5; h += 0.5) new Set(sunOnWindows(UI.month, h).map(f => f.room && f.room.name).filter(Boolean)).forEach(n => { hot[n] = (hot[n] || 0) + 0.5; }); // each half-hour counted once per room
+  const hotList = Object.entries(hot).sort((a, b) => b[1] - a[1]);
+  const faces = [...new Set(WINDOW_FACE.map(f => `${f.room ? f.room.name : 'Window'}: ${compass(f.bearing)}`))];
+  el.innerHTML = `<div style="display:flex;justify-content:space-between;align-items:center"><h3>Sun study · ${SITE.unit}</h3><button class="iconbtn" data-sunclose="1" aria-label="Close"><svg class="ic sm"><use href="#i-close"/></svg></button></div>
+    <div class="sunrow"><label class="field" style="flex:1">Month<select class="input" id="sun-month">${MONTHS.map((m, i) => `<option value="${i}"${i === UI.month ? ' selected' : ''}>${m}</option>`).join('')}</select></label>
+      <div class="field" style="flex:2"><span>Time · <b style="color:var(--ink)" id="sun-hlabel">${fmtHour(UI.hour)}</b></span><input type="range" id="sun-hour" min="7" max="22" step="0.25" value="${UI.hour}" aria-label="Time of day"></div></div>
+    <div class="btnrow"><button class="btn sm" data-sunh="9">Morning</button><button class="btn sm" data-sunh="13">Noon</button><button class="btn sm" data-sunh="16">Afternoon</button><button class="btn sm" data-sunh="18.75">Sunset</button><button class="btn sm" data-sunh="21">Night</button></div>
+    <p class="sunnow">${sp.el > 0 ? `Sun in the <b>${compass(sp.az)}</b>, ${Math.round(sp.el)}° above the horizon.` : '<b>The sun has set.</b>'} ${sp.el > 2 ? (rooms.length ? `Direct sun now: <b>${rooms.map(esc).join(', ')}</b>.` : 'No direct sun through your windows right now.') : ''}</p>
+    <div class="sec"><p class="eyebrow">Afternoon sun, 2–6:30pm in ${MONTHS[UI.month]}</p>${hotList.length ? hotList.map(([n, h]) => `<div class="hotrow"><span>${esc(n)}</span><span class="bar"><i style="width:${Math.min(100, h / 4.5 * 100)}%"></i></span><small>${h} h</small></div>`).join('') : '<p class="hint">No direct afternoon sun this month.</p>'}</div>
+    <details class="more"><summary>Which way each window faces</summary><p class="hint" style="margin-top:6px">${faces.map(esc).join(' · ')}</p></details>
+    <p class="hint">From Blk 74A’s orientation on the HDB site plan (bedrooms face about ${SITE.planUp}°, ${compass(SITE.planUp)}) and the sun’s path over Singapore. Neighbouring blocks may shade some windows; that isn’t modelled.</p>`;
+}
+$('#sun-pop').addEventListener('click', e => {
+  if (e.target.closest('[data-sunclose]')) { UI.sunOpen = false; renderSunPop(); renderTC(); return; }
+  const b = e.target.closest('[data-sunh]'); if (b) setHour(+b.dataset.sunh);
+});
+$('#sun-pop').addEventListener('input', e => { if (e.target.id === 'sun-hour') { UI.hour = +e.target.value; applyTOD(); $('#sun-hlabel').textContent = fmtHour(UI.hour); clearTimeout(window.__sunT); window.__sunT = setTimeout(() => { saveUI(); renderTC(); renderSunPop(); }, 300); } });
+$('#sun-pop').addEventListener('change', e => { if (e.target.id === 'sun-month') { UI.month = +e.target.value; saveUI(); applyTOD(); renderSunPop(); } });
+
 /* ---------------- Before / After ---------------- */
 let afterState = null;
 function setBefore(on) {
@@ -2820,7 +3009,7 @@ function addDesign(state, name) { setBefore(false); persist(); DS.list.push({ id
 function switchDesign(i, quiet) {
   setBefore(false);
   if (i === DS.active && !quiet) return;
-  persist(); DS.active = i; S = DS.list[i].s; undoStack.length = 0; redoStack.length = 0; UI.sel = null;
+  persist(); DS.active = i; S = DS.list[i].s; lastAuto = 0; undoStack.length = 0; redoStack.length = 0; UI.sel = null;
   saveDesigns(); renderAll(); renderDesigns(); if (!quiet) toast(`Switched to ${DS.list[i].name}`);
 }
 let dsUI = { open: false, confirm: null, rename: null };
@@ -3003,6 +3192,7 @@ function renderAll() {
 
 /* ---------------- Boot ---------------- */
 renderPlan(); renderTop(); renderTC(); renderRail(); renderDrawer(); renderHint(); renderBadge();
+addVersion('When you opened the planner', true); lastAuto = Date.now();
 $('#view-main').appendChild(cv);
 $('#view-main').appendChild(labelLayer); labelLayer.hidden = true;
 $('#loading').hidden = false;

@@ -1,6 +1,6 @@
 # Blk 74A Reno Planner
 
-An in-browser renovation planner for the HDB **4-Room Type 2** unit at **Blk 74A**. The plan is drawn to scale (in mm) from the HDB floor plan: 89 m², which is 86 m² of internal floor area plus the A/C ledge.
+An in-browser renovation planner for the HDB **4-Room Type 2** unit **#25-509** at **Blk 74A, Tanglin Halt Cascadia**. The plan is drawn to scale (in mm) from the HDB floor plan: 89 m², which is 86 m² of internal floor area plus the A/C ledge.
 
 It's a single `index.html` file with no build step. Open it in a browser to use it.
 
@@ -31,6 +31,13 @@ The 3D model fills the screen. Everything else floats on top of it, so the model
   - Click or tap the floor to walk there.
   - Use the "You're in" chip to jump to any room with a quick fade.
   - You can open doors, and select, move and add furniture, while walking.
+- **Real sunlight (Sun study).** Uses the block's orientation from the HDB site plan: the bedrooms face about 333°, north-north-west.
+  - Pick a month and time to see where the sun is and which windows get direct sun.
+  - See how many afternoon hours of sun each room gets.
+  - Day, Sunset and Night are real times. North arrows show on the plan and in 3D.
+  - The view outside the windows is drawn from level 25.
+- **Character.** Walk as a man (177 cm) or a woman (170 cm). Both heights can be edited, and first person uses that person's eye level.
+- **Versions and history.** Under **File → Versions & history**, save named versions of each design option. The planner also keeps automatic snapshots every few minutes and before restores and resets. Restoring saves the current state first.
 - **Doors.** Tap any door in 2D or 3D to open or close it, or use the all-doors button.
 - **Layout checks.** The **Checks** tool flags furniture that stops a door from opening (the blocked swing shows red on the plan), overlapping items, and walkways under 600 mm. A badge shows the count.
 - **Custom items.** Add any product by name and W × D × H, with price and colour. It's saved under **My items** for reuse.
