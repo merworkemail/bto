@@ -19,6 +19,11 @@ It's a single `index.html` file with no build step. Open it in a browser to use 
   - Drag, rotate and resize items. They snap to a 50 mm grid and to wall faces.
   - Clearances to the nearest walls show live while an item is selected.
   - An item turns red when it overlaps a wall or another piece.
+- **3D view.** The **2D / 3D** toggle builds the flat in 3D from your current layout: walls at ceiling height, windows, doors, your flooring and paint, and every piece of furniture.
+  - Orbit around it, or switch walls to **Cut-away** to see into every room from above.
+  - **Eye level** puts you inside at 1.6 m. Drag to look around and use W A S D to walk. Double-click any floor to jump there.
+  - Click to select, and drag furniture to move it in 3D. Edits made in either view show in both.
+  - The 3D engine (three.js) loads from a CDN the first time you open the view.
 - **Measure tool.** Drag on the plan to measure any distance in mm.
 - **Budget.**
   - The total is grouped into hacking, flooring, painting, built-in carpentry (priced per metre run), loose furniture, and electrical and services.
