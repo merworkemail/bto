@@ -1199,7 +1199,7 @@ function readOnly() { if (UI.before) { toast('You’re viewing the flat as hande
 function mutate(fn) { if (readOnly()) return; pushUndo(JSON.stringify(S)); fn(); persist(); renderAll(); }
 function undo() { if (readOnly() || !undoStack.length) return; redoStack.push(JSON.stringify(S)); S = JSON.parse(undoStack.pop()); validateSel(); persist(); renderAll(); toast('Undone'); }
 function redo() { if (readOnly() || !redoStack.length) return; undoStack.push(JSON.stringify(S)); S = JSON.parse(redoStack.pop()); validateSel(); persist(); renderAll(); toast('Redone'); }
-function persist() { if (typeof UI !== 'undefined' && UI.before) return; DS.list[DS.active].s = S; saveDesigns(); autoVersion(); }
+function persist() { if (typeof UI !== 'undefined' && UI.before) return; DS.list[DS.active].s = S; saveDesigns(); }
 /* versions & history: named saves plus automatic snapshots, kept per design option */
 const KEY_VER = 'bto74a.versions', AUTO_EVERY = 4 * 60 * 1000, MAX_AUTO = 20, MAX_NAMED = 30;
 function readVers() { try { const v = JSON.parse(ls.get(KEY_VER) || '{}'); return v && typeof v === 'object' ? v : {}; } catch (e) { return {}; } }
@@ -1745,7 +1745,7 @@ function overviewPose(aspect) {
   return { pos: tgt.clone().add(dir.multiplyScalar(dist)), tgt, fov };
 }
 /* ---- Walk mode: third-person avatar (default) or first person; eased, collision-aware movement ---- */
-const AV = { x: 11.4, z: 4.7, y: 0, vy: 0, yaw: -Math.PI / 2, vx: 0, vz: 0, dest: null, dist: 2.3, t: 0, blockedT: 0, lastTip: 0 };
+const AV = { x: 11.4, z: 4.7, y: 0, vy: 0, yaw: -Math.PI / 2, vx: 0, vz: 0, dest: null, dist: 3.0, t: 0, blockedT: 0, lastTip: 0 };
 let avatar, legL, legR, destRing, avMats = [], wallMeshes = [], OBST = [];
 const V3v = (x, y, z) => new THREE.Vector3(x, y, z);
 const charH = () => (UI.char.kind === 'f' ? UI.char.f : UI.char.m) / 100; // metres
@@ -1872,6 +1872,25 @@ function walkUpdate(dt) {
   return true;
 }
 const camRay = { r: null };
+/* walls or furniture between the camera and the figure fade out, so the figure is never hidden */
+let GHOST = null; const FADED = new Set(); let ITEM_MESHES = [];
+function ghostMat() { if (!GHOST) GHOST = new THREE.MeshStandardMaterial({ color: new THREE.Color('#ffffff'), transparent: true, opacity: 0.13, depthWrite: false, roughness: 1 }); return GHOST; }
+function restoreFaded(keep) { FADED.forEach(m => { if (keep && keep.has(m)) return; if (m.userData.om) { m.material = m.userData.om; delete m.userData.om; } FADED.delete(m); }); }
+function fadeOccluders() {
+  if (!camRay.o) camRay.o = new THREE.Raycaster();
+  const cand = wallMeshes.concat(ITEM_MESHES), now = new Set(), h = charH();
+  [0.95, 0.55, 0.15].forEach(f => { // rays to the head, waist and feet
+    const p = V3v(AV.x, AV.y + h * f, AV.z), dir = p.clone().sub(camera.position), L = dir.length(); if (L < 0.1) return; dir.normalize();
+    camRay.o.set(camera.position, dir); camRay.o.far = L - 0.25;
+    camRay.o.intersectObjects(cand, false).forEach(hit => now.add(hit.object));
+  });
+  wallMeshes.forEach(m => { // also fade walls right next to the camera, which would fill the view
+    if (!m.userData.box) { m.updateMatrixWorld(true); m.userData.box = new THREE.Box3().setFromObject(m); }
+    if (m.userData.box.distanceToPoint(camera.position) < 0.55) now.add(m);
+  });
+  restoreFaded(now);
+  now.forEach(m => { if (FADED.has(m)) return; m.userData.om = m.material; m.material = ghostMat(); FADED.add(m); });
+}
 function fitThirdCam() { // over-the-shoulder: keep the pivot beside the head, the camera inside the room and below the ceiling
   if (!camRay.r) camRay.r = new THREE.Raycaster();
   const look = new THREE.Vector3(); camera.getWorldDirection(look); look.y = 0; if (look.lengthSq() > 1e-6) { look.normalize();
@@ -1879,15 +1898,15 @@ function fitThirdCam() { // over-the-shoulder: keep the pivot beside the head, t
     controls.target.add(shift); camera.position.add(shift); }
   const tgt = controls.target, dir = camera.position.clone().sub(tgt); if (dir.lengthSq() < 1e-8) return; dir.normalize();
   // zooming out tilts the camera down and lifts it over the walls, so small rooms never box you in
-  const zt = Math.max(0, Math.min(1, (AV.dist - 2.2) / 4.3)), polar = (0.46 - 0.24 * zt) * Math.PI, az = Math.atan2(dir.x, dir.z);
+  const zt = Math.max(0, Math.min(1, (AV.dist - 2.2) / 4.3)), polar = (0.41 - 0.2 * zt) * Math.PI, az = Math.atan2(dir.x, dir.z);
   dir.set(Math.sin(polar) * Math.sin(az), Math.cos(polar), Math.sin(polar) * Math.cos(az));
   let d = AV.dist; const top = S.rates.ceiling / 1000 - 0.15;
-  if (zt < 0.3) { camRay.r.set(tgt, dir); camRay.r.far = d; const hit = camRay.r.intersectObjects(wallMeshes, false)[0]; if (hit) d = Math.max(0.45, hit.distance - 0.2); }
   camera.position.copy(tgt).addScaledVector(dir, d);
   const above = camera.position.y > top + 0.05;
   if (!above && camera.position.y > top) camera.position.y = top;
   if (gCeil && gCeil.visible === above && !UI.low) { gCeil.visible = !above; ITEMS3D.forEach((e, id) => { const it = S.items.find(i => i.id === id); if (it && CAT[it.type].elec === 'ceil') e.g.visible = !above; }); }
-  avatarOpacity(d < 1 ? Math.max(0.12, (d - 0.45) / 0.55) * 0.62 : 0.62 + 0.3 * zt); // see-through up close, solid when zoomed out
+  avatarOpacity(0.9);
+  fadeOccluders();
 }
 function dolly3D(k) {
   if (UI.cam === 'walk') { if (UI.pov === 'third') { AV.dist = Math.min(6.5, Math.max(1.2, AV.dist * k)); requestRender(); } else { camera.fov = Math.min(85, Math.max(42, camera.fov * (k > 1 ? 1.08 : 0.93))); camera.updateProjectionMatrix(); requestRender(); } return; }
@@ -2074,7 +2093,8 @@ function setScenery() {
   if (!nbGroup) buildNeighbours(); nbGroup.visible = walk;
   if (gCeil) gCeil.visible = walk && !UI.low;
   gMarks.visible = true; // only the selected item is marked while walking
-  if (avatar) { avatar.visible = walk && UI.pov === 'third'; avatarOpacity(0.62); }
+  if (avatar) { avatar.visible = walk && UI.pov === 'third'; avatarOpacity(0.9); }
+  if (!(walk && UI.pov === 'third')) restoreFaded();
   if (destRing && !walk) destRing.visible = false;
   ITEMS3D.forEach((e, id) => { const it = S.items.find(i => i.id === id); if (it && CAT[it.type].elec === 'ceil') e.g.visible = walk && !UI.low; });
   renderer.shadowMap.needsUpdate = true; requestRender();
@@ -2197,7 +2217,7 @@ function buildStatic() {
   const key = JSON.stringify([S.rooms, S.walls, S.rates.ceiling, UI.low, wallsMode, cssVar('--stage'), cssVar('--accent')]);
   if (key === staticKey) return false;
   staticKey = key;
-  disposeOwn(gStatic); wallMeshes = [];
+  restoreFaded(); disposeOwn(gStatic); wallMeshes = [];
   const H = UI.low ? 1100 : S.rates.ceiling;
   const ground = groundMesh = pbox(gStatic, -6000, -6000, 25000, 21000, -400, -380, mat(cssVar('--ground'), { rough: 1 })); ground.castShadow = false; ground.visible = UI.cam !== 'walk';
   ROOMS.forEach(r => {
@@ -2282,7 +2302,7 @@ function syncDoors() {
 function stepDoors(t) {
   for (let i = doorAnims.length - 1; i >= 0; i--) {
     const a = doorAnims[i], k = Math.min(1, (t - a.t0) / a.ms), e = 1 - Math.pow(1 - k, 3); // ease out, like a door slowing to a stop
-    setLeaf(a.L, a.from + a.delta * e); if (k >= 1) doorAnims.splice(i, 1);
+    setLeaf(a.L, a.from + a.delta * e); delete a.L.mesh.userData.box; if (k >= 1) doorAnims.splice(i, 1);
   }
   renderer.shadowMap.needsUpdate = true;
   return true;
@@ -2488,6 +2508,8 @@ function sync3D() {
   if (a) applyTOD(false);
   syncDoors();
   OBST = obstacleRects();
+  ITEM_MESHES = []; gItems.traverse(o => { if (o.isMesh) ITEM_MESHES.push(o); });
+  if (FADED.size) restoreFaded();
   buildMarks();
   if (a || b) renderer.shadowMap.needsUpdate = true;
   requestRender();
@@ -2885,8 +2907,8 @@ function historyHTML() {
   return `<form class="sec" id="v-form"><label class="field">Save the current state of ${esc(dn)}<span style="display:flex;gap:8px"><input class="input" id="v-new" maxlength="40" placeholder="e.g. Before meeting the ID"><button class="btn primary" type="submit">Save</button></span></label></form>
     <div class="sec"><p class="eyebrow">Base</p><div class="vrow"><span class="vic named"><svg class="ic sm"><use href="#i-home"/></svg></span><span class="t"><b>Bare house</b><small>As handed over · no furniture · always available</small></span><button class="btn sm${UI.vBare ? ' danger' : ''}" data-vbare="1">${UI.vBare ? 'Reset now?' : 'Reset to this'}</button></div></div>
     <div class="sec"><p class="eyebrow">Saved versions${named.length ? ' · ' + named.length : ''}</p>${named.length ? named.map(row).join('') : '<p class="hint">None yet. Save one before trying a big change.</p>'}</div>
-    <div class="sec"><p class="eyebrow">Automatic history${autos.length ? ' · ' + autos.length : ''}</p>${autos.length ? autos.map(row).join('') : '<p class="hint">Snapshots appear here every few minutes while you work, and before restores and resets.</p>'}</div>
-    <p class="hint">History is kept for each design option on this device. Restoring saves the current state first, so nothing is lost.</p>`;
+    ${autos.length ? `<div class="sec"><p class="eyebrow">Safety copies · ${autos.length}</p>${autos.map(row).join('')}</div>` : ''}
+    <p class="hint">Your design saves continuously on this device. Versions are only created when you save one here; a safety copy is kept automatically just before any reset or restore.</p>`;
 }
 function findVer(id) { const v = readVers(), list = v[dsId()] || []; return { v, list, x: list.find(y => y.id === id) }; }
 body.addEventListener('submit', e => { if (e.target.id !== 'v-form') return; e.preventDefault(); const n = ($('#v-new').value || '').trim() || 'Version ' + new Date().toLocaleString('en-SG', { day: 'numeric', month: 'short', hour: 'numeric', minute: '2-digit' }); if (UI.before) setBefore(false); persist(); toast(addVersion(n, false) !== false ? `Saved “${n}”` : 'Couldn’t save: this browser’s storage is full. Delete some versions.'); renderDrawer(); });
@@ -3351,7 +3373,11 @@ function renderAll() {
 
 /* ---------------- Boot ---------------- */
 renderPlan(); renderTop(); renderTC(); renderRail(); renderDrawer(); renderHint(); renderBadge();
-addVersion('When you opened the planner', true); lastAuto = Date.now();
+(function tidyHistory() { // one continuous design per device: drop old open-time and timed snapshots, keep saved versions and pre-reset safety copies
+  const v = readVers(); let changed = false;
+  Object.keys(v).forEach(id => { const keep = v[id].filter(x => !x.auto || (x.name && x.name.startsWith('Before '))); if (keep.length !== v[id].length) { v[id] = keep; changed = true; } });
+  if (changed) writeVers(v);
+})();
 $('#view-main').appendChild(cv);
 $('#view-main').appendChild(labelLayer); labelLayer.hidden = true;
 $('#loading').hidden = false;

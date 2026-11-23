@@ -44,11 +44,11 @@ The 3D model fills the screen. Everything else floats on top of it, so the model
 - **Mouse controls.** Left-click selects things and walks. Right-drag orbits or looks around, middle-drag pans, and the wheel zooms. Option/Alt + drag also orbits on trackpads.
 - **Walking.**
   - Space jumps, and Q / E turn.
-  - Zooming out lifts the follow camera over the walls.
+  - Walls and furniture between the camera and your figure fade out, so your figure is never hidden. Zooming out lifts the camera over the walls.
   - In Walk mode, furniture only moves after you press **Move**, which prevents accidental drags.
   - Doors swing open and shut smoothly.
   - The common corridor and lift lobby outside the front door can be walked, and you can't step off the edge.
-- **Versions and history.** Under **File → Versions & history**, save named versions of each design option. The planner also keeps automatic snapshots every few minutes and before restores and resets. Restoring saves the current state first.
+- **Versions and history.** Your design saves continuously on each device. Under **File → Versions & history** you can save named versions of each design option. A safety copy is kept automatically just before any reset or restore.
 - **Doors.** Tap any door in 2D or 3D to open or close it, or use the all-doors button.
 - **Layout checks.** The **Checks** tool flags furniture that stops a door from opening (the blocked swing shows red on the plan), overlapping items, and walkways under 600 mm. A badge shows the count.
 - **Custom items.** Add any product by name and W × D × H, with price and colour. It's saved under **My items** for reuse.
