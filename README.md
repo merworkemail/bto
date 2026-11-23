@@ -25,6 +25,17 @@ The 3D model fills the screen. Everything else floats on top of it, so the model
 - **Electrical layout.** Place ceiling lights, downlights, pendants, fans, power points, data points, switches and aircon units. They show as standard symbols on the plan, are counted in the budget, and appear in 3D.
 - **Ceilings.** Choose no false ceiling, a flat false ceiling, or cove lighting (an L-box with an LED strip) per room, with costs. Ceilings, lights and fans show in Walk mode, and cove lighting glows at sunset and at night.
 - **Export pack.** **File → Open export pack** builds printable A4 pages: the floor plan with dimensions and electrical symbols, 3D views, a room schedule, electrical and carpentry schedules, and the budget. Print or save it as PDF, or download the plan and 3D views as images.
+- **Walk mode built for comfort.**
+  - A third-person, over-the-shoulder camera follows a see-through figure. First person is one tap away.
+  - Movement eases in and out, and you stop at walls, closed doors and furniture.
+  - Click or tap the floor to walk there.
+  - Use the "You're in" chip to jump to any room with a quick fade.
+  - You can open doors, and select, move and add furniture, while walking.
+- **Doors.** Tap any door in 2D or 3D to open or close it, or use the all-doors button.
+- **Layout checks.** The **Checks** tool flags furniture that stops a door from opening (the blocked swing shows red on the plan), overlapping items, and walkways under 600 mm. A badge shows the count.
+- **Custom items.** Add any product by name and W × D × H, with price and colour. It's saved under **My items** for reuse.
+- **Colours and materials.** Choose fabric for sofas, wood for loose furniture, and laminate for carpentry (with "use on all carpentry"). Colours show in 3D and tint the plan.
+- **Renovation timeline.** A schedule built from your design, a move-in estimate, a typical payment schedule and HDB working-hour rules. The schedule is also included in the export pack.
 - **Touch screens.**
   - An on-screen joystick lets you walk in Walk mode.
   - Double-tap a floor to walk there.
